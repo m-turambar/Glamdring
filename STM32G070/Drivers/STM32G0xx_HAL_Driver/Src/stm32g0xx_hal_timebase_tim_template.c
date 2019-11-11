@@ -41,6 +41,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal.h"
 
+/* Mike */
+#include "stm32g0xx_hal_rtc.h"
+#include "stm32g0xx_hal_tim.h"
+
 /** @addtogroup STM32G0xx_HAL_Driver
   * @{
   */

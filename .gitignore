@@ -6,3 +6,7 @@
 *.so
 *.dll
 *.d
+*.obj
+*.cmake
+STM32G070/Martillo/CMakeFiles/*
+STM32G070/CMakeCache.txt
