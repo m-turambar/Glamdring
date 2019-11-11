@@ -16,8 +16,9 @@ target_include_directories(m0_hal
 	"../Drivers/STM32G0xx_HAL_Driver/Inc")
 	"../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy")
 	"../Drivers/CMSIS/Include")
-target_compile_flags(m0_hal
-	
+target_compile_options(m0_hal PUBLIC
+	-Og -Wall -fdata-sections -ffunction-sections -g
+	-gdwarf-2 -MMD -MP
 )
 
 add_library(m0_bsp
