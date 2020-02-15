@@ -2,6 +2,7 @@
 #include "main.h"
 #include "gpio.h"
 
+const int cnt_start = 500;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -11,12 +12,12 @@ void SystemClock_Config(void);
 void SysTick_Handler(void)
 {
 	HAL_IncTick();
-	static unsigned int cnt = 500;
+	static unsigned int cnt = cnt_start;
 	--cnt;
 	if(cnt == 0)
 	{
 		HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
-		cnt = 500;
+		cnt = cnt_start;
 	}
 }
 

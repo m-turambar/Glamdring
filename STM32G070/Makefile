@@ -107,8 +107,6 @@ AS_DEFS =
 # C defines
 C_DEFS =  \
 -DUSE_HAL_DRIVER \
--DSTM32G070xx \
--DUSE_HAL_DRIVER \
 -DSTM32G070xx
 
 
@@ -187,8 +185,9 @@ $(BUILD_DIR):
 # clean up
 #######################################
 clean:
-	-rm -fR $(BUILD_DIR)
-  
+    del /f /q $(BUILD_DIR)
+#	-rm -fR $(BUILD_DIR)
+    
 #######################################
 # dependencies
 #######################################
