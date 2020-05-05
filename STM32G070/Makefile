@@ -22,7 +22,7 @@ TARGET = STM32G070
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -Og
+OPT = -Og -std=c99
 
 
 #######################################
@@ -36,12 +36,19 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
-Src/main.c \
+Src/dma.c \
 Src/gpio.c \
 Src/usart.c \
-Src/stm32g0xx_it.c \
+Src/main.c \
 Src/stm32g0xx_hal_msp.c \
+Src/stm32g0xx_hal_timebase_tim.c \
+Src/stm32g0xx_it.c \
+Src/system_stm32g0xx.c \
+Src/tim.c \
+Src/adc.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_gpio.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc_ex.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim_ex.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_uart.c \
@@ -57,8 +64,14 @@ Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_pwr.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_pwr_ex.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_cortex.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal.c \
-Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_exti.c \
-Src/system_stm32g0xx.c  
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_exti.c
+#Src/app_freertos.c \
+#Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c \
+#Middlewares/Third_Party/FreeRTOS/Source/tasks.c \
+#Middlewares/Third_Party/FreeRTOS/Source/queue.c \
+#Middlewares/Third_Party/FreeRTOS/Source/timers.c \
+#Middlewares/Third_Party/FreeRTOS/Source/list.c \
+#Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM0/port.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -119,8 +132,10 @@ C_INCLUDES =  \
 -IDrivers/STM32G0xx_HAL_Driver/Inc \
 -IDrivers/STM32G0xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32G0xx/Include \
--IDrivers/CMSIS/Include \
 -IDrivers/CMSIS/Include
+#-IMiddlewares/Third_Party/FreeRTOS/Source/include \
+#-IMiddlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM0 \
+#-IMiddlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
 
 
 # compile gcc flags
@@ -185,7 +200,7 @@ $(BUILD_DIR):
 # clean up
 #######################################
 clean:
-    del /f /q $(BUILD_DIR)
+	del /f /q $(BUILD_DIR)
 #	-rm -fR $(BUILD_DIR)
     
 #######################################

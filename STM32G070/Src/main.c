@@ -1,108 +1,118 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-
-/* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "adc.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
+void set_pwm_value(uint16_t val);
 void SystemClock_Config(void);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
+#define RX_SZ 3
+uint8_t rx_buf[RX_SZ];
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
+//es mapear de una recta a otra no?
+int map(int m, int ol, int oh, int tl, int th)
+{
+    if(m <= ol)
+        return tl;
+    if(m >= oh)
+        return th;
+    int orange = oh-ol;
+    float prop = (m-ol)/orange;
+    int trange = th-tl;
+    int ret = trange*prop + tl;
+    return ret;
+}
 
-/* USER CODE END 0 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
+{
+	#define RESP_SZ 16
+	uint8_t resp_buf[RESP_SZ] = "got: ";
+	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+	for(int i=0; i<RX_SZ; ++i)
+		resp_buf[i + 5] = rx_buf[i];
+	
+	HAL_UART_Transmit(huart, resp_buf, RESP_SZ, 10);
+	const volatile size_t pwm_val = (rx_buf[0]-'0')*100 + (rx_buf[1]-'0')*10 + (rx_buf[2]-'0');
+	set_pwm_value(pwm_val);
+}
 
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
+void delayMicroseconds(uint32_t Delay)
+{
+  uint32_t tickstart = HAL_GetTick();
+  uint32_t wait = Delay;
+
+  /* Add a freq to guarantee minimum wait */
+  if (wait < HAL_MAX_DELAY)
+  {
+    wait += (uint32_t)(uwTickFreq);
+  }
+
+  while ((HAL_GetTick() - tickstart) < wait)
+  {
+  }
+}
+
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-  
-
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
   /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  /************************************/
+  ADC1_Init();
+  pinMode(GPIOA, GPIO_PIN_1, INPUT);
+  pinMode(GPIOC, GPIO_PIN_13, INPUT);
+  /************************************/
+  pinMode(GPIOA, GPIO_PIN_4, OUTPUT);
+  pinMode(GPIOA, GPIO_PIN_6, OUTPUT);
+  pinMode(GPIOA, GPIO_PIN_7, OUTPUT);
+  //MX_DMA_Init();
+  MX_TIM14_Init();
   MX_USART2_UART_Init();
-  /* USER CODE BEGIN 2 */
 
-  /* USER CODE END 2 */
+  /* Mike */
+  //HAL_UART_Receive_DMA(&huart2, rx_buf, RX_SZ);
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+  set_pwm_value(1000);
+
+  uint8_t tx_buf[16] = {0};
+  
+  int t_on = 1;
+  
+  HAL_UART_Transmit(&huart2, tx_buf, 16, 10);
+  
   while (1)
   {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
+    if(readPin(GPIOA, GPIO_PIN_1) == 0)
+    {
+        //HAL_UART_Transmit(&huart2, tx_buf, 4, 10);
+        for(int i = 4; i<8; ++i)
+        {        
+            writePin(GPIOA, i, 1);
+            HAL_Delay(t_on);
+            writePin(GPIOA, i, 0);
+        }
+    }
+    if(readPin(GPIOC, GPIO_PIN_13) == 0)
+    {
+        //HAL_UART_Transmit(&huart2, tx_buf, 4, 10);
+        for(int i = 7; i>=4; --i)
+        {        
+            writePin(GPIOA, i, 1);
+            HAL_Delay(t_on);
+            writePin(GPIOA, i, 0);
+        }
+    }    
   }
-  /* USER CODE END 3 */
+
 }
 
 /**
@@ -145,15 +155,30 @@ void SystemClock_Config(void)
   */
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
   PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+  PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_SYSCLK;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }
 }
 
-/* USER CODE BEGIN 4 */
 
-/* USER CODE END 4 */
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM3 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+
+  if (htim->Instance == TIM3) {
+    HAL_IncTick();
+  }
+
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.
@@ -161,10 +186,8 @@ void SystemClock_Config(void)
   */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
 
-  /* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT
@@ -176,12 +199,9 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
-  /* USER CODE BEGIN 6 */
+{
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
