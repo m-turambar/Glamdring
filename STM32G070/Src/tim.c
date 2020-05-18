@@ -1,6 +1,7 @@
 #include "tim.h"
 
 TIM_HandleTypeDef htim14;
+TIM_HandleTypeDef t16;
 
 void MX_TIM14_Init(void)
 {
@@ -33,20 +34,47 @@ void MX_TIM14_Init(void)
 
 }
 
+void MX_TIM16_Init(void)
+{
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  t16.Instance = TIM16;
+  //htim14.Init.Prescaler = 160-1;
+  t16.Init.Prescaler = 100;
+  t16.Init.CounterMode = TIM_COUNTERMODE_UP;
+  t16.Init.Period = 2000-1;
+  t16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  t16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&t16) != HAL_OK)
+  {
+    Error_Handler();
+  }
+/*  if (HAL_TIM_PWM_Init(&htim14) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 150;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim14, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }*/
+  HAL_TIM_MspPostInit(&t16);
+}
+
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
 {
 
   if(tim_baseHandle->Instance==TIM14)
   {
-  /* USER CODE BEGIN TIM14_MspInit 0 */
-
-  /* USER CODE END TIM14_MspInit 0 */
     /* TIM14 clock enable */
     __HAL_RCC_TIM14_CLK_ENABLE();
-  /* USER CODE BEGIN TIM14_MspInit 1 */
-
-  /* USER CODE END TIM14_MspInit 1 */
   }
+  if(tim_baseHandle->Instance == TIM16)
+    __HAL_RCC_TIM16_CLK_ENABLE();
 }
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
 {
@@ -54,10 +82,6 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   if(timHandle->Instance==TIM14)
   {
-  /* USER CODE BEGIN TIM14_MspPostInit 0 */
-
-  /* USER CODE END TIM14_MspPostInit 0 */
-  
     __HAL_RCC_GPIOC_CLK_ENABLE();
     /**TIM14 GPIO Configuration    
     PC12     ------> TIM14_CH1 
@@ -68,10 +92,16 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF2_TIM14;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /* USER CODE BEGIN TIM14_MspPostInit 1 */
-
-  /* USER CODE END TIM14_MspPostInit 1 */
+  }
+  if(timHandle->Instance==TIM16)
+  {
+    __HAL_RCC_GPIOD_CLK_ENABLE();
+    GPIO_InitStruct.Pin = GPIO_PIN_0;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF2_TIM16;
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
   }
 
 }
@@ -81,14 +111,11 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 
   if(tim_baseHandle->Instance==TIM14)
   {
-  /* USER CODE BEGIN TIM14_MspDeInit 0 */
-
-  /* USER CODE END TIM14_MspDeInit 0 */
-    /* Peripheral clock disable */
     __HAL_RCC_TIM14_CLK_DISABLE();
-  /* USER CODE BEGIN TIM14_MspDeInit 1 */
-
-  /* USER CODE END TIM14_MspDeInit 1 */
+  }
+  if(tim_baseHandle->Instance==TIM16)
+  {
+    __HAL_RCC_TIM16_CLK_DISABLE();
   }
 } 
 

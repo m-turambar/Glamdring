@@ -85,7 +85,7 @@ LoopFillZerobss:
   bl  SystemInit
 /* Call static constructors */
   bl __libc_init_array
-/* Call the application's entry point.*/
+/* Call the application entry point.*/
   bl main
 
 LoopForever:
@@ -114,7 +114,7 @@ Infinite_Loop:
 * 0x0000.0000.
 *
 ******************************************************************************/
-   .section .isr_vector,"a",%progbits
+  .section .isr_vector,"a",%progbits
   .type g_pfnVectors, %object
   .size g_pfnVectors, .-g_pfnVectors
 
