@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="G070" targetName="G070.elf" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e1e1fd41-d4e8-4bd2-81b1-7b49beaf9dcc" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.cproject" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.mxproject" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.project" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeLists_template.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Device/ST/STM32G0xx/Include/stm32g070xx.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Device/ST/STM32G0xx/Include/stm32g0xx.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Device/ST/STM32G0xx/Include/system_stm32g0xx.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/arm_common_tables.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/arm_const_structs.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/arm_math.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/cmsis_armcc.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/cmsis_armcc_V6.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/cmsis_gcc.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/core_cm0.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/core_cm0plus.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/core_cm3.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/core_cm4.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/core_cm7.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/core_cmFunc.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/core_cmInstr.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/core_cmSimd.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/core_sc000.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/CMSIS/Include/core_sc300.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_cortex.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_def.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_dma.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_dma_ex.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_exti.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_gpio.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_gpio_ex.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr_ex.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_rcc.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_rcc_ex.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_tim.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_tim_ex.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_rcc.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_cortex.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_dma.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_dma_ex.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_exti.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_flash.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_flash_ex.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_gpio.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_pwr.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_pwr_ex.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rcc.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rcc_ex.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim_ex.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_rcc.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/G070.ioc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/G070.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Inc/MPU6050.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Inc/main.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Inc/stm32g0xx_hal_conf.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Inc/stm32g0xx_it.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/STM32G070RBTx_FLASH.ld" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Src/MPU6050.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Src/stm32g0xx_hal_msp.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Src/stm32g0xx_it.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Src/syscalls.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Src/system_stm32g0xx.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/startup/startup_stm32g070xx.s" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Makefile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/cmake-build-debug/CMakeCache.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/cmake-build-debug/CMakeFiles/3.16.5/CompilerIdC/CMakeCCompilerId.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/cmake-build-debug/CMakeFiles/3.16.5/CompilerIdCXX/CMakeCXXCompilerId.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/cmake-build-debug/CMakeFiles/CMakeError.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/cmake-build-debug/CMakeFiles/clion-environment.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/cmake-build-debug/Glamdring.cbp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../STM32G070/cmake-build-debug/Makefile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../flash.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../make.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32F767ZI/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/../STM32F767ZI/Src/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../STM32G070/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_abs_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_abs_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_abs_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_abs_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_add_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_add_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_add_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_add_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_dot_prod_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_dot_prod_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_dot_prod_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_dot_prod_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_mult_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_mult_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_mult_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_mult_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_negate_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_negate_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_negate_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_negate_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_offset_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_offset_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_offset_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_offset_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_scale_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_scale_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_scale_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_scale_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_shift_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_shift_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_shift_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_sub_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_sub_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_sub_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/BasicMathFunctions/arm_sub_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/CommonTables/arm_common_tables.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/CommonTables/arm_const_structs.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_conj_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_conj_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_conj_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_dot_prod_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_dot_prod_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_dot_prod_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mag_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mag_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mag_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mag_squared_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mag_squared_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mag_squared_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mult_cmplx_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mult_cmplx_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mult_cmplx_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mult_real_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mult_real_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ComplexMathFunctions/arm_cmplx_mult_real_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ControllerFunctions/arm_pid_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ControllerFunctions/arm_pid_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ControllerFunctions/arm_pid_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ControllerFunctions/arm_pid_reset_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ControllerFunctions/arm_pid_reset_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ControllerFunctions/arm_pid_reset_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ControllerFunctions/arm_sin_cos_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/ControllerFunctions/arm_sin_cos_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FastMathFunctions/arm_cos_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FastMathFunctions/arm_cos_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FastMathFunctions/arm_cos_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FastMathFunctions/arm_sin_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FastMathFunctions/arm_sin_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FastMathFunctions/arm_sin_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FastMathFunctions/arm_sqrt_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FastMathFunctions/arm_sqrt_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df1_32x64_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df1_32x64_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df1_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df1_fast_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df1_fast_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df1_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df1_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df1_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df1_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df1_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df2T_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df2T_f64.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df2T_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_df2T_init_f64.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_stereo_df2T_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_biquad_cascade_stereo_df2T_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_fast_opt_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_fast_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_fast_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_opt_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_opt_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_partial_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_partial_fast_opt_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_partial_fast_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_partial_fast_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_partial_opt_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_partial_opt_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_partial_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_partial_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_partial_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_conv_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_correlate_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_correlate_fast_opt_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_correlate_fast_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_correlate_fast_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_correlate_opt_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_correlate_opt_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_correlate_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_correlate_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_correlate_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_decimate_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_decimate_fast_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_decimate_fast_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_decimate_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_decimate_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_decimate_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_decimate_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_decimate_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_fast_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_fast_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_init_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_interpolate_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_interpolate_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_interpolate_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_interpolate_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_interpolate_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_interpolate_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_lattice_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_lattice_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_lattice_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_lattice_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_lattice_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_lattice_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_sparse_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_sparse_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_sparse_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_sparse_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_sparse_init_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_sparse_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_sparse_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_fir_sparse_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_iir_lattice_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_iir_lattice_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_iir_lattice_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_iir_lattice_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_iir_lattice_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_iir_lattice_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_norm_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_norm_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_norm_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_norm_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_norm_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_norm_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/FilteringFunctions/arm_lms_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_add_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_add_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_add_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_cmplx_mult_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_cmplx_mult_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_cmplx_mult_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_inverse_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_inverse_f64.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_mult_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_mult_fast_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_mult_fast_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_mult_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_mult_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_scale_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_scale_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_scale_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_sub_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_sub_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_sub_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_trans_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_trans_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/MatrixFunctions/arm_mat_trans_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_max_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_max_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_max_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_max_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_mean_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_mean_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_mean_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_mean_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_min_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_min_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_min_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_min_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_power_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_power_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_power_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_power_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_rms_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_rms_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_rms_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_std_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_std_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_std_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_var_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_var_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/StatisticsFunctions/arm_var_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_copy_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_copy_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_copy_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_copy_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_fill_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_fill_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_fill_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_fill_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_float_to_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_float_to_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_float_to_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_q15_to_float.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_q15_to_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_q15_to_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_q31_to_float.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_q31_to_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_q31_to_q7.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_q7_to_float.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_q7_to_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/SupportFunctions/arm_q7_to_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_bitreversal.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_bitreversal2.S" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix2_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix2_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix2_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix2_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix2_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix2_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix4_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix4_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix4_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix4_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix4_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix4_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_cfft_radix8_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_dct4_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_dct4_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_dct4_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_dct4_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_dct4_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_dct4_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_rfft_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_rfft_fast_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_rfft_fast_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_rfft_init_f32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_rfft_init_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_rfft_init_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_rfft_q15.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/DSP_Lib/Source/TransformFunctions/arm_rfft_q31.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/Lib/ARM/arm_cortexM0b_math.lib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/Lib/ARM/arm_cortexM0l_math.lib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/Lib/GCC/libarm_cortexM0l_math.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Drivers/CMSIS/RTOS/Template/cmsis_os.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Inc/mi2c.h" beforeDir="false" afterPath="$PROJECT_DIR$/../STM32G070/Inc/mi2c.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../STM32G070/Src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/Src/mi2c.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../STM32G070/Src/mi2c.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/build/STM32G070.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../STM32G070/build/STM32G070.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/build/STM32G070.elf" beforeDir="false" afterPath="$PROJECT_DIR$/../STM32G070/build/STM32G070.elf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/build/STM32G070.hex" beforeDir="false" afterPath="$PROJECT_DIR$/../STM32G070/build/STM32G070.hex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/build/STM32G070.map" beforeDir="false" afterPath="$PROJECT_DIR$/../STM32G070/build/STM32G070.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/compile_commands.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../STM32G070/flash.bat" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="EmbeddedSvdWindowState">
+    <option name="columnWidths">
+      <list>
+        <option value="187" />
+        <option value="82" />
+        <option value="1541" />
+      </list>
+    </option>
+    <option name="columnOrder">
+      <list>
+        <option value="Name" />
+        <option value="Value" />
+        <option value="Description" />
+      </list>
+    </option>
+    <option name="loadedFiles">
+      <list>
+        <option value="A:/STMicroelectronics/STM32G07x.svd" />
+      </list>
+    </option>
+    <option name="nodes">
+      <map>
+        <entry key="STM32G07x.svd" value="-E" />
+        <entry key="STM32G07x.svd|g:GPIO" value="-C" />
+        <entry key="STM32G07x.svd|g:I2C" value="-E" />
+        <entry key="STM32G07x.svd|p:GPIOA" value="-C" />
+        <entry key="STM32G07x.svd|p:GPIOA|AFRH" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|AFRL" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|BRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|BSRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|IDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|LCKR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|MODER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|ODR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|OSPEEDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|OTYPER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|PUPDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOB" value="-C" />
+        <entry key="STM32G07x.svd|p:GPIOB|AFRH" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOB|AFRL" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOB|BRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOB|BSRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOB|IDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOB|LCKR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOB|MODER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOB|ODR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOB|OSPEEDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOB|OTYPER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOB|PUPDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOC" value="-C" />
+        <entry key="STM32G07x.svd|p:GPIOC|AFRH" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOC|AFRL" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOC|BRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOC|BSRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOC|IDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOC|LCKR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOC|MODER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOC|ODR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOC|OSPEEDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOC|OTYPER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOC|PUPDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD" value="-C" />
+        <entry key="STM32G07x.svd|p:GPIOD|AFRH" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|AFRL" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|BRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|BSRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|IDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|LCKR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|MODER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|ODR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|OSPEEDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|OTYPER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|PUPDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOF" value="-C" />
+        <entry key="STM32G07x.svd|p:GPIOF|AFRH" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOF|AFRL" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOF|BRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOF|BSRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOF|IDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOF|LCKR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOF|MODER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOF|ODR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOF|OSPEEDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOF|OTYPER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOF|PUPDR" value="HC" />
+        <entry key="STM32G07x.svd|p:I2C2" value="-E" />
+        <entry key="STM32G07x.svd|p:I2C2|CR1" value="HC" />
+        <entry key="STM32G07x.svd|p:I2C2|CR2" value="HE" />
+        <entry key="STM32G07x.svd|p:I2C2|ICR" value="HC" />
+        <entry key="STM32G07x.svd|p:I2C2|ISR" value="HE" />
+        <entry key="STM32G07x.svd|p:I2C2|OAR1" value="HC" />
+        <entry key="STM32G07x.svd|p:I2C2|OAR2" value="HC" />
+        <entry key="STM32G07x.svd|p:I2C2|PECR" value="HC" />
+        <entry key="STM32G07x.svd|p:I2C2|RXDR" value="HC" />
+        <entry key="STM32G07x.svd|p:I2C2|TIMEOUTR" value="HC" />
+        <entry key="STM32G07x.svd|p:I2C2|TIMINGR" value="HC" />
+        <entry key="STM32G07x.svd|p:I2C2|TXDR" value="HE" />
+      </map>
+    </option>
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="Make.Settings">
+    <option name="path" value="C:\mingw\bin\mingw32-make.exe" />
+  </component>
+  <component name="ProjectId" id="1cRTHkKOwvo4i6QsGFHGs3v7X7u" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="A:/STMicroelectronics/STM32G07x.svd" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\migue\proyectos\Glamdring\G070\Src" />
+      <recent name="C:\Users\migue\proyectos\Glamdring\G070\Inc" />
+    </key>
+  </component>
+  <component name="RunManager" selected="OpenOCD Download &amp; Run.OCD G070">
+    <configuration name="G070.elf" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="G070" TARGET_NAME="G070.elf" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="G070" RUN_TARGET_NAME="G070.elf">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.G070.elf" />
+      <item itemvalue="OpenOCD Download &amp; Run.OCD G070" />
+    </list>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e1e1fd41-d4e8-4bd2-81b1-7b49beaf9dcc" name="Default Changelist" comment="" />
+      <created>1590490320397</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1590490320397</updated>
+      <workItem from="1590490331541" duration="2832000" />
+      <workItem from="1590501854167" duration="1068000" />
+      <workItem from="1590503098176" duration="4635000" />
+      <workItem from="1590533376427" duration="13075000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2472" y="178" key="#New_File_Extensions" timestamp="1590565137577">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2472" y="178" key="#New_File_Extensions/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590565137577" />
+    <state x="2660" y="274" key="FileChooserDialogImpl" timestamp="1590503655996">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2660" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590503655996" />
+    <state width="1877" height="205" key="GridCell.Tab.0.bottom" timestamp="1590568568744">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568744" />
+    <state width="1877" height="205" key="GridCell.Tab.0.center" timestamp="1590568568744">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568744" />
+    <state width="1877" height="205" key="GridCell.Tab.0.left" timestamp="1590568568744">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568744" />
+    <state width="1877" height="205" key="GridCell.Tab.0.right" timestamp="1590568568744">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568744" />
+    <state width="1877" height="205" key="GridCell.Tab.1.bottom" timestamp="1590568568745">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568745" />
+    <state width="1877" height="205" key="GridCell.Tab.1.center" timestamp="1590568568744">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568744" />
+    <state width="1877" height="205" key="GridCell.Tab.1.left" timestamp="1590568568744">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568744" />
+    <state width="1877" height="205" key="GridCell.Tab.1.right" timestamp="1590568568744">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568744" />
+    <state width="1877" height="205" key="GridCell.Tab.2.bottom" timestamp="1590568568745">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.2.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568745" />
+    <state width="1877" height="205" key="GridCell.Tab.2.center" timestamp="1590568568745">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.2.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568745" />
+    <state width="1877" height="205" key="GridCell.Tab.2.left" timestamp="1590568568745">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.2.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568745" />
+    <state width="1877" height="205" key="GridCell.Tab.2.right" timestamp="1590568568745">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="205" key="GridCell.Tab.2.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590568568745" />
+    <state x="2187" y="150" key="SettingsEditor" timestamp="1590557405234">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2187" y="150" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590557405234" />
+    <state x="2536" y="240" key="run.anything.popup" timestamp="1590562552780">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2536" y="240" key="run.anything.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590562552780" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/startup/startup_stm32g070xx.s</url>
+          <line>121</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
