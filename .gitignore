@@ -10,3 +10,4 @@
 *.cmake
 STM32G070/Martillo/CMakeFiles/*
 STM32G070/CMakeCache.txt
+G070/cmake-build-debug
