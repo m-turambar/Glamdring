@@ -5,7 +5,7 @@ Focusing on the NUCLEO-G070RB Cortex-M0+ development unit.
 Developing code to practice device driver writing, and some libraries to interact with sensors.
 
 Libraries developed so far:
-HAL substitute for I2C peripheral
+HAL substitute for I2C peripheral.
 MPU6050 accelerometer library.
 
 15/Feb/2020:
