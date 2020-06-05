@@ -9,6 +9,7 @@
 #include <cstdio>
 #include "mi2c.h"
 #include "MPU6050.h"
+#include "basic_timer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -144,7 +145,7 @@ int main(void)
 
 
 
-      HAL_Delay(500);
+      HAL_Delay(50);
       writePin(GPIOA, 5, 0); //LED
 /*
 
