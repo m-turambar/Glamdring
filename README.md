@@ -1,5 +1,12 @@
 # Glamdring
-TBD: BSP and/or bootloader for Kinetis K22
+Experiments with STM32 microcontrollers.
+Focusing on the NUCLEO-G070RB Cortex-M0+ development unit.
+
+Developing code to practice device driver writing, and some libraries to interact with sensors.
+
+Libraries developed so far:
+HAL substitute for I2C peripheral.
+MPU6050 accelerometer library.
 
 15/Feb/2020:
 Figured out a way to compile, link, and flash the NUCLEO-F767ZI (or any other NUCLEO board for that matter) with a single keystroke in NP++.
@@ -15,4 +22,5 @@ Once you have saved this script, map it to a hotkey and voilà.
 
 Extremely useful since this will cut down development time and eliminate developer attention loss by not having to exit NP++.
 
-I don't know why I am writing this. I am the only one that will ever read it. Lol. lololol.
+May/2020:
+We (I) now develop using Clion, I will publish the details in youtube.
