@@ -13,26 +13,6 @@ extern "C"{
 namespace mI2C2
 {
 
-
-  struct registro
-  {
-    registro(const size_t addr_) :
-    addr(addr_) {}
-    const size_t addr;
-  };
-
-  /* abstracción para interactuar con los campos de bits de un registro */
-  struct bitfield
-  {
-    /* sz is the number of bits this bitfield has, offset is number of bits offset from register base address */
-    bitfield(const size_t size, const uint8_t offset):
-    mask((1U << size) - 1U), offset(offset) {}
-    /* Does not write the register. Returns a number that you can OR with other bitfields to then write the register. */
-    const size_t operator()(const size_t val) { return (val&mask) << offset; } //(slave_addr&0x3FF) << SADDR
-    const size_t mask;
-    const uint8_t offset;
-  };
-
   enum class Mode{
     Standard,
     Fast,
@@ -62,12 +42,12 @@ namespace mI2C2
   void init_gpios();
   void enable_clock();
   void configure_timings(size_t timing);
+  void disable();
   void enable();
   int comm_init(const size_t slave_addr, const uint8_t write, uint8_t* buffer, const size_t nbytes, const uint8_t autoend=1);
+  int write(const size_t slave_addr, uint8_t* buffer, const size_t nbytes, const uint8_t autoend=1);
+  int read(const size_t slave_addr, uint8_t* buffer, const size_t nbytes, const uint8_t autoend=1);
 
-  void disable();
-
-  void write();
 };
 
 };

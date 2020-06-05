@@ -3,14 +3,7 @@
 //
 
 #include "../Inc/mi2c.h"
-
-/* el namespace anónimo le da storage estático */
-namespace {
-  volatile size_t& memoria(const size_t loc)
-  {
-    return *reinterpret_cast<size_t*>(loc);
-  }
-}
+#include "helpers.h"
 
 namespace mI2C2 {
 
@@ -71,6 +64,16 @@ namespace mI2C2 {
   }
   void configure_timings(size_t timing) {
     memoria(TIMINGR) = timing;
+  }
+
+  int write(const size_t slave_addr, uint8_t* buffer, const size_t nbytes, const uint8_t autoend)
+  {
+    return comm_init(slave_addr, 0, buffer, nbytes, autoend);
+  }
+
+  int read(const size_t slave_addr, uint8_t* buffer, const size_t nbytes, const uint8_t autoend)
+  {
+    return comm_init(slave_addr, 1, buffer, nbytes, autoend);
   }
 
   /* set write to 0 to perform a write */
