@@ -115,6 +115,11 @@ int main(void)
   uint8_t tx_buf[32] = "---\n";
   uint8_t greetings[32] = "Hey I just reset\n";
 
+  HAL_Delay(50);
+  basic_timer t6(BasicTimer::TIM6_, 0xF00, 0x800);
+  t6.configure_interrupts(1);
+  t6.enable();
+
   //mIWDG::set_and_go(6, 0xFF);
   mI2C2::enable();
   MPU6050 mpu;
@@ -172,7 +177,7 @@ int main(void)
     }
     else {
 
-      writePin(GPIOA, 5, 0);
+
     }
 
   }
