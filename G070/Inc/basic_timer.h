@@ -8,14 +8,17 @@
 #include "helpers.h"
 #include "RCC.h"
 
+#undef TIM6
+#undef TIM7
+
 extern "C"
 {
 
 void TIM6_IRQHandler(void);
 
 enum class BasicTimer : std::size_t {
-  TIM6_ = 0x40001000,
-  TIM7_ = 0x40001400
+  TIM6 = 0x40001000,
+  TIM7 = 0x40001400
 };
 
 class basic_timer {
@@ -32,11 +35,12 @@ public:
       PSC(base+0x28),
       ARR(base+0x2C)
   {
-    if (tim==BasicTimer::TIM6_) {
+    /* Habilitamos los relojes de los periféricos */
+    if (tim==BasicTimer::TIM6) {
       bitfield TIM6EN(1, 4);
       memoria(RCC::APBENR1) |= TIM6EN(1);
     }
-    else if (tim==BasicTimer::TIM7_) {
+    else if (tim==BasicTimer::TIM7) {
       bitfield TIM7EN(1, 5);
       memoria(RCC::APBENR1) |= TIM7EN(1);
     }

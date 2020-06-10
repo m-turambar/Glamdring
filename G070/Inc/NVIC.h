@@ -57,22 +57,5 @@ typedef enum
  * el segundo está escrito con las nalgas de un becario. Repitiendo este código que estaba en la HAL de ST,
  * podemos omitir incluir toda su HAL, y hacer uso del código de ARM. */
 #include "core_cm0plus.h"
-#include <cstddef>
-#include "helpers.h"
-
-#undef NVIC
-
-/* no sé si tenga caso usar esta estructura, pues lo de arriba es CMSIS. Es más portable. */
-namespace NVIC {
-  const registro ISER(0xE000E100);
-  const registro ICER(0xE000E180);
-  const registro ISPR(0xE000E200);
-  const registro ICPR(0xE000E280);
-  /* solo los bits 7 y 6 de los registros de prioridad les hace caso el hardware, osea escribir un 6 como priodidad
-   * seria equivalente a escribir 0. Solo tienen sentido los valores 0, 64, 1288, 192. 0 Tiene prioridad más alta. */
-  // const registro IPR0_7(0xE000E400); deberia ser un arreglo de 8 registros donde cada registro guarda 4 prioridades
-  const uint8_t TIM6_IRQn = 17;
-  const uint8_t TIM7_IRQn = 18;
-};
 
 #endif //G070_NVIC_H

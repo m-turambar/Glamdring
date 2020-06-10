@@ -3,4 +3,11 @@
 //
 
 #include "RCC.h"
+namespace RCC
+{
+  void enable_port_clock(const GPIO_Port port)
+  {
+    memoria(IOPENR) |= (1u << static_cast<uint8_t>(port));
+  }
+}
 

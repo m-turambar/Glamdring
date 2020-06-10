@@ -13,7 +13,7 @@ void TIM6_IRQHandler(void)
   ++i;
   writePin(GPIOA, 5, i%2);
   NVIC_ClearPendingIRQ(TIM6_IRQn);
-  memoria(tim6_ptr->SR) &= (~(1u));
+  memoria(tim6_ptr->SR) &= (~(1u)); //clear timer's status register
 }
 
 void basic_timer::set_prescaler(const uint16_t prescaler) const

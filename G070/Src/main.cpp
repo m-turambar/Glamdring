@@ -7,7 +7,7 @@
 #include "../Inc/usart.h"
 #include <cstring>
 #include <cstdio>
-#include "mi2c.h"
+#include "I2C.h"
 #include "MPU6050.h"
 #include "basic_timer.h"
 
@@ -115,16 +115,16 @@ int main(void)
   uint8_t tx_buf[32] = "---\n";
   uint8_t greetings[32] = "Hey I just reset\n";
 
-  HAL_Delay(50);
-  basic_timer t6(BasicTimer::TIM6_, 0xF00, 0x800);
+  basic_timer t6(BasicTimer::TIM6, 0x1800, 0x800);
   t6.configure_interrupts(1);
   t6.enable();
 
   //mIWDG::set_and_go(6, 0xFF);
-  mI2C2::enable();
-  MPU6050 mpu;
-  int res = mpu.set_sampling_rate();
-  print("escribiendo frecuencia: ", res);
+  I2C i2c2(I2C::Peripheral::I2C1);
+  i2c2.enable(I2C::Timing::Standard);
+  MPU6050 mpu(i2c2); //pasa una referencia al objeto i2c
+  I2C::Status res = mpu.set_sampling_rate();
+  print("setting_sampling_rate: ", static_cast<size_t>(res));
 
 
 
@@ -134,26 +134,19 @@ int main(void)
 
   /* HAL_GetTick regresa en milisegundos. ;/ */
   while (1) {
-    if (readPin(GPIOC, GPIO_PIN_13)==0) {
 
-      writePin(GPIOA, 5, 1); //LED
-
-      //print("escribiendo registro de X: ", res);
+    if(readPin(GPIOC, GPIO_PIN_13)==0) {
       mpu.posicionar_en_registro_ax();
       mpu.leer(buf, 6);
       mpu.convert_to_float(acc, buf, 3);
 
-
       std::sprintf((char*)tx_buf, "ax=%.2f\t ay=%.2f\t az=%.2f\n\r", acc[0], acc[1], acc[2]);
 
       HAL_UART_Transmit(&huart2, tx_buf, std::strlen((const char*)tx_buf), 10);
+    }
 
-
-
-      HAL_Delay(50);
-      writePin(GPIOA, 5, 0); //LED
+    if (false) {
 /*
-
       writePin(GPIOA, 4, 1); //Ultrasonic
       HAL_Delay(1);
       writePin(GPIOA, 4, 0); //Ultrasonic
@@ -161,18 +154,6 @@ int main(void)
 
       while (readPin(GPIOA, GPIO_PIN_1)==0);
 
-      volatile uint32_t loops = 0; //this ofc will not count cycles. we have to manually measure. lame.
-
-      while (readPin(GPIOA, GPIO_PIN_1)==1)
-        ++loops;
-
-      int distance = loops;// / 58.2;
-      //int distance = 42;// / 58.2;
-      unsigned char distance_buffer[10] = {0};
-      itoa(distance, distance_buffer, 10);
-      HAL_UART_Transmit(&huart2, distance_buffer, 10, 10);
-      HAL_Delay(100);
-      writePin(GPIOA, 5, 0); //LED
       */
     }
     else {
