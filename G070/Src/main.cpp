@@ -85,6 +85,13 @@ void print(const char* str, int val)
   HAL_UART_Transmit(&huart2, (uint8_t *)buf, strlen(buf), 10);
 }
 
+void test_callback(void)
+{
+  static volatile int i=0;
+  ++i;
+  writePin(GPIOA, 5, i%2);
+}
+
 int main(void)
 {
   /* MCU Configuration--------------------------------------------------------*/
@@ -118,6 +125,14 @@ int main(void)
   basic_timer t6(BasicTimer::TIM6, 0x1800, 0x800);
   t6.configure_interrupts(1);
   t6.enable();
+
+  auto timer_callback = [](void) -> void {
+    static volatile int i=0;
+    ++i;
+    writePin(GPIOA, 5, i%2);
+  };
+  t6.callback = timer_callback;
+  //t6.callback = test_callback;
 
   //mIWDG::set_and_go(6, 0xFF);
   I2C i2c2(I2C::Peripheral::I2C1);

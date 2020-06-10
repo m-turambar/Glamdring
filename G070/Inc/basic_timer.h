@@ -62,6 +62,7 @@ public:
 
   void set_autoreload(const uint16_t autoreload) const;
 
+  void (*callback)(void);
   const size_t base;
   registro CR1, CR2, DIER, SR, EGR, CNT, PSC, ARR;
 };

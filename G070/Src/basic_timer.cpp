@@ -9,9 +9,7 @@ const basic_timer* tim6_ptr = nullptr;
 
 void TIM6_IRQHandler(void)
 {
-  static volatile int i=0;
-  ++i;
-  writePin(GPIOA, 5, i%2);
+  tim6_ptr->callback();
   NVIC_ClearPendingIRQ(TIM6_IRQn);
   memoria(tim6_ptr->SR) &= (~(1u)); //clear timer's status register
 }
