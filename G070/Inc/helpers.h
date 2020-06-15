@@ -28,8 +28,8 @@ struct bitfield
   bitfield(const uint8_t size, const uint8_t offset):
       mask((1U << size) - 1U), offset(offset) {}
   /* Does not write the register. Returns a number that you can OR with other bitfields to then write the register. */
-  const size_t operator ()(const size_t val) const { return (val&mask) << offset; } //(slave_addr&0x3FF) << SADDR
-  const size_t operator !() const { return ~mask; }
+  constexpr size_t operator ()(const size_t val) const { return (val&mask) << offset; } //(slave_addr&0x3FF) << SADDR
+  constexpr size_t operator !() const { return ~mask; }
   const size_t mask;
   const uint8_t offset;
 };

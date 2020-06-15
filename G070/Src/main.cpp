@@ -78,7 +78,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /************************************/
-  ADC1_Init();
   pinMode(GPIOA, GPIO_PIN_1, INPUT);
   pinMode(GPIOC, GPIO_PIN_13, INPUT);
   /************************************/
@@ -86,10 +85,7 @@ int main(void)
   pinMode(GPIOA, GPIO_PIN_5, OUTPUT);
   pinMode(GPIOA, GPIO_PIN_6, OUTPUT);
   pinMode(GPIOA, GPIO_PIN_7, OUTPUT);
-  //MX_DMA_Init();
   MX_USART2_UART_Init();
-
-  //set_pwm_value(1000);
 
   uint8_t tx_buf[32] = "---\n";
   uint8_t greetings[32] = "Hey I just reset\n";
