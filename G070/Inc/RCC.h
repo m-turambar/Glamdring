@@ -22,6 +22,7 @@ namespace RCC {
   constexpr size_t base = 0x40021000;
   const registro IOPENR{base + 0x34};
   const registro APBENR1{base + 0x3C};
+  const registro APBENR2{base + 0x40};
   void enable_port_clock(const GPIO_Port port);
 };
 

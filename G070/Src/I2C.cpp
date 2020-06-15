@@ -63,11 +63,11 @@
   void I2C::enable_clock() const
   {
     if(peripheral==Peripheral::I2C1) {
-      bitfield I2C1EN(1, 21);
+      const bitfield I2C1EN(1, 21);
       memoria(RCC::APBENR1) |= I2C1EN(1);
     }
     else if(peripheral==Peripheral::I2C2) {
-      bitfield I2C2EN(1, 22);
+      const bitfield I2C2EN(1, 22);
       memoria(RCC::APBENR1) |= I2C2EN(1);
     }
   }

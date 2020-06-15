@@ -232,8 +232,7 @@ g_pfnVectors:
   .weak      TIM3_IRQHandler
   .thumb_set TIM3_IRQHandler,Default_Handler
 
-  .weak      TIM7_IRQHandler
-  .thumb_set TIM7_IRQHandler,Default_Handler
+
 
   .weak      TIM14_IRQHandler
   .thumb_set TIM14_IRQHandler,Default_Handler

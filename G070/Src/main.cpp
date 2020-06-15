@@ -4,12 +4,19 @@
 #include "usart.h"
 #include "../Inc/gpio.h"
 #include "../Inc/adc.h"
-#include "../Inc/usart.h"
 #include <cstring>
 #include <cstdio>
 #include "I2C.h"
 #include "MPU6050.h"
 #include "basic_timer.h"
+
+#undef TIM15
+#undef TIM16
+#undef TIM17
+
+#include "general_timer.h"
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,20 +31,6 @@ void itoa(int num, unsigned char* buffer, int base);
 #define RX_SZ 3
 uint8_t rx_buf[RX_SZ];
 
-//es mapear de una recta a otra no?
-int map(int m, int ol, int oh, int tl, int th)
-{
-  if (m<=ol)
-    return tl;
-  if (m>=oh)
-    return th;
-  int orange = oh-ol;
-  float prop = (m-ol)/orange;
-  int trange = th-tl;
-  int ret = trange*prop+tl;
-  return ret;
-}
-
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
 #define RESP_SZ 16
@@ -51,32 +44,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
   set_pwm_value(pwm_val);
 }
 
-/* Independent watch dog*/
-namespace mIWDG{
-  constexpr size_t base = 0x40003000;
-  constexpr size_t KR = (base); //limit 0x400033FF
-  constexpr size_t PR = (base + 0x4);
-  constexpr size_t RLR = (base + 0x8);
-  constexpr size_t SR = (base + 0xC);
-  constexpr size_t WINR = (base + 0x10);
-  /*************************************/
-  void enable_watchdog() { *reinterpret_cast<size_t*>(KR) = 0x0000CCCC;}
-  void enable_regwrite() { *reinterpret_cast<size_t*>(KR) = 0x00005555;}
-  void write_prescaler(const size_t val) { *reinterpret_cast<size_t*>(PR) = (val&0x7); }//values from 0 to 7
-  void write_reload(const size_t val) { *reinterpret_cast<size_t*>(RLR) = (val&0xFFF); }
-  void wait() {
-    size_t status = 1;
-    while(status != 0) { status = *reinterpret_cast<size_t*>(SR); };
-  }
-  void refresh() { *reinterpret_cast<size_t*>(KR) = 0x0000AAAA; }
-  void set_and_go(const size_t prescaler, const size_t reload) {
-    enable_watchdog();
-    enable_regwrite();
-    write_prescaler(prescaler);
-    write_reload(reload);
-    wait();
-  }
-};
 
 void print(const char* str, int val)
 {
@@ -90,6 +57,12 @@ void test_callback(void)
   static volatile int i=0;
   ++i;
   writePin(GPIOA, 5, i%2);
+}
+
+volatile uint8_t glb_flag=0;
+void one_pulse_test_callback(void)
+{
+  ++glb_flag;
 }
 
 int main(void)
@@ -114,34 +87,34 @@ int main(void)
   pinMode(GPIOA, GPIO_PIN_6, OUTPUT);
   pinMode(GPIOA, GPIO_PIN_7, OUTPUT);
   //MX_DMA_Init();
-  MX_TIM14_Init();
   MX_USART2_UART_Init();
 
-  set_pwm_value(1000);
+  //set_pwm_value(1000);
 
   uint8_t tx_buf[32] = "---\n";
   uint8_t greetings[32] = "Hey I just reset\n";
-
-  basic_timer t6(BasicTimer::TIM6, 0x1800, 0x800);
-  t6.configure_interrupts(1);
-  t6.enable();
 
   auto timer_callback = [](void) -> void {
     static volatile int i=0;
     ++i;
     writePin(GPIOA, 5, i%2);
   };
-  t6.callback = timer_callback;
-  //t6.callback = test_callback;
+  basic_timer t6(BasicTimer::TIM6, basic_timer::Mode::Periodic, 0x1800, 0x800);
+  t6.enable_interrupt(timer_callback);
+  //t6.start();
+
+
+  general_timer t17(GeneralTimer::TIM17, general_timer::Mode::OnePulseMode, 0x2000, 0x800);
+  t17.enable_interrupt(one_pulse_test_callback);
+
 
   //mIWDG::set_and_go(6, 0xFF);
+
   I2C i2c2(I2C::Peripheral::I2C1);
   i2c2.enable(I2C::Timing::Standard);
   MPU6050 mpu(i2c2); //pasa una referencia al objeto i2c
   I2C::Status res = mpu.set_sampling_rate();
   print("setting_sampling_rate: ", static_cast<size_t>(res));
-
-
 
   HAL_UART_Transmit(&huart2, greetings, strlen((const char*)greetings), 10);
   uint8_t buf[16] = {0};
@@ -150,7 +123,7 @@ int main(void)
   /* HAL_GetTick regresa en milisegundos. ;/ */
   while (1) {
 
-    if(readPin(GPIOC, GPIO_PIN_13)==0) {
+    if(glb_flag%2 == 1) {
       mpu.posicionar_en_registro_ax();
       mpu.leer(buf, 6);
       mpu.convert_to_float(acc, buf, 3);
@@ -158,6 +131,13 @@ int main(void)
       std::sprintf((char*)tx_buf, "ax=%.2f\t ay=%.2f\t az=%.2f\n\r", acc[0], acc[1], acc[2]);
 
       HAL_UART_Transmit(&huart2, tx_buf, std::strlen((const char*)tx_buf), 10);
+      glb_flag = 0;
+    }
+
+    if(readPin(GPIOC, GPIO_PIN_13)==0) {
+      t17.start();
+
+
     }
 
     if (false) {
