@@ -2,10 +2,11 @@
 // Created by migue on 13/06/2020.
 //
 
-#ifndef G070_MGPIO_H
-#define G070_MGPIO_H
+#ifndef G070_GPIO_PORT_H
+#define G070_GPIO_PORT_H
 
 #include <helpers.h>
+#include <g070_gpio_af.h>
 
 #undef GPIO
 
@@ -45,22 +46,12 @@ namespace GPIO {
     PullDown = 0x2
   };
 
-  enum class AlternFunct {
-    AF0,
-    AF1,
-    AF2,
-    AF3,
-    AF4,
-    AF5,
-    AF6,
-    AF7,
-  };
 
   /* Vamos a crear solo una instancia por cada puerto de esta clase.
    * La clase que el usuario utilizará es gpio */
-  class mGPIO {
+  class GPIO_Port {
   public:
-    mGPIO(const Port port)
+    GPIO_Port(const Port port)
         :
         base(static_cast<size_t>(port)),
         MODER(base),
@@ -74,12 +65,6 @@ namespace GPIO {
         AFRL(base+0x20),
         AFRH(base+0x24),
         BRR(base+0x28) { }
-
-    const size_t base;
-    /* tanto BSRR como BRR modifican ODR atómicamente. La diferencia es que BSRR puede
-     * setear y resetear, y BRR solo resetear. ODR es útil tenerlo por si lo queremos leer.
-     * Podríamos sólo usar BSRR y omitir BRR por completo */
-    const registro MODER, OTYPER, OSPEEDR, PUPDR, IDR, ODR, BSRR, LCKR, AFRL, AFRH, BRR;
 
     /* entrada, salida, alternate, analogico */
     void cfg_mode(const uint8_t pin, const Mode mode) const;
@@ -96,35 +81,51 @@ namespace GPIO {
     uint8_t read_input(const uint8_t pin) const;
 
     /* El registro ODR se debe modificar indirectamente a través de escrituras al
-     * registro BSRR, para asegurar atomicidad */
+    * registro BSRR, para asegurar atomicidad */
     uint8_t read_output(const uint8_t pin) const;
     /* usa el registro BSRR para conseguir escrituras atómicas */
     void set_output(const uint8_t pin) const;
     /* usa el registro BSRR para conseguir escrituras atómicas */
     void reset_output(const uint8_t pin) const;
-
-
     /* can only be written once per MCU reset */
     uint8_t lock_bits(const uint16_t bits) const;
+
+  private:
+
+    const size_t base;
+    /* tanto BSRR como BRR modifican ODR atómicamente. La diferencia es que BSRR puede
+     * setear y resetear, y BRR solo resetear. ODR es útil tenerlo por si lo queremos leer.
+     * Podríamos sólo usar BSRR y omitir BRR por completo */
+    const registro MODER, OTYPER, OSPEEDR, PUPDR, IDR, ODR, BSRR, LCKR, AFRL, AFRH, BRR;
 
   };
 
   /* estas instancias deben pasarse al constructor de gpio*/
-  extern mGPIO A, B, C, D, F;
+  extern GPIO_Port PORTA, PORTB, PORTC, PORTD, PORTF;
 
 /* Esta es la clase que el usuario debe usar. Se pasa como referencia uno de los GPIOs que ya existen, declarados en
  * este mismo archivo de encabezado. */
-  class gpio {
+  class pin {
   public:
-    gpio(mGPIO& port_arg, const uint8_t pin_arg) :
+    pin(GPIO_Port& port_arg, const uint8_t num_arg) :
         port(port_arg),
-        pin(pin_arg)
-        { }
+        num(num_arg) { }
 
-    const mGPIO& port;
-    const uint8_t pin;
+    void cfg_mode(const Mode mode) const;
+    void cfg_output_type(const OutputType ot) const;
+    void cfg_speed(Speed speed) const;
+    void cfg_pull(PullResistor pupd) const;
+    void cfg_alternate(AlternFunct afsel) const;
+    uint8_t read_input() const;
+    uint8_t read_output() const;
+    void set_output() const;
+    void reset_output() const;
+
+  private:
+    const GPIO_Port& port;
+    const uint8_t num;
   };
 
 }
 
-#endif //G070_MGPIO_H
+#endif //G070_GPIO_PORT_H

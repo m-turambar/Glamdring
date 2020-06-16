@@ -10,7 +10,7 @@
 
 struct registro
 {
-  registro(const size_t addr_) :
+  constexpr registro(const size_t addr_) :
       addr(addr_) {}
   const size_t addr;
 };
@@ -29,7 +29,7 @@ struct bitfield
       mask((1U << size) - 1U), offset(offset) {}
   /* Does not write the register. Returns a number that you can OR with other bitfields to then write the register. */
   constexpr size_t operator ()(const size_t val) const { return (val&mask) << offset; } //(slave_addr&0x3FF) << SADDR
-  constexpr size_t operator !() const { return ~mask; }
+  constexpr size_t operator !() const { return ~(mask << offset); }
   const size_t mask;
   const uint8_t offset;
 };

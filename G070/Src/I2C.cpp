@@ -7,6 +7,7 @@
 #include "I2C.h"
 #include "helpers.h"
 #include "RCC.h"
+#include <GPIO_Port.h>
 
 
   /* offsets in bits in CR2. Think about a better safer way to put these. */
@@ -26,7 +27,9 @@
   /*OAR1*/
   const bitfield OA1EN(1, 15);
 
-  /* Habilita los relojes de los gpios que se usarán para la comunicación. */
+  /* Habilita los relojes de los gpios que se usarán para la comunicación. Claramente la
+   * API de C es más concisa, pero la mía es más type safe, y podría extenderse para configurar
+   * más de 1 pin a la vez. */
   void I2C::init_gpios()
   {
     /**
@@ -38,18 +41,27 @@
      * PA9      ------> I2C1_SCL
      * PA10     ------> I2C1_SDA
     */
+
     if(peripheral==Peripheral::I2C2) {
       RCC::enable_port_clock(RCC::GPIO_Port::B);
-      GPIO_InitTypeDef GPIO_InitStruct = {0};
-      GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_11;
-      GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-      GPIO_InitStruct.Pull = GPIO_PULLUP;
-      GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-      GPIO_InitStruct.Alternate = GPIO_AF6_I2C2;
-      HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+      GPIO::pin pin10(GPIO::PORTB, 10);
+      pin10.cfg_mode(GPIO::Mode::Alternate);
+      pin10.cfg_alternate(GPIO::AlternFunct::AF6_I2C2);
+      pin10.cfg_pull(GPIO::PullResistor::PullUp);
+      pin10.cfg_output_type(GPIO::OutputType::OpenDrain);
+      pin10.cfg_speed(GPIO::Speed::High);
+
+      GPIO::pin pin11(GPIO::PORTB, 11);
+      pin11.cfg_mode(GPIO::Mode::Alternate);
+      pin11.cfg_alternate(GPIO::AlternFunct::AF6_I2C2);
+      pin11.cfg_pull(GPIO::PullResistor::PullUp);
+      pin11.cfg_output_type(GPIO::OutputType::OpenDrain);
+      pin11.cfg_speed(GPIO::Speed::High);
     }
     else if(peripheral==Peripheral::I2C1) {
       RCC::enable_port_clock(RCC::GPIO_Port::A);
+/*
       GPIO_InitTypeDef GPIO_InitStruct = {0};
       GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_9;
       GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
@@ -57,6 +69,22 @@
       GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
       GPIO_InitStruct.Alternate = GPIO_AF6_I2C1; //vale lo mismo que el dos, asi como muchos otros perifericos
       HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+*/
+
+      const GPIO::pin pin10(GPIO::PORTA, 10);
+      pin10.cfg_mode(GPIO::Mode::Alternate);
+      pin10.cfg_alternate(GPIO::AlternFunct::AF6_I2C1);
+      pin10.cfg_pull(GPIO::PullResistor::PullUp);
+      pin10.cfg_output_type(GPIO::OutputType::OpenDrain);
+      pin10.cfg_speed(GPIO::Speed::High);
+
+      const GPIO::pin pin9(GPIO::PORTA, 9);
+      pin9.cfg_mode(GPIO::Mode::Alternate);
+      pin9.cfg_alternate(GPIO::AlternFunct::AF6_I2C1);
+      pin9.cfg_pull(GPIO::PullResistor::PullUp);
+      pin9.cfg_output_type(GPIO::OutputType::OpenDrain);
+      pin9.cfg_speed(GPIO::Speed::High);
+
     }
   }
 

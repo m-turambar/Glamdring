@@ -16,8 +16,6 @@
 
 #include "general_timer.h"
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -60,7 +58,7 @@ void test_callback(void)
 }
 
 volatile uint8_t glb_flag=0;
-void one_pulse_test_callback(void)
+void callback1(void)
 {
   ++glb_flag;
 }
@@ -77,6 +75,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  //mIWDG::set_and_go(6, 0xFF);
   /************************************/
   pinMode(GPIOA, GPIO_PIN_1, INPUT);
   pinMode(GPIOC, GPIO_PIN_13, INPUT);
@@ -90,21 +89,17 @@ int main(void)
   uint8_t tx_buf[32] = "---\n";
   uint8_t greetings[32] = "Hey I just reset\n";
 
-  auto timer_callback = [](void) -> void {
+  auto led_callback = [](void) -> void {
     static volatile int i=0;
     ++i;
     writePin(GPIOA, 5, i%2);
   };
   basic_timer t6(BasicTimer::TIM6, basic_timer::Mode::Periodic, 0x1800, 0x800);
-  t6.enable_interrupt(timer_callback);
-  //t6.start();
-
+  t6.enable_interrupt(led_callback);
+  t6.start();
 
   general_timer t17(GeneralTimer::TIM17, general_timer::Mode::OnePulseMode, 0x2000, 0x800);
-  t17.enable_interrupt(one_pulse_test_callback);
-
-
-  //mIWDG::set_and_go(6, 0xFF);
+  t17.enable_interrupt(callback1);
 
   I2C i2c2(I2C::Peripheral::I2C1);
   i2c2.enable(I2C::Timing::Standard);
@@ -132,25 +127,8 @@ int main(void)
 
     if(readPin(GPIOC, GPIO_PIN_13)==0) {
       t17.start();
-
-
     }
 
-    if (false) {
-/*
-      writePin(GPIOA, 4, 1); //Ultrasonic
-      HAL_Delay(1);
-      writePin(GPIOA, 4, 0); //Ultrasonic
-      //pulseIn(GPIOA, GPIO_PIN_1, HIGH)
-
-      while (readPin(GPIOA, GPIO_PIN_1)==0);
-
-      */
-    }
-    else {
-
-
-    }
 
   }
 
