@@ -73,8 +73,8 @@ void basic_timer::configure(const Mode mode, uint8_t auto_reload_preload, uint8_
   const bitfield URS(1, 2);
   const bitfield UDIS(1, 1);
   const bitfield CEN(1, 0);
-  size_t cr1 = UIFRE_MAP(status_bit_remap) | ARPE(auto_reload_preload) | OPM(static_cast<uint8_t>(mode)) | URS(update_request_source) |
-      UDIS(update_disable) | CEN(0);
+  size_t cr1 = UIFRE_MAP(status_bit_remap) | ARPE(auto_reload_preload) | OPM(static_cast<uint8_t>(mode)) |
+      URS(update_request_source) | UDIS(update_disable) | CEN(0);
   memoria(CR1) |= cr1;
   //memoria(CNT) = 0; //this causes a hardfault for some reason
 }

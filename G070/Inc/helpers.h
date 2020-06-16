@@ -19,8 +19,6 @@ struct registro
 volatile size_t& memoria(const size_t loc);
 volatile size_t& memoria(const registro reg);
 
-
-
 /* abstracción para interactuar con los campos de bits de un registro */
 struct bitfield
 {

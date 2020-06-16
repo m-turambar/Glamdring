@@ -21,6 +21,7 @@ namespace GPIO {
     F = 0x50001400
   };
 
+
   enum class Mode {
     Input = 0x0,
     Output = 0x1,
@@ -83,10 +84,20 @@ namespace GPIO {
     /* El registro ODR se debe modificar indirectamente a través de escrituras al
     * registro BSRR, para asegurar atomicidad */
     uint8_t read_output(const uint8_t pin) const;
+
     /* usa el registro BSRR para conseguir escrituras atómicas */
     void set_output(const uint8_t pin) const;
+
     /* usa el registro BSRR para conseguir escrituras atómicas */
     void reset_output(const uint8_t pin) const;
+
+    void toggle(const uint8_t pin) const;
+
+    /* Configura un pin como entrada digital */
+    void entrada(const uint8_t pin, const PullResistor pupd=PullResistor::PullUp) const;
+    /* Configura un pin como salida digital */
+    void salida(const uint8_t pin, const OutputType out_t=OutputType::PushPull) const;
+
     /* can only be written once per MCU reset */
     uint8_t lock_bits(const uint16_t bits) const;
 
@@ -120,6 +131,7 @@ namespace GPIO {
     uint8_t read_output() const;
     void set_output() const;
     void reset_output() const;
+    void toggle_output() const;
 
   private:
     const GPIO_Port& port;

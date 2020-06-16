@@ -1,14 +1,12 @@
 #include "main.h"
-#include "dma.h"
-#include "tim.h"
 #include "usart.h"
-#include "../Inc/gpio.h"
-#include "../Inc/adc.h"
 #include <cstring>
 #include <cstdio>
 #include "I2C.h"
 #include "MPU6050.h"
 #include "basic_timer.h"
+#include "GPIO_Port.h"
+#include "RCC.h"
 
 #undef TIM15
 #undef TIM16
@@ -33,7 +31,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
 #define RESP_SZ 16
   uint8_t resp_buf[RESP_SZ] = "got: ";
-  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+  GPIO::PORTA.toggle(5);
   for (int i = 0; i<RX_SZ; ++i)
     resp_buf[i+5] = rx_buf[i];
 
@@ -52,9 +50,7 @@ void print(const char* str, int val)
 
 void test_callback(void)
 {
-  static volatile int i=0;
-  ++i;
-  writePin(GPIOA, 5, i%2);
+  GPIO::PORTA.toggle(5);
 }
 
 volatile uint8_t glb_flag=0;
@@ -72,27 +68,26 @@ int main(void)
 
   /* Configure the system clock */
   SystemClock_Config();
+  //mIWDG::set_and_go(6, 0xFF);
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  //mIWDG::set_and_go(6, 0xFF);
   /************************************/
-  pinMode(GPIOA, GPIO_PIN_1, INPUT);
-  pinMode(GPIOC, GPIO_PIN_13, INPUT);
+  RCC::enable_port_clock(RCC::GPIO_Port::A);
+  RCC::enable_port_clock(RCC::GPIO_Port::C);
+  GPIO::PORTA.entrada(1);
+  GPIO::PORTC.entrada(13);
   /************************************/
-  pinMode(GPIOA, GPIO_PIN_4, OUTPUT);
-  pinMode(GPIOA, GPIO_PIN_5, OUTPUT);
-  pinMode(GPIOA, GPIO_PIN_6, OUTPUT);
-  pinMode(GPIOA, GPIO_PIN_7, OUTPUT);
-  MX_USART2_UART_Init();
+  GPIO::PORTA.salida(4);
+  GPIO::PORTA.salida(5);
+  GPIO::PORTA.salida(6);
+  GPIO::PORTA.salida(7);
 
+  MX_USART2_UART_Init();
   uint8_t tx_buf[32] = "---\n";
   uint8_t greetings[32] = "Hey I just reset\n";
 
   auto led_callback = [](void) -> void {
-    static volatile int i=0;
-    ++i;
-    writePin(GPIOA, 5, i%2);
+    GPIO::PORTA.toggle(5);
   };
   basic_timer t6(BasicTimer::TIM6, basic_timer::Mode::Periodic, 0x1800, 0x800);
   t6.enable_interrupt(led_callback);
@@ -125,7 +120,7 @@ int main(void)
       glb_flag = 0;
     }
 
-    if(readPin(GPIOC, GPIO_PIN_13)==0) {
+    if(GPIO::PORTC.read_input(13) == 0) {
       t17.start();
     }
 

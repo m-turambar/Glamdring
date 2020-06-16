@@ -100,6 +100,32 @@ namespace GPIO
     return res;
   }
 
+  void GPIO_Port::toggle(const uint8_t pin) const
+  {
+    const uint8_t pin_val = read_output(pin);
+    if(pin_val==0)
+      set_output(pin);
+    else
+      reset_output(pin);
+  }
+
+  void GPIO_Port::entrada(const uint8_t pin, const PullResistor pupd) const
+  {
+    reset_output(pin);
+    cfg_mode(pin, Mode::Input);
+    cfg_pull(pin, pupd);
+    cfg_speed(pin, Speed::Low);
+  }
+
+  void GPIO_Port::salida(const uint8_t pin, const OutputType out_t) const
+  {
+    reset_output(pin);
+    cfg_mode(pin, Mode::Output);
+    cfg_pull(pin, PullResistor::NoPull);
+    cfg_output_type(pin, out_t);
+    cfg_speed(pin, Speed::Low);
+  }
+
   /*************************************************************************************************************/
   /*************************************************************************************************************/
   /*************************************************************************************************************/

@@ -61,15 +61,6 @@
     }
     else if(peripheral==Peripheral::I2C1) {
       RCC::enable_port_clock(RCC::GPIO_Port::A);
-/*
-      GPIO_InitTypeDef GPIO_InitStruct = {0};
-      GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_9;
-      GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-      GPIO_InitStruct.Pull = GPIO_PULLUP;
-      GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-      GPIO_InitStruct.Alternate = GPIO_AF6_I2C1; //vale lo mismo que el dos, asi como muchos otros perifericos
-      HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-*/
 
       const GPIO::pin pin10(GPIO::PORTA, 10);
       pin10.cfg_mode(GPIO::Mode::Alternate);
