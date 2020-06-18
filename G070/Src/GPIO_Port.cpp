@@ -130,6 +130,7 @@ namespace GPIO
   {
     reset_output(pin);
     cfg_mode(pin, Mode::Alternate);
+    cfg_alternate(pin, af);
     cfg_output_type(pin, OutputType::PushPull);
     cfg_pull(pin, PullResistor::NoPull);
     cfg_speed(pin, Speed::VeryLow); //ayuda a reducir el ruido
@@ -138,6 +139,7 @@ namespace GPIO
   void GPIO_Port::pin_for_I2C(uint8_t pin, AlternFunct af) const
   {
     cfg_mode(pin, Mode::Alternate);
+    cfg_alternate(pin, af);
     cfg_output_type(pin, OutputType::OpenDrain);
     cfg_pull(pin, PullResistor::PullUp);
     cfg_speed(pin, Speed::VeryLow);
