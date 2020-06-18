@@ -44,50 +44,25 @@
 
     if(peripheral==Peripheral::I2C2) {
       RCC::enable_port_clock(RCC::GPIO_Port::B);
-
-      GPIO::pin pin10(GPIO::PORTB, 10);
-      pin10.cfg_mode(GPIO::Mode::Alternate);
-      pin10.cfg_alternate(GPIO::AlternFunct::AF6_I2C2);
-      pin10.cfg_pull(GPIO::PullResistor::PullUp);
-      pin10.cfg_output_type(GPIO::OutputType::OpenDrain);
-      pin10.cfg_speed(GPIO::Speed::High);
-
-      GPIO::pin pin11(GPIO::PORTB, 11);
-      pin11.cfg_mode(GPIO::Mode::Alternate);
-      pin11.cfg_alternate(GPIO::AlternFunct::AF6_I2C2);
-      pin11.cfg_pull(GPIO::PullResistor::PullUp);
-      pin11.cfg_output_type(GPIO::OutputType::OpenDrain);
-      pin11.cfg_speed(GPIO::Speed::High);
+      GPIO::PORTB.pin_for_I2C(10, GPIO::AlternFunct::AF6_I2C2);
+      GPIO::PORTB.pin_for_I2C(11, GPIO::AlternFunct::AF6_I2C2);
     }
     else if(peripheral==Peripheral::I2C1) {
       RCC::enable_port_clock(RCC::GPIO_Port::A);
-
-      const GPIO::pin pin10(GPIO::PORTA, 10);
-      pin10.cfg_mode(GPIO::Mode::Alternate);
-      pin10.cfg_alternate(GPIO::AlternFunct::AF6_I2C1);
-      pin10.cfg_pull(GPIO::PullResistor::PullUp);
-      pin10.cfg_output_type(GPIO::OutputType::OpenDrain);
-      pin10.cfg_speed(GPIO::Speed::High);
-
-      const GPIO::pin pin9(GPIO::PORTA, 9);
-      pin9.cfg_mode(GPIO::Mode::Alternate);
-      pin9.cfg_alternate(GPIO::AlternFunct::AF6_I2C1);
-      pin9.cfg_pull(GPIO::PullResistor::PullUp);
-      pin9.cfg_output_type(GPIO::OutputType::OpenDrain);
-      pin9.cfg_speed(GPIO::Speed::High);
-
+      GPIO::PORTA.pin_for_I2C(9, GPIO::AlternFunct::AF6_I2C1);
+      GPIO::PORTA.pin_for_I2C(10, GPIO::AlternFunct::AF6_I2C1);
     }
   }
 
+  /** Nota
+   * Dejarle esta responsabilidad al RCC es correcto ya que los detalles pueden cambiar de micro a micro. */
   void I2C::enable_clock() const
   {
     if(peripheral==Peripheral::I2C1) {
-      const bitfield I2C1EN(1, 21);
-      memoria(RCC::APBENR1) |= I2C1EN(1);
+      RCC::enable_I2C1_clock();
     }
     else if(peripheral==Peripheral::I2C2) {
-      const bitfield I2C2EN(1, 22);
-      memoria(RCC::APBENR1) |= I2C2EN(1);
+      RCC::enable_I2C2_clock();
     }
   }
 

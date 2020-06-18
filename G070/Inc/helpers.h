@@ -23,11 +23,17 @@ volatile size_t& memoria(const registro reg);
 struct bitfield
 {
   /* sz is the number of bits this bitfield has, offset is number of bits offset from register base address */
-  bitfield(const uint8_t size, const uint8_t offset):
+  constexpr bitfield(const uint8_t size, const uint8_t offset):
       mask((1U << size) - 1U), offset(offset) {}
   /* Does not write the register. Returns a number that you can OR with other bitfields to then write the register. */
   constexpr size_t operator ()(const size_t val) const { return (val&mask) << offset; } //(slave_addr&0x3FF) << SADDR
+  /** Para operaciones de resetear bitfields en un registro*/
   constexpr size_t operator !() const { return ~(mask << offset); }
+  /** Regresa solo los bits del bitfield de ese registro
+   * reg: 11001010 10110000 11100010 00001111
+   * bf:  00000000 11100000 00000000 00000000
+   * ret: 00000000 10100000 00000000 00000000*/
+  const size_t operator ()(const registro reg) const { return ((mask << offset)&(memoria(reg))); }
   const size_t mask;
   const uint8_t offset;
 };

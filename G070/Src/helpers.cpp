@@ -4,6 +4,9 @@
 
 #include "helpers.h"
 
+/** Nota
+ * Estas funciones son nuestra principal herramienta para leer y escribir de memoria */
+
 volatile size_t& memoria(const size_t loc)
 {
   return *reinterpret_cast<size_t*>(loc);

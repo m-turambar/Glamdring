@@ -98,6 +98,11 @@ namespace GPIO {
     /* Configura un pin como salida digital */
     void salida(const uint8_t pin, const OutputType out_t=OutputType::PushPull) const;
 
+    /* Configura un pin para usarse con I2C, OpenDrain con PullUp */
+    void pin_for_I2C(const uint8_t pin, const AlternFunct af) const;
+    /* Configura un pin con PushPull noPull */
+    void pin_for_UART_or_SPI(const uint8_t pin, const AlternFunct af) const;
+
     /* can only be written once per MCU reset */
     uint8_t lock_bits(const uint16_t bits) const;
 

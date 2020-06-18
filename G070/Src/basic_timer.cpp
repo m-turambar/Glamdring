@@ -94,5 +94,9 @@ void basic_timer::enable_interrupt(void (*callback_fn)(void),const uint8_t isr_p
 /* solo cuidado con One Pulse Mode ya que en la primera habilitación ocurre una interrupción */
 void basic_timer::start(void) const
 {
+  const bitfield lwr16(16, 0);
+  const bitfield upr16(16, 16);
+  memoria(CNT) = lwr16(ARR) | upr16(CNT);
+
   memoria(CR1) |= (0x1);
 }

@@ -114,7 +114,7 @@ namespace GPIO
     reset_output(pin);
     cfg_mode(pin, Mode::Input);
     cfg_pull(pin, pupd);
-    cfg_speed(pin, Speed::Low);
+    cfg_speed(pin, Speed::VeryLow);
   }
 
   void GPIO_Port::salida(const uint8_t pin, const OutputType out_t) const
@@ -123,7 +123,24 @@ namespace GPIO
     cfg_mode(pin, Mode::Output);
     cfg_pull(pin, PullResistor::NoPull);
     cfg_output_type(pin, out_t);
-    cfg_speed(pin, Speed::Low);
+    cfg_speed(pin, Speed::VeryLow);
+  }
+
+  void GPIO_Port::pin_for_UART_or_SPI(const uint8_t pin, const AlternFunct af) const
+  {
+    reset_output(pin);
+    cfg_mode(pin, Mode::Alternate);
+    cfg_output_type(pin, OutputType::PushPull);
+    cfg_pull(pin, PullResistor::NoPull);
+    cfg_speed(pin, Speed::VeryLow); //ayuda a reducir el ruido
+  }
+
+  void GPIO_Port::pin_for_I2C(uint8_t pin, AlternFunct af) const
+  {
+    cfg_mode(pin, Mode::Alternate);
+    cfg_output_type(pin, OutputType::OpenDrain);
+    cfg_pull(pin, PullResistor::PullUp);
+    cfg_speed(pin, Speed::VeryLow);
   }
 
   /*************************************************************************************************************/
