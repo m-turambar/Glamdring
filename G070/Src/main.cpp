@@ -11,8 +11,13 @@
 #undef TIM15
 #undef TIM16
 #undef TIM17
+#undef USART1
+#undef USART2
+#undef USART3
+#undef USART4
 
 #include "general_timer.h"
+#include "UART.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,14 +80,11 @@ int main(void)
   RCC::enable_port_clock(RCC::GPIO_Port::A);
   RCC::enable_port_clock(RCC::GPIO_Port::C);
   GPIO::PORTA.entrada(1);
-  GPIO::PORTC.entrada(13);
+  auto blue_btn = GPIO::PORTC.entrada(13);
   /************************************/
-  GPIO::PORTA.salida(4);
-  GPIO::PORTA.salida(5);
-  GPIO::PORTA.salida(6);
-  GPIO::PORTA.salida(7);
 
-  MX_USART2_UART_Init();
+  //MX_USART2_UART_Init();
+  UART uart2(UART::Peripheral::USART2, 115200);
   uint8_t tx_buf[32] = "---\n";
   uint8_t greetings[32] = "Hey I just reset\n";
 
@@ -102,7 +104,8 @@ int main(void)
   I2C::Status res = mpu.set_sampling_rate();
   print("setting_sampling_rate: ", static_cast<size_t>(res));
 
-  HAL_UART_Transmit(&huart2, greetings, strlen((const char*)greetings), 10);
+  //HAL_UART_Transmit(&huart2, greetings, strlen((const char*)greetings), 10);
+  uart2.transmit(greetings, strlen((const char*)greetings));
   uint8_t buf[16] = {0};
   float acc[3] = {0};
 
@@ -116,14 +119,14 @@ int main(void)
 
       std::sprintf((char*)tx_buf, "ax=%.2f\t ay=%.2f\t az=%.2f\n\r", acc[0], acc[1], acc[2]);
 
-      HAL_UART_Transmit(&huart2, tx_buf, std::strlen((const char*)tx_buf), 10);
+      //HAL_UART_Transmit(&huart2, tx_buf, std::strlen((const char*)tx_buf), 10);
+      uart2.transmit(tx_buf, std::strlen((const char*)tx_buf));
       glb_flag = 0;
     }
 
-    if(GPIO::PORTC.read_input(13) == 0) {
+    if(blue_btn.read_input() == 0) {
       t17.start();
     }
-
 
   }
 

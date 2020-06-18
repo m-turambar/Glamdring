@@ -11,6 +11,7 @@
 #undef GPIO
 
 namespace GPIO {
+  class pin;
 
   /* Deberíamos poner el puerto 'E' para compatibilidad con otros dispositivos? */
   enum class Port {
@@ -94,9 +95,9 @@ namespace GPIO {
     void toggle(const uint8_t pin) const;
 
     /* Configura un pin como entrada digital */
-    void entrada(const uint8_t pin, const PullResistor pupd=PullResistor::PullUp) const;
+    GPIO::pin entrada(const uint8_t pin, const PullResistor pupd=PullResistor::PullUp) const;
     /* Configura un pin como salida digital */
-    void salida(const uint8_t pin, const OutputType out_t=OutputType::PushPull) const;
+    GPIO::pin salida(const uint8_t pin, const OutputType out_t=OutputType::PushPull) const;
 
     /* Configura un pin para usarse con I2C, OpenDrain con PullUp */
     void pin_for_I2C(const uint8_t pin, const AlternFunct af) const;
@@ -123,7 +124,7 @@ namespace GPIO {
  * este mismo archivo de encabezado. */
   class pin {
   public:
-    pin(GPIO_Port& port_arg, const uint8_t num_arg) :
+    pin(const GPIO_Port& port_arg, const uint8_t num_arg) :
         port(port_arg),
         num(num_arg) { }
 

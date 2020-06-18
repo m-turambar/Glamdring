@@ -9,7 +9,7 @@
 #ifndef __usart_H
 #define __usart_H
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 #include "main.h"
@@ -22,4 +22,3 @@ void MX_USART2_UART_Init(void);
 }
 #endif
 #endif /*__ usart_H */
-
