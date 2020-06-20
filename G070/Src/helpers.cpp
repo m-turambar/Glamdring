@@ -7,6 +7,11 @@
 /** Nota
  * Estas funciones son nuestra principal herramienta para leer y escribir de memoria */
 
+constexpr size_t operator&(const size_t addr, const flag f)
+{
+  return addr & f.mask;
+}
+
 volatile size_t& memoria(const size_t loc)
 {
   return *reinterpret_cast<size_t*>(loc);
@@ -16,4 +21,25 @@ volatile size_t& memoria(const registro reg)
 {
   return *reinterpret_cast<size_t*>(reg.addr);
 }
+
+void registro::set(flag f) const
+{
+  memoria(addr) |= f.mask;
+}
+
+bool registro::is_set(flag f) const
+{
+  return (memoria(addr) & f) != 0;
+}
+
+void registro::reset(flag f) const
+{
+  memoria(addr) &= !f;
+}
+
+bool registro::is_reset(flag f) const
+{
+  return (memoria(addr) & f) == 0;
+}
+
 

@@ -8,6 +8,13 @@
 #include <cstddef>
 #include "helpers.h"
 
+extern "C" {
+
+void USART1_IRQHandler(void);
+void USART2_IRQHandler(void);
+void USART3_4_IRQHandler(void);
+
+/** UARTs 1 y 2 tienen FIFOs, 3 y 4 no. Pero todas tienen DMA. */
 class UART {
 
 public:
@@ -38,23 +45,45 @@ public:
     Even
   };
 
-  UART(const Peripheral peripheral, const size_t baud_arg, const WordLength wlen=WordLength::Eight);
+  UART(const Peripheral peripheral, const size_t baud_arg, const WordLength wlen = WordLength::Eight);
 
   void enable_clock() const;
+
   void enable() const;
+
+  const UART& enable_interrupt_rx(void (*callback_arg)(const uint8_t byte), const uint8_t priority=3);
+
   void cfg_word_length(const WordLength len) const;
+
   void cfg_stop_bits(const StopBits bits) const;
+
   void cfg_parity(const Parity parity) const;
+
   void cfg_baud(const size_t baud) const;
-  void enable_fifo() const;
+
+  const UART& enable_fifo() const;
+
   void init_gpios();
 
-  void transmit(const uint8_t* buffer, size_t sz) const;
-  void receive() const;
+  void transmitq(const uint8_t* buffer, size_t sz) const;
+
+  void receiveq(uint8_t* buffer, size_t sz) const;
+
+  bool available() const;
+
+  /** Implementacion ingenua. Deberias usar DMA siempre que puedas. O interrupciones con una queue de sw. */
+  uint8_t read_byte() const;
+
+  void write_byte(const uint8_t b) const;
+  const UART& operator<<(const uint8_t b) const;
 
   const Peripheral peripheral;
+  void (*callback_rx)(const uint8_t byte) {nullptr};
   const size_t base, baud;
   const registro CR1, CR2, CR3, BRR, GTPR, RTOT, RQR, ISR, ICR, RDR, TDR, PRESC;
+};
+
+
 };
 
 #endif //G070_UART_H

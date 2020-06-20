@@ -89,4 +89,14 @@ void HAL_ResumeTick(void)
   __HAL_TIM_ENABLE_IT(&htim3, TIM_IT_UPDATE);
 }
 
+void TIM3_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM3_IRQn 0 */
+
+  /* USER CODE END TIM3_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim3);
+  /* USER CODE BEGIN TIM3_IRQn 1 */
+
+  /* USER CODE END TIM3_IRQn 1 */
+}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -29,29 +29,8 @@ void SystemClock_Config(void);
 
 void itoa(int num, unsigned char* buffer, int base);
 
-#define RX_SZ 3
-uint8_t rx_buf[RX_SZ];
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
-{
-#define RESP_SZ 16
-  uint8_t resp_buf[RESP_SZ] = "got: ";
-  GPIO::PORTA.toggle(5);
-  for (int i = 0; i<RX_SZ; ++i)
-    resp_buf[i+5] = rx_buf[i];
-
-  HAL_UART_Transmit(huart, resp_buf, RESP_SZ, 10);
-  const volatile size_t pwm_val = (rx_buf[0]-'0')*100+(rx_buf[1]-'0')*10+(rx_buf[2]-'0');
-  set_pwm_value(pwm_val);
-}
-
-
-void print(const char* str, int val)
-{
-  char buf[64];
-  std::sprintf(buf, "%s%d\r\n", str, val);
-  HAL_UART_Transmit(&huart2, (uint8_t *)buf, strlen(buf), 10);
-}
+//const volatile size_t pwm_val = (rx_buf[0]-'0')*100+(rx_buf[1]-'0')*10+(rx_buf[2]-'0');
+// set_pwm_value(pwm_val);
 
 void test_callback(void)
 {
@@ -80,12 +59,19 @@ int main(void)
   RCC::enable_port_clock(RCC::GPIO_Port::A);
   RCC::enable_port_clock(RCC::GPIO_Port::C);
   GPIO::PORTA.entrada(1);
+  GPIO::PORTA.salida(5);
   auto blue_btn = GPIO::PORTC.entrada(13);
   /************************************/
 
-  //MX_USART2_UART_Init();
   UART uart2(UART::Peripheral::USART2, 115200);
-  uint8_t tx_buf[32] = "---\n";
+  uart2.enable_fifo().enable();
+
+  /** Hasta que no encuentre un mejor mecanismo para hacer callbacks más sofisticados,
+   * seguiré haciendo cochinadas en las interrupciones. Hay que buscar una solución. */
+  UART uart3(UART::Peripheral::USART3, 9600);
+  uart3.enable_interrupt_rx(nullptr).enable();
+
+  uint8_t tx_buf[64] = "---\n";
   uint8_t greetings[32] = "Hey I just reset\n";
 
   auto led_callback = [](void) -> void {
@@ -100,12 +86,11 @@ int main(void)
 
   I2C i2c2(I2C::Peripheral::I2C1);
   i2c2.enable(I2C::Timing::Standard);
+
   MPU6050 mpu(i2c2); //pasa una referencia al objeto i2c
   I2C::Status res = mpu.set_sampling_rate();
-  print("setting_sampling_rate: ", static_cast<size_t>(res));
 
-  //HAL_UART_Transmit(&huart2, greetings, strlen((const char*)greetings), 10);
-  uart2.transmit(greetings, strlen((const char*)greetings));
+  uart2.transmitq(greetings, strlen((const char*)greetings));
   uint8_t buf[16] = {0};
   float acc[3] = {0};
 
@@ -119,14 +104,24 @@ int main(void)
 
       std::sprintf((char*)tx_buf, "ax=%.2f\t ay=%.2f\t az=%.2f\n\r", acc[0], acc[1], acc[2]);
 
-      //HAL_UART_Transmit(&huart2, tx_buf, std::strlen((const char*)tx_buf), 10);
-      uart2.transmit(tx_buf, std::strlen((const char*)tx_buf));
+      uart2.transmitq(tx_buf, std::strlen((const char*)tx_buf));
       glb_flag = 0;
     }
 
     if(blue_btn.read_input() == 0) {
       t17.start();
     }
+
+    /** Forwardeo del UART3 al UART2 */
+    if(uart3.available()) {
+      uart2.write_byte(uart3.read_byte());
+    }
+
+    /** Pass through to UART 3 */
+    if(uart2.available()) {
+      uart3.write_byte(uart2.read_byte());
+    }
+
 
   }
 

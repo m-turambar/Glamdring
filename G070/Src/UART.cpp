@@ -5,11 +5,61 @@
 #include <UART.h>
 #include "RCC.h"
 #include "GPIO_Port.h"
+#include "NVIC.h"
 
-UART* ptr_UART1{nullptr};
-UART* ptr_UART2{nullptr};
-UART* ptr_UART3{nullptr};
-UART* ptr_UART4{nullptr};
+/** Banderas que se usan mucho en las rutinas de comunicacion. Declararlas en el stack una y otra
+ * vez no tiene mucho sentido, así que las hacemos globales */
+constexpr static flag RXNE(5);
+constexpr static flag TE(3);
+constexpr static flag TXFNF(7); /** Reset value = 1. Exactamente el mismo bit con o sin FIFO:TXE*/
+constexpr static flag TC(6);
+/** No queue */
+const flag TXE(3);
+
+UART* UART1_ptr{nullptr};
+UART* UART2_ptr{nullptr};
+UART* UART3_ptr{nullptr};
+UART* UART4_ptr{nullptr};
+
+/** Rutinas de serviceo a interrupciones */
+void USART1_IRQHandler(void)
+{
+  auto& UART1 = *UART1_ptr;
+  if(UART1.ISR.is_set(RXNE)) {
+    const uint8_t b = UART1.read_byte();
+    UART1.callback_rx(b);
+  }
+  NVIC_ClearPendingIRQ(USART1_IRQn);
+}
+
+void USART2_IRQHandler(void)
+{
+  auto& UART2 = *UART2_ptr;
+  if(UART2.ISR.is_set(RXNE)) {
+    const uint8_t b = UART2.read_byte();
+    UART2.callback_rx(b);
+  }
+  NVIC_ClearPendingIRQ(USART2_IRQn);
+}
+
+/** Por ahora no hagas la diferencia */
+void USART3_4_IRQHandler(void)
+{
+  auto& UART3 = *UART3_ptr;
+  auto& UART4 = *UART4_ptr;
+  if(UART3.ISR.is_set(RXNE)) {
+    const uint8_t b = UART3.read_byte();
+    /** El problema de esto es que cómo le paso una referencia al UART2 al callback
+     * Tienes que hacer el UART2 global, para que no sea un argumento del callback.
+     * Ya hay que encontrar una solución a este patrón recurrente. */
+    //UART3.callback_rx(b);
+    *UART2_ptr << b; //vaya pero qué necedad
+  }
+  else if(UART4.ISR.is_set(RXNE)) {
+
+  }
+  NVIC_ClearPendingIRQ(USART3_4_IRQn);
+}
 
 UART::UART(const UART::Peripheral peripheral, size_t baud_arg, WordLength wlen):
     peripheral(peripheral),
@@ -30,30 +80,32 @@ UART::UART(const UART::Peripheral peripheral, size_t baud_arg, WordLength wlen):
 {
   switch (peripheral) {
   case UART::Peripheral::USART1:
-    ptr_UART1 = this;
+    UART1_ptr = this;
     break;
 
   case UART::Peripheral::USART2:
-    ptr_UART2 = this;
+    UART2_ptr = this;
     break;
 
   case UART::Peripheral::USART3:
-    ptr_UART3 = this;
+    UART3_ptr = this;
     break;
 
   case UART::Peripheral::USART4:
-    ptr_UART4 = this;
+    UART4_ptr = this;
     break;
   }
 
   enable_clock();
-  enable_fifo();
-  /** stop bits by default are 1 */
   cfg_word_length(wlen);
   cfg_baud(baud);
+  /** stop bits by default are 1 */
   init_gpios();
-  enable();
 }
+
+/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
+/** ** ** ** ** ** ** ** ** ** ** ENABLERS ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
+/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
 
 /** Nota
  * Es preferible delegarle los detalles de la implementación al RCC porque éste último puede cambiar de micro a micro
@@ -79,17 +131,46 @@ void UART::enable_clock() const
   }
 }
 
-void UART::enable_fifo() const
+const UART& UART::enable_fifo() const
 {
-  const bitfield FIFOEN(1, 29);
-  memoria(CR1) |= FIFOEN(1);
+  flag FIFOEN(29);
+  CR1.set(FIFOEN);
+  return *this;
 }
 
+void UART::enable() const
+{
+  flag UE(0);
+  CR1.set(UE);
+
+  /** Habilitamos la recepción de datos */
+  flag RE(2);
+  CR1.set(RE);
+}
+
+const UART& UART::enable_interrupt_rx(void (*callback_arg)(const uint8_t byte), uint8_t priority)
+{
+  callback_rx = callback_arg;
+  flag RXNEIE(5);
+  CR1.set(RXNEIE);
+  const IRQn_Type mIRQn = (peripheral==Peripheral::USART1 ? USART1_IRQn :
+                           (peripheral==Peripheral::USART2 ? USART2_IRQn:
+                           (peripheral==Peripheral::USART3 ? USART3_4_IRQn:
+                           (peripheral==Peripheral::USART4 ? USART3_4_IRQn: HardFault_IRQn))));
+
+  NVIC_SetPriority(mIRQn, priority);
+  NVIC_EnableIRQ(mIRQn);
+  return *this;
+}
+
+/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
+/** ** ** ** ** ** ** ** ** ** ** CONFIGURATORS  ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
+/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
 
 void UART::cfg_word_length(const UART::WordLength len) const
 {
-  const bitfield M0(1, 12);
-  const bitfield M1(1, 28);
+  constexpr bitfield M0(1, 12);
+  constexpr bitfield M1(1, 28);
   size_t temp = (memoria(CR1) & !M0 & !M1);
   temp = temp | M0(0x01 & static_cast<uint8_t>(len)) | M1(0x10 & static_cast<uint8_t>(len));
   memoria(CR1) |= temp;
@@ -114,36 +195,6 @@ void UART::cfg_parity(const UART::Parity parity) const
 
 }
 
-void UART::enable() const
-{
-  const bitfield UE(1,0);
-  memoria(CR1) |= UE(1);
-}
-
-
-void UART::transmit(const uint8_t* buffer, size_t sz) const
-{
-  const bitfield TE(1,3);
-  //const bitfield TXE(1,3); //como usamos la queue interna parece no necesitarse
-  const bitfield TXFNF(1, 7); /** Reset value = 1 */
-  const bitfield TC(1,6);
-  const bitfield tdr(9,0);
-  memoria(CR1) |= TE(1);
-
-  for(size_t i=0; i<sz; ++i)
-  {
-    while(TXFNF(ISR) == 0) {} /** esperamos hasta que la queue de tranmision deje de estar llena */
-    memoria(TDR) = tdr(buffer[i]);
-  }
-  while(TC(ISR) != 0) {} /** esperamos hasta que la transmision termine */
-}
-
-void UART::receive() const
-{
-  const bitfield RE(1,2);
-  memoria(CR1) |= RE(1);
-}
-
 void UART::init_gpios()
 {
   if(peripheral == Peripheral::USART2) {
@@ -151,7 +202,67 @@ void UART::init_gpios()
     GPIO::PORTA.pin_for_UART_or_SPI(2, GPIO::AlternFunct::AF1_USART2);
     GPIO::PORTA.pin_for_UART_or_SPI(3, GPIO::AlternFunct::AF1_USART2);
   }
+  else if(peripheral == Peripheral::USART3) {
+    /** No es la única configuración posible, también es viable en puerto C 4,11 con otro AF val */
+    RCC::enable_port_clock(RCC::GPIO_Port::D);
+    GPIO::PORTD.pin_for_UART_or_SPI(8, GPIO::AlternFunct::AF0_USART3);
+    GPIO::PORTD.pin_for_UART_or_SPI(9, GPIO::AlternFunct::AF0_USART3);
+  }
 }
+
+/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
+/** ** ** ** ** ** ** ** ** ** ** COMMS RX TX ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
+/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
+
+void UART::receiveq(uint8_t* buffer, size_t sz) const
+{
+  constexpr flag RXFNE(5);
+
+  for(size_t i=0; i<sz; ++i)
+  {
+    while(ISR.is_reset(RXFNE)) {}
+    buffer[i] = memoria(RDR);
+  }
+}
+
+bool UART::available() const
+{
+  return ISR.is_set(RXNE);
+}
+
+uint8_t UART::read_byte() const
+{
+  while(ISR.is_reset(RXNE)) { }
+  return memoria(RDR);
+}
+
+void UART::transmitq(const uint8_t* buffer, size_t sz) const
+{
+  bitfield tdr(9,0);
+  CR1.set(TE);
+
+  for(size_t i=0; i<sz; ++i)
+  {
+    while(ISR.is_reset(TXFNF)) {} /** esperamos hasta que la queue de tranmision deje de estar llena */
+    memoria(TDR) = tdr(buffer[i]);
+  }
+  while(ISR.is_reset(TC)) {} /** esperamos hasta que la transmision termine */
+}
+
+void UART::write_byte(uint8_t b) const
+{
+  CR1.set(TE);
+  while(ISR.is_reset(TXFNF)) {} /** Es lo mismo que TXE. Es el mismo bit en el mismo registro */
+  memoria(TDR) = b;
+  while(ISR.is_reset(TC)) {} /** esperamos hasta que la transmision termine */
+}
+
+const UART& UART::operator<<(uint8_t b) const
+{
+  write_byte(b);
+  return *this;
+}
+
 
 
 

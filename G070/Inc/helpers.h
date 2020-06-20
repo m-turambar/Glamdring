@@ -8,10 +8,29 @@
 #include <cstddef>
 #include <cstdint>
 
+/** No te concentres en hacer las instancias de estas clases const o constexpr.
+ * Al parecer no causa ninguna diferencia. Sin embargo, usar flag sobre bitfield sí reduce un poco la flash que usas.
+ * */
+
+/** Es un bitfield de un solo bit */
+struct flag
+{
+  constexpr flag(const uint8_t offset):
+  mask(1 << offset) {}
+  constexpr size_t operator !() const { return ~(mask); }
+  const size_t mask;
+};
+
 struct registro
 {
   constexpr registro(const size_t addr_) :
-      addr(addr_) {}
+  addr(addr_) {}
+
+  void set(const flag f) const;
+  void reset(const flag f) const;
+  bool is_set(const flag f) const;
+  bool is_reset(const flag f) const;
+
   const size_t addr;
 };
 
