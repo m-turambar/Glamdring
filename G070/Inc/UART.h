@@ -14,7 +14,12 @@ void USART1_IRQHandler(void);
 void USART2_IRQHandler(void);
 void USART3_4_IRQHandler(void);
 
-/** UARTs 1 y 2 tienen FIFOs, 3 y 4 no. Pero todas tienen DMA. */
+/** UARTs 1 y 2 tienen FIFOs, 3 y 4 no. Pero todas tienen DMA.
+ * Muchas de las configuraciones default de los registros de la UART son las deseables.
+ * Ejemplo un stop bit, no parity, Ocho bits por palabra, vienen por default después de un reseteo.
+ * En este momento no me estoy molestando en modificarlas, pero por limpieza y por si reseteamos de alguna
+ * manera en la que el valor de los registros no se borre, lo más saludable sería explícitamente configurar
+ * esos valores creo. */
 class UART {
 
 public:

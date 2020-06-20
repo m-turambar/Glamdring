@@ -1,5 +1,4 @@
 #include "main.h"
-#include "usart.h"
 #include <cstring>
 #include <cstdio>
 #include "I2C.h"

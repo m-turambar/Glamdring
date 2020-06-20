@@ -12,22 +12,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1e1fd41-d4e8-4bd2-81b1-7b49beaf9dcc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Inc/IWDG.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Inc/general_timer.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Inc/mGPIO.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Src/IWDG.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Src/general_timer.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Src/mGPIO.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/OCD_G070.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/OCD_G070.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Inc/MPU6050.h" beforeDir="false" afterPath="$PROJECT_DIR$/Inc/MPU6050.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Inc/RCC.h" beforeDir="false" afterPath="$PROJECT_DIR$/Inc/RCC.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Inc/basic_timer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Inc/basic_timer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Inc/helpers.h" beforeDir="false" afterPath="$PROJECT_DIR$/Inc/helpers.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Src/I2C.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Src/I2C.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Src/MPU6050.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Src/MPU6050.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Src/basic_timer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Src/basic_timer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Inc/UART.h" beforeDir="false" afterPath="$PROJECT_DIR$/Inc/UART.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Inc/usart.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/usart.c" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/startup/startup_stm32g070xx.s" beforeDir="false" afterPath="$PROJECT_DIR$/startup/startup_stm32g070xx.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stm32g070cb.pdf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../STM32F767ZI/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/../STM32F767ZI/Src/main.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,7 +35,7 @@
       <list>
         <option value="187" />
         <option value="254" />
-        <option value="412" />
+        <option value="272" />
       </list>
     </option>
     <option name="columnOrder">
@@ -61,35 +53,58 @@
     <option name="nodes">
       <map>
         <entry key="STM32G07x.svd" value="-E" />
-        <entry key="STM32G07x.svd|g:TIM" value="-E" />
-        <entry key="STM32G07x.svd|p:TIM17" value="-E" />
-        <entry key="STM32G07x.svd|p:TIM17|AF1" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|ARR" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|BDTR" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|CCER" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|CCMR1_Input" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|CCMR1_Output" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|CCR1" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|CNT" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|CR1" value="HE" />
-        <entry key="STM32G07x.svd|p:TIM17|CR2" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|DCR" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|DIER" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|DMAR" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|EGR" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|PSC" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|RCR" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM17|SR" value="HE" />
-        <entry key="STM32G07x.svd|p:TIM17|TISEL" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM6" value="-E" />
-        <entry key="STM32G07x.svd|p:TIM6|ARR" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM6|CNT" value="HE" />
-        <entry key="STM32G07x.svd|p:TIM6|CR1" value="HE" />
-        <entry key="STM32G07x.svd|p:TIM6|CR2" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM6|DIER" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM6|EGR" value="HE" />
-        <entry key="STM32G07x.svd|p:TIM6|PSC" value="HC" />
-        <entry key="STM32G07x.svd|p:TIM6|SR" value="HE" />
+        <entry key="STM32G07x.svd|g:GPIO" value="-E" />
+        <entry key="STM32G07x.svd|g:USART" value="-E" />
+        <entry key="STM32G07x.svd|p:GPIOA" value="-E" />
+        <entry key="STM32G07x.svd|p:GPIOA|AFRH" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|AFRL" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|BRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|BSRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|IDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|LCKR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|MODER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|ODR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|OSPEEDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|OTYPER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOA|PUPDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD" value="-C" />
+        <entry key="STM32G07x.svd|p:GPIOD|AFRH" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|AFRL" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|BRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|BSRR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|IDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|LCKR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|MODER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|ODR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|OSPEEDR" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|OTYPER" value="HC" />
+        <entry key="STM32G07x.svd|p:GPIOD|PUPDR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART2" value="-E" />
+        <entry key="STM32G07x.svd|p:USART2|BRR" value="HE" />
+        <entry key="STM32G07x.svd|p:USART2|CR1" value="HE" />
+        <entry key="STM32G07x.svd|p:USART2|CR2" value="HC" />
+        <entry key="STM32G07x.svd|p:USART2|CR3" value="HC" />
+        <entry key="STM32G07x.svd|p:USART2|GTPR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART2|ICR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART2|ISR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART2|PRESC" value="HC" />
+        <entry key="STM32G07x.svd|p:USART2|RDR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART2|RQR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART2|RTOR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART2|TDR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3" value="-C" />
+        <entry key="STM32G07x.svd|p:USART3|BRR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3|CR1" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3|CR2" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3|CR3" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3|GTPR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3|ICR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3|ISR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3|PRESC" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3|RDR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3|RQR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3|RTOR" value="HC" />
+        <entry key="STM32G07x.svd|p:USART3|TDR" value="HC" />
       </map>
     </option>
   </component>
@@ -122,7 +137,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="project.propDebugger" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -172,7 +187,20 @@
       <workItem from="1591827864865" duration="7326000" />
       <workItem from="1592070050545" duration="13613000" />
       <workItem from="1592154423377" duration="4526000" />
-      <workItem from="1592232197565" duration="3155000" />
+      <workItem from="1592232197565" duration="17992000" />
+      <workItem from="1592277007522" duration="410000" />
+      <workItem from="1592277496983" duration="5609000" />
+      <workItem from="1592283757615" duration="69000" />
+      <workItem from="1592284400516" duration="2856000" />
+      <workItem from="1592319194742" duration="18420000" />
+      <workItem from="1592364493051" duration="3558000" />
+      <workItem from="1592408527634" duration="20075000" />
+      <workItem from="1592493731181" duration="9284000" />
+      <workItem from="1592580041790" duration="11736000" />
+      <workItem from="1592592998023" duration="2019000" />
+      <workItem from="1592597173934" duration="393000" />
+      <workItem from="1592617238257" duration="11175000" />
+      <workItem from="1592656088329" duration="1364000" />
     </task>
     <servers />
   </component>
@@ -184,10 +212,14 @@
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2472" y="178" key="#New_File_Extensions/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590565137577" />
-    <state x="2334" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1591556080986">
+    <state x="2726" y="66" width="673" height="940" key="#Notifications" timestamp="1592278934014">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2334" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591556080986" />
+    <state x="2726" y="66" width="673" height="940" key="#Notifications/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592278934014" />
+    <state x="2334" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1592283084827">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2334" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592283084827" />
     <state x="2685" y="235" key="#com.intellij.ide.util.MemberChooser" timestamp="1591470021307">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
@@ -220,157 +252,130 @@
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="343" key="GridCell.Tab.-1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591803439421" />
-    <state width="1877" height="343" key="GridCell.Tab.0.bottom" timestamp="1591835424665">
+    <state width="1921" height="289" key="GridCell.Tab.0.bottom" timestamp="1592657431729">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424665" />
-    <state width="1877" height="343" key="GridCell.Tab.0.center" timestamp="1591835424665">
+    <state width="1921" height="289" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657431729" />
+    <state width="1921" height="289" key="GridCell.Tab.0.center" timestamp="1592657431729">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424665" />
-    <state width="1877" height="343" key="GridCell.Tab.0.left" timestamp="1591835424665">
+    <state width="1921" height="289" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657431729" />
+    <state width="1921" height="289" key="GridCell.Tab.0.left" timestamp="1592657431729">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424665" />
-    <state width="1877" height="343" key="GridCell.Tab.0.right" timestamp="1591835424665">
+    <state width="1921" height="289" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657431729" />
+    <state width="1921" height="289" key="GridCell.Tab.0.right" timestamp="1592657431729">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424665" />
-    <state width="1877" height="343" key="GridCell.Tab.1.bottom" timestamp="1591835424665">
+    <state width="1921" height="289" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657431729" />
+    <state width="1921" height="285" key="GridCell.Tab.1.bottom" timestamp="1592657156185">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424665" />
-    <state width="1877" height="343" key="GridCell.Tab.1.center" timestamp="1591835424665">
+    <state width="1921" height="285" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
+    <state width="1921" height="285" key="GridCell.Tab.1.center" timestamp="1592657156185">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424665" />
-    <state width="1877" height="343" key="GridCell.Tab.1.left" timestamp="1591835424665">
+    <state width="1921" height="285" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
+    <state width="1921" height="285" key="GridCell.Tab.1.left" timestamp="1592657156185">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424665" />
-    <state width="1877" height="343" key="GridCell.Tab.1.right" timestamp="1591835424665">
+    <state width="1921" height="285" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
+    <state width="1921" height="285" key="GridCell.Tab.1.right" timestamp="1592657156185">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424665" />
-    <state x="1028" y="75" width="892" height="924" key="GridCell.Tab.2.bottom" timestamp="1591835424662">
+    <state width="1921" height="285" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.bottom" timestamp="1592657156185">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1028" y="75" width="892" height="924" key="GridCell.Tab.2.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424662" />
-    <state x="1028" y="75" width="892" height="924" key="GridCell.Tab.2.center" timestamp="1591835424662">
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.center" timestamp="1592657156185">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1028" y="75" width="892" height="924" key="GridCell.Tab.2.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424662" />
-    <state x="1028" y="75" width="892" height="924" key="GridCell.Tab.2.left" timestamp="1591835424665">
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.left" timestamp="1592657156185">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1028" y="75" width="892" height="924" key="GridCell.Tab.2.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424665" />
-    <state x="1028" y="75" width="892" height="924" key="GridCell.Tab.2.right" timestamp="1591835424662">
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.right" timestamp="1592657156185">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1028" y="75" width="892" height="924" key="GridCell.Tab.2.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424662" />
-    <state x="2987" y="91" width="848" height="907" key="GridCell.Tab.3.bottom" timestamp="1591756022114">
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.bottom" timestamp="1592632036382">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592632036382" />
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.center" timestamp="1592632036381">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592632036381" />
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.left" timestamp="1592632036381">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592632036381" />
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.right" timestamp="1592632036382">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592632036382" />
+    <state x="2187" y="150" key="SettingsEditor" timestamp="1592283148868">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2987" y="91" width="848" height="907" key="GridCell.Tab.3.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591756022114" />
-    <state x="2987" y="91" width="848" height="907" key="GridCell.Tab.3.center" timestamp="1591756022114">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state x="2987" y="91" width="848" height="907" key="GridCell.Tab.3.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591756022114" />
-    <state x="2987" y="91" width="848" height="907" key="GridCell.Tab.3.left" timestamp="1591756022113">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state x="2987" y="91" width="848" height="907" key="GridCell.Tab.3.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591756022113" />
-    <state x="2987" y="91" width="848" height="907" key="GridCell.Tab.3.right" timestamp="1591756022114">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state x="2987" y="91" width="848" height="907" key="GridCell.Tab.3.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591756022114" />
-    <state x="2187" y="150" key="SettingsEditor" timestamp="1591499288005">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state x="2187" y="150" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591499288005" />
+    <state x="2187" y="150" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592283148868" />
     <state x="2012" y="92" width="1736" height="856" maximized="true" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1591376759859">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2012" y="92" width="1736" height="856" maximized="true" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591376759859" />
-    <state x="1028" y="75" width="908" height="992" key="dock-window-1" timestamp="1591830123536">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1028" y="75" width="908" height="992" key="dock-window-1/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591830123536" />
-    <state x="1028" y="75" width="908" height="992" key="dock-window-2" timestamp="1591830123536">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1028" y="75" width="908" height="992" key="dock-window-2/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591830123536" />
-    <state x="1028" y="75" width="908" height="992" key="dock-window-3" timestamp="1591830557667">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1028" y="75" width="908" height="992" key="dock-window-3/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591830557667" />
-    <state x="1028" y="75" width="908" height="992" key="dock-window-4" timestamp="1591835219675">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1028" y="75" width="908" height="992" key="dock-window-4/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835219675" />
-    <state x="1028" y="75" width="908" height="992" key="dock-window-5" timestamp="1591835424771">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1028" y="75" width="908" height="992" key="dock-window-5/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591835424771" />
-    <state x="2987" y="91" width="864" height="975" key="dock-window-6" timestamp="1591656499541">
+    <state x="2434" y="248" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1592539280464">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2987" y="91" width="864" height="975" key="dock-window-6/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591656499541" />
-    <state x="2987" y="91" width="864" height="975" key="dock-window-7" timestamp="1591656499541">
+    <state x="2434" y="248" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592539280464" />
+    <state x="1159" y="3" width="768" height="1036" key="dock-window-1" timestamp="1592657009853">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1159" y="3" width="768" height="1036" key="dock-window-1/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657009853" />
+    <state x="1159" y="3" width="768" height="1036" key="dock-window-2" timestamp="1592619711034">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1159" y="3" width="768" height="1036" key="dock-window-2/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592619711034" />
+    <state x="1159" y="3" width="768" height="1036" key="dock-window-3" timestamp="1592625073273">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1159" y="3" width="768" height="1036" key="dock-window-3/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592625073273" />
+    <state x="1159" y="3" width="768" height="1036" key="dock-window-4" timestamp="1592635940838">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1159" y="3" width="768" height="1036" key="dock-window-4/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592635940838" />
+    <state x="1159" y="3" width="768" height="1036" key="dock-window-5" timestamp="1592635940838">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1159" y="3" width="768" height="1036" key="dock-window-5/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592635940838" />
+    <state x="1018" y="18" width="908" height="992" key="dock-window-6" timestamp="1592591851169">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1018" y="18" width="908" height="992" key="dock-window-6/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592591851169" />
+    <state x="1018" y="18" width="908" height="992" key="dock-window-7" timestamp="1592591851169">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1018" y="18" width="908" height="992" key="dock-window-7/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592591851169" />
+    <state x="2526" y="36" width="908" height="862" key="dock-window-8" timestamp="1592592977578">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2987" y="91" width="864" height="975" key="dock-window-7/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591656499541" />
-    <state x="2987" y="91" width="864" height="975" key="dock-window-8" timestamp="1591656866388">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state x="2987" y="91" width="864" height="975" key="dock-window-8/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591656866388" />
+    <state x="2526" y="36" width="908" height="862" key="dock-window-8/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592592977578" />
     <state x="2987" y="91" width="864" height="975" key="dock-window-9" timestamp="1591656866388">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2987" y="91" width="864" height="975" key="dock-window-9/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591656866388" />
-    <state x="2422" y="101" width="1287" height="801" key="find.popup" timestamp="1591749499986">
+    <state x="2422" y="101" width="1287" height="801" key="find.popup" timestamp="1592346653069">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="667" y="119" width="585" height="801" key="find.popup/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1591471950596" />
-    <state x="2422" y="101" width="1287" height="801" key="find.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591749499986" />
-    <state x="2536" y="240" key="run.anything.popup" timestamp="1591645203817">
+    <state x="2422" y="101" width="1287" height="801" key="find.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592346653069" />
+    <state x="2536" y="240" key="run.anything.popup" timestamp="1592261625978">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2536" y="240" key="run.anything.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591645203817" />
+    <state x="2536" y="240" key="run.anything.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592261625978" />
     <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1591646326051">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591646326051" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Src/RCC.cpp</url>
-          <line>12</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Drivers/CMSIS/Device/ST/STM32G0xx/Include/stm32g070xx.h</url>
-          <line>46</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_i2c.c</url>
-          <line>320</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Src/general_timer.cpp</url>
-          <line>110</line>
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Src/basic_timer.cpp</url>
-          <line>96</line>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

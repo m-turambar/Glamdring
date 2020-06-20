@@ -260,12 +260,5 @@ g_pfnVectors:
 
   .weak      USART1_IRQHandler
   .thumb_set USART1_IRQHandler,Default_Handler
-
-  .weak      USART2_IRQHandler
-  .thumb_set USART2_IRQHandler,Default_Handler
-
-  .weak      USART3_4_IRQHandler
-  .thumb_set USART3_4_IRQHandler,Default_Handler
-
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 
