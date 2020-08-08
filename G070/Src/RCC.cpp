@@ -5,7 +5,10 @@
 #include "RCC.h"
 namespace RCC
 {
-  void enable_port_clock(const GPIO_Port port)
+
+
+
+  void enable_port_clock(const GPIO_Port& port)
   {
     memoria(IOPENR) |= (1u << static_cast<uint8_t>(port));
   }
@@ -48,6 +51,24 @@ namespace RCC
   {
     const bitfield I2C2EN(1, 22);
     memoria(RCC::APBENR1) |= I2C2EN(1);
+  }
+
+  void enable_TIM15_clock()
+  {
+    flag TIM15EN(16);
+    RCC::APBENR2.set(TIM15EN);
+  }
+
+  void enable_TIM16_clock()
+  {
+    flag TIM16EN(17);
+    RCC::APBENR2.set(TIM16EN);
+  }
+
+  void enable_TIM17_clock()
+  {
+    flag TIM17EN(18);
+    RCC::APBENR2.set(TIM17EN);
   }
 
   /*******************************************/

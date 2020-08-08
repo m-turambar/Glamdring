@@ -1,4 +1,5 @@
-#include "main.h"
+#include "stm32g0xx_hal.h"
+
 #include <cstring>
 #include <cstdio>
 #include "I2C.h"
@@ -24,6 +25,8 @@ extern "C" {
 
 void set_pwm_value(uint16_t val);
 
+
+void Error_Handler(void);
 void SystemClock_Config(void);
 
 void itoa(int num, unsigned char* buffer, int base);
@@ -59,10 +62,16 @@ int main(void)
   RCC::enable_port_clock(RCC::GPIO_Port::C);
   GPIO::PORTA.entrada(1);
   GPIO::PORTA.salida(5);
+  GPIO::PORTA.salida(6).cfg_mode(GPIO::Mode::Alternate).cfg_alternate(GPIO::AlternFunct::AF5_TIM16);
   auto blue_btn = GPIO::PORTC.entrada(13);
   /************************************/
 
+  general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic, 0x8, 0x100); /* each tick is 1ms*/
+  t16.enable_output_compare(0x1);
+  t16.start();
+
   UART uart2(UART::Peripheral::USART2, 115200);
+  //uart2.enable_interrupt_rx(nullptr);
   uart2.enable_fifo().enable();
 
   /** Hasta que no encuentre un mejor mecanismo para hacer callbacks más sofisticados,
@@ -70,8 +79,8 @@ int main(void)
   UART uart3(UART::Peripheral::USART3, 9600);
   uart3.enable_interrupt_rx(nullptr).enable();
 
-  uint8_t tx_buf[64] = "---\n";
-  uint8_t greetings[32] = "Hey I just reset\n";
+  char tx_buf[64] = "---\n";
+  char greetings[32] = "Hey I just reset\n";
 
   auto led_callback = [](void) -> void {
     GPIO::PORTA.toggle(5);
@@ -89,7 +98,8 @@ int main(void)
   MPU6050 mpu(i2c2); //pasa una referencia al objeto i2c
   I2C::Status res = mpu.set_sampling_rate();
 
-  uart2.transmitq(greetings, strlen((const char*)greetings));
+  //uart2.transmitq(greetings, strlen((const char*)greetings));
+  uart2 << greetings;
   uint8_t buf[16] = {0};
   float acc[3] = {0};
 
@@ -101,9 +111,10 @@ int main(void)
       mpu.leer(buf, 6);
       mpu.convert_to_float(acc, buf, 3);
 
-      std::sprintf((char*)tx_buf, "ax=%.2f\t ay=%.2f\t az=%.2f\n\r", acc[0], acc[1], acc[2]);
+      std::sprintf(tx_buf, "ax=%.2f\t ay=%.2f\t az=%.2f\n\r", acc[0], acc[1], acc[2]);
 
-      uart2.transmitq(tx_buf, std::strlen((const char*)tx_buf));
+      //uart2.transmitq(tx_buf, std::strlen((const char*)tx_buf));
+      uart2 << tx_buf;
       glb_flag = 0;
     }
 
@@ -111,16 +122,8 @@ int main(void)
       t17.start();
     }
 
-    /** Forwardeo del UART3 al UART2 */
-    if(uart3.available()) {
-      uart2.write_byte(uart3.read_byte());
-    }
-
-    /** Pass through to UART 3 */
-    if(uart2.available()) {
-      uart3.write_byte(uart2.read_byte());
-    }
-
+    if(uart2.available())
+      uart3 << uart2.read_byte();
 
   }
 
@@ -151,8 +154,7 @@ void SystemClock_Config(void)
   }
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
-      | RCC_CLOCKTYPE_PCLK1;
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;

@@ -6,6 +6,7 @@
 #include "RCC.h"
 #include "GPIO_Port.h"
 #include "NVIC.h"
+#include <cstring>
 
 /** Banderas que se usan mucho en las rutinas de comunicacion. Declararlas en el stack una y otra
  * vez no tiene mucho sentido, así que las hacemos globales */
@@ -38,6 +39,7 @@ void USART2_IRQHandler(void)
   if(UART2.ISR.is_set(RXNE)) {
     const uint8_t b = UART2.read_byte();
     UART2.callback_rx(b);
+    //*UART2_ptr << b;
   }
   NVIC_ClearPendingIRQ(USART2_IRQn);
 }
@@ -49,7 +51,7 @@ void USART3_4_IRQHandler(void)
   auto& UART4 = *UART4_ptr;
   if(UART3.ISR.is_set(RXNE)) {
     const uint8_t b = UART3.read_byte();
-    /** El problema de esto es que cómo le paso una referencia al UART2 al callback
+    /** El problema de esto es que ¿cómo le paso una referencia al UART2 al callback?
      * Tienes que hacer el UART2 global, para que no sea un argumento del callback.
      * Ya hay que encontrar una solución a este patrón recurrente. */
     //UART3.callback_rx(b);
@@ -263,6 +265,23 @@ const UART& UART::operator<<(uint8_t b) const
   return *this;
 }
 
+/** No estoy 100% feliz con esta implementación. Duplica mucho código. Sacrifico este espacio por la conveniencia
+ * de usar char* como tipo base en esta operación, vs unsigned char *. Probablemente el segundo es más seguro pero
+ * el tiempo y las pruebas confirmarán. */
+const UART& UART::operator<<(const char* buffer) const
+{
+  const size_t sz = std::strlen(buffer);
+  bitfield tdr(9,0);
+  CR1.set(TE);
+
+  for(size_t i=0; i<sz; ++i)
+  {
+    while(ISR.is_reset(TXFNF)) {} /** esperamos hasta que la queue de tranmision deje de estar llena */
+    memoria(TDR) = tdr(buffer[i]);
+  }
+  while(ISR.is_reset(TC)) {} /** esperamos hasta que la transmision termine */
+  return *this;
+}
 
 
 

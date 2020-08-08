@@ -56,10 +56,13 @@ public:
 
   void set_autoreload(const uint16_t autoreload) const;
 
+  void enable_output_compare(uint16_t cmp) const;
+
+
   void (*callback)(void) {nullptr};
   const GeneralTimer peripheral;
   const size_t base;
-  registro CR1, CR2, DIER, SR, EGR, CNT, PSC, ARR;
+  registro CR1, CR2, DIER, SR, EGR, CNT, PSC, ARR, CCMR1, CCER, CCR1, BDTR;
 };
 
 }

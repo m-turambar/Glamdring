@@ -5,7 +5,7 @@
   *                      and de-Initialization codes.
   *****************************************************************************/
 
-#include "main.h"
+#include "stm32g0xx_hal.h"
 
 /**
   * Initializes the Global MSP.

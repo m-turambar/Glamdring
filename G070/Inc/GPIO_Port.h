@@ -69,15 +69,15 @@ namespace GPIO {
         BRR(base+0x28) { }
 
     /* entrada, salida, alternate, analogico */
-    void cfg_mode(const uint8_t pin, const Mode mode) const;
+    const GPIO_Port& cfg_mode(const uint8_t pin, const Mode mode) const;
     /* push-pull(reset state), open-drain */
-    void cfg_output_type(const uint8_t pin, const OutputType ot) const;
+    const GPIO_Port& cfg_output_type(const uint8_t pin, const OutputType ot) const;
 
-    void cfg_speed(const uint8_t pin, const Speed speed) const;
+    const GPIO_Port& cfg_speed(const uint8_t pin, const Speed speed) const;
 
-    void cfg_pull(const uint8_t pin, const PullResistor pupd) const;
+    const GPIO_Port& cfg_pull(const uint8_t pin, const PullResistor pupd) const;
 
-    void cfg_alternate(const uint8_t pin, const AlternFunct afsel) const;
+    const GPIO_Port& cfg_alternate(const uint8_t pin, const AlternFunct afsel) const;
 
     /* returns 1 if IDx is set or 0 otherwise */
     uint8_t read_input(const uint8_t pin) const;
@@ -128,11 +128,11 @@ namespace GPIO {
         port(port_arg),
         num(num_arg) { }
 
-    void cfg_mode(const Mode mode) const;
-    void cfg_output_type(const OutputType ot) const;
-    void cfg_speed(Speed speed) const;
-    void cfg_pull(PullResistor pupd) const;
-    void cfg_alternate(AlternFunct afsel) const;
+    const pin& cfg_mode(const Mode mode) const;
+    const pin& cfg_output_type(const OutputType ot) const;
+    const pin& cfg_speed(Speed speed) const;
+    const pin& cfg_pull(PullResistor pupd) const;
+    const pin& cfg_alternate(AlternFunct afsel) const;
     uint8_t read_input() const;
     uint8_t read_output() const;
     void set_output() const;

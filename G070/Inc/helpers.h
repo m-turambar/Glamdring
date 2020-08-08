@@ -50,7 +50,7 @@ struct bitfield
   /** Para operaciones de resetear bitfields en un registro*/
   constexpr size_t operator !() const { return ~(mask << offset); }
 
-  /** Regresa solo los bits del bitfield de ese registro
+  /** Lectura: Regresa el valor del bitfield en el registro leido
    * reg: 11001010 10110000 11100010 00001111
    * bf:  00000000 11100000 00000000 00000000
    * ret: 00000000 10100000 00000000 00000000*/

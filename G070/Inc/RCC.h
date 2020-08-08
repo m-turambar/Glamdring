@@ -18,6 +18,14 @@ extern "C" {
 
 /* super incomplete - will be filled in as new functionality is needed */
 namespace RCC {
+  enum class PrimaryClock {
+    HSI_RC = 16000000,
+    HSE_OSC,
+    LSI_RC,
+    LSE_OSC,
+    I2S_CKIN
+  };
+
   enum class GPIO_Port : uint8_t {
     A = 0,
     B = 1,
@@ -57,7 +65,9 @@ namespace RCC {
 
   constexpr registro CSR{base+0x60};
 
-  void enable_port_clock(const GPIO_Port port);
+  /** Hay un periodo de espera que el software debe tomar en consideración, de 2 ciclos, después de habilitar
+   * el reloj de un periférico. */
+  void enable_port_clock(const GPIO_Port& port);
 
   void enable_I2C1_clock();
   void enable_I2C2_clock();
@@ -66,6 +76,10 @@ namespace RCC {
   void enable_USART2_clock();
   void enable_USART3_clock();
   void enable_USART4_clock();
+
+  void enable_TIM15_clock();
+  void enable_TIM16_clock();
+  void enable_TIM17_clock();
 } ;
 
 };
