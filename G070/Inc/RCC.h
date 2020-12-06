@@ -18,6 +18,7 @@ extern "C" {
 
 /* super incomplete - will be filled in as new functionality is needed */
 namespace RCC {
+  /** Cuál es el valor de los otros relojes? */
   enum class PrimaryClock {
     HSI_RC = 16000000,
     HSE_OSC,

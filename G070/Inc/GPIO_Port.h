@@ -94,7 +94,7 @@ namespace GPIO {
 
     void toggle(const uint8_t pin) const;
 
-    /* Configura un pin como entrada digital */
+    /* Configura un pin como entrada digital con pull-up = alto (por default)*/
     GPIO::pin entrada(const uint8_t pin, const PullResistor pupd=PullResistor::PullUp) const;
     /* Configura un pin como salida digital */
     GPIO::pin salida(const uint8_t pin, const OutputType out_t=OutputType::PushPull) const;

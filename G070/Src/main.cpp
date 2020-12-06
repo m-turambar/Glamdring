@@ -8,6 +8,7 @@
 #include "GPIO_Port.h"
 #include "RCC.h"
 
+
 #undef TIM15
 #undef TIM16
 #undef TIM17
@@ -15,6 +16,9 @@
 #undef USART2
 #undef USART3
 #undef USART4
+#undef PWR
+
+#include "PWR.h"
 
 #include "general_timer.h"
 #include "UART.h"
@@ -95,15 +99,14 @@ int main(void)
   I2C i2c2(I2C::Peripheral::I2C1);
   i2c2.enable(I2C::Timing::Standard);
 
-  MPU6050 mpu(i2c2); //pasa una referencia al objeto i2c
-  I2C::Status res = mpu.set_sampling_rate();
+  MPU6050 mpu(i2c2); //instancia que representa a nuestro acelerómetro
+  mpu.set_sampling_rate();
 
   //uart2.transmitq(greetings, strlen((const char*)greetings));
   uart2 << greetings;
   uint8_t buf[16] = {0};
   float acc[3] = {0};
 
-  /* HAL_GetTick regresa en milisegundos. ;/ */
   while (1) {
 
     if(glb_flag%2 == 1) {
@@ -141,7 +144,7 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage 
   */
-  HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
+  PWR::configurar_regulador(PWR::Voltaje::Range_1);
   /** Initializes the CPU, AHB and APB busses clocks 
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;

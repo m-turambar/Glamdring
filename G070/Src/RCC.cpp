@@ -15,10 +15,11 @@ namespace RCC
 
   /********************************************/
 
+  /** Hay que probar que esto no introduzca bugs, para replicarlo en los demás. Usa menos memoria. */
   void enable_USART1_clock()
   {
-    const bitfield USART1EN(1, 14);
-    memoria(RCC::APBENR2) |= USART1EN(1);
+    const flag USART1EN(14);
+    RCC::APBENR2.set(USART1EN);
   }
 
   void enable_USART2_clock()

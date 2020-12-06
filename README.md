@@ -23,4 +23,6 @@ Once you have saved this script, map it to a hotkey and voilà.
 Extremely useful since this will cut down development time and eliminate developer attention loss by not having to exit NP++.
 
 May/2020:
-We (I) now develop using Clion, I will publish the details in youtube.
+We (I) now develop using Clion.
+
+This is far superior to NP++, since debugging is possible with register viewing. It is the best embedded environment I have developed in so far.

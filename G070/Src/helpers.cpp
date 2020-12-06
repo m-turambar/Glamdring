@@ -42,4 +42,27 @@ bool registro::is_reset(flag f) const
   return (memoria(addr) & f) == 0;
 }
 
+void registro::write(const bitfield bf) const
+{
+  size_t tmp = memoria(*this);
+  bf.overwrite(tmp);
+  memoria(*this) = tmp;
+}
+
+void registro::reset(const bitfield bf) const
+{
+  size_t tmp = memoria(*this);
+  bf.clear(tmp);
+  memoria(*this) = tmp;
+}
+
+size_t registro::read(const bitfield bf) const
+{
+  return bf.mask & memoria(*this);
+}
+
+size_t registro::read_grounded(const bitfield bf) const
+{
+  return (bf.mask & memoria(*this)) >> bf.offset;
+}
 

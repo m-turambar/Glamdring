@@ -17,12 +17,13 @@ constexpr static flag TC(6);
 /** No queue */
 const flag TXE(3);
 
+/** sospechoso */
 UART* UART1_ptr{nullptr};
 UART* UART2_ptr{nullptr};
 UART* UART3_ptr{nullptr};
 UART* UART4_ptr{nullptr};
 
-/** Rutinas de serviceo a interrupciones */
+/** Rutinas de serviceo a interrupciones. Igual. Es aplicación. */
 void USART1_IRQHandler(void)
 {
   auto& UART1 = *UART1_ptr;
@@ -33,6 +34,7 @@ void USART1_IRQHandler(void)
   NVIC_ClearPendingIRQ(USART1_IRQn);
 }
 
+/** Esto también es código de aplicación. No pertenece aquí. */
 void USART2_IRQHandler(void)
 {
   auto& UART2 = *UART2_ptr;
@@ -45,6 +47,7 @@ void USART2_IRQHandler(void)
 }
 
 /** Por ahora no hagas la diferencia */
+/** Esto es código de aplicación en el driver. Está mal. Cambiarlo. O moverlo a código de aplicación. */
 void USART3_4_IRQHandler(void)
 {
   auto& UART3 = *UART3_ptr;
@@ -173,7 +176,7 @@ void UART::cfg_word_length(const UART::WordLength len) const
 {
   constexpr bitfield M0(1, 12);
   constexpr bitfield M1(1, 28);
-  size_t temp = (memoria(CR1) & !M0 & !M1);
+  size_t temp = (memoria(CR1) & !M0 & !M1); /** súper críptico. Claramente hay que mejorar la API. */
   temp = temp | M0(0x01 & static_cast<uint8_t>(len)) | M1(0x10 & static_cast<uint8_t>(len));
   memoria(CR1) |= temp;
 }

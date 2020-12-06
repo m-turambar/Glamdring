@@ -1,0 +1,30 @@
+* Este archivo servirá para tomar notas sobre mi progreso y saber en qué me quedé *
+
+Sería bueno poder usar nuestros drivers para configurar el coche. Para eliminar beep al hacer unlock.
+
+29/11/2020:
+Estoy retomando este proyecto en 29/11/2020. Lleva unos meses sin atención, debido a mi ingreso a Microsoft.
+
+Objetivo actual es deslindarme por completo de la HAL que ST te da. Usar tu propia HAL.
+Por qué? Porque así sólo dependes de los cambios de hardware. Y porque así puede ser código más limpio, y menos código.
+
+Menos código es mejor.
+
+Los drivers que hiciste anteriormente están incompletos, aunque son funcionales. Falta hacer uso de DMA.
+
+Drivers de ST a sustituir: (o funciones a implementar)
+Configuración de los relojes de buses. Bus de CPU, AHB, APB. Entender de qué depende esta configuración.
+Configurar y entender el regulador de voltage interno principal. Éste puede configurarse (y debe, al parecer).
+Funciones a sustituir:
+HAL_PWREx_ControlVoltageScaling
+HAL_RCC_OscConfig
+HAL_RCC_ClockConfig
+
+05/12/2020:
+No recordaba que había creado una rama llamada 'cleanup'
+Micro prende, e imprime "Hey I just reset" en la terminal de manera exitosa, a 115200bps
+No has cargado cambios de configuración de relojes ni PWR
+
+En el driver de UART hay demasiado código de aplicación.
+
+Gran cambio: reforma a bitfield. Mask va a estar shifteada siempre.
