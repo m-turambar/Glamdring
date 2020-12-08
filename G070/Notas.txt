@@ -28,3 +28,51 @@ No has cargado cambios de configuración de relojes ni PWR
 En el driver de UART hay demasiado código de aplicación.
 
 Gran cambio: reforma a bitfield. Mask va a estar shifteada siempre.
+
+#########################################################################
+
+Parece que la reforma a bitfield fue exitosa.
+Hay un bit de la flash y el prefetch buffer que hay que investigar.
+
+06/12/2020:
+Configurar relojes RCC.
+Tres funciones que usa la hal de st:
+HAL_RCC_OscConfig
+HAL_RCC_ClockConfig
+HAL_RCCEx_PeriphCLKConfig
+
+Nota: No tenemos todo el código con extern "C".
+Hay que investigar eso.
+DEBUG: Para debuggear correctamente, tuve que poner como default toolchain la que tengo de embedded.
+File->Settings->"Build, Execution, Deployment"->toolchains.
+Aunque mi toolchain se llame mingw, eso no tiene mucho que ver. Supongo que es por mingw32-make.
+
+Ya que mis compiladores y depuradores son los siguientes:
+Make: El de mingw(y creo que por eso puse como root C:\MinGW, pero modifiqué los compiladores y depurador!)
+C compiler: C:\Program Files (x86)\GNU Tools ARM Embedded\8 2019-q3-update\bin\arm-none-eabi-gcc.exe
+C++ compiler: C:\Program Files (x86)\GNU Tools ARM Embedded\8 2019-q3-update\bin\arm-none-eabi-g++.exe
+Debugger: C:\Program Files (x86)\GNU Tools ARM Embedded\8 2019-q3-update\bin\arm-none-eabi-gdb.exe
+
+07/12/2020:
+Creo que para configurar los relojes, al inicializar, movemos el prescaler a su valor más alto y luego al que queremos.
+Esto para evitar algún tipo de error por no-definición (como variables no inicializadas en C?)
+RCC::CFGR::PPRE = 0b111 (prescaler del APB)
+luego
+RCC::CFGR::HPRE = 0b000 (prescaler del AHB, es 0 por default)
+
+Dependiendo del reloj que seleccionemos como SYSCLK, debemos checar si está listo antes de usarlo.
+Esto en RCC::CR
+Ejemplos {HSIRDY, HSERDY, PLLRDY}
+
+Luego, muy importante, en el RCC::CFGR::SW, declaramos cuál es el reloj que se usará para sistema.
+Las opciones son: {HSISYS, HSE, PLLRCLK, LSI, LSE}
+
+Al parecer siempre hay que estar atentos a la latencia de la Flash, y ajustarla a la frecuencia de reloj que usemos.
+
+Cierra el driver configurando el prescaler del APB a 1:
+RCC::CFGR::PPRE = 0b000 (prescaler del APB)
+
+/*********************************************/
+Relojes de periféricos
+Usart 2:
+RCC::CCIPR::USART2SEL

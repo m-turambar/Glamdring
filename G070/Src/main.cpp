@@ -1,5 +1,3 @@
-#include "stm32g0xx_hal.h"
-
 #include <cstring>
 #include <cstdio>
 #include "I2C.h"
@@ -7,9 +5,9 @@
 #include "basic_timer.h"
 #include "GPIO_Port.h"
 #include "RCC.h"
-
-
 #undef TIM15
+
+
 #undef TIM16
 #undef TIM17
 #undef USART1
@@ -17,8 +15,10 @@
 #undef USART3
 #undef USART4
 #undef PWR
+#undef FLASH
 
 #include "PWR.h"
+#include "FLASH.h"
 
 #include "general_timer.h"
 #include "UART.h"
@@ -27,10 +27,11 @@
 extern "C" {
 #endif
 
+void inicializacion();
+void configurar_relojes();
 void set_pwm_value(uint16_t val);
 
-
-void Error_Handler(void);
+void error(void);
 void SystemClock_Config(void);
 
 void itoa(int num, unsigned char* buffer, int base);
@@ -51,13 +52,8 @@ void callback1(void)
 
 int main(void)
 {
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-
-  /* Configure the system clock */
-  SystemClock_Config();
+  inicializacion();
+  configurar_relojes();
   //mIWDG::set_and_go(6, 0xFF);
 
   /* Initialize all configured peripherals */
@@ -127,62 +123,48 @@ int main(void)
 
     if(uart2.available())
       uart3 << uart2.read_byte();
-
   }
-
 }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
+void inicializacion()
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
-
-  /** Configure the main internal regulator output voltage 
-  */
+  FLASH::prefetch_buffer_enable();
+  RCC::enable_SYSCFG_clock();
+  RCC::enable_power_clock();
+  //NVIC_SetPriority(PendSV_IRQn, 3, 0);
   PWR::configurar_regulador(PWR::Voltaje::Range_1);
-  /** Initializes the CPU, AHB and APB busses clocks 
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct)!=HAL_OK) {
-    Error_Handler();
-  }
-  /** Initializes the CPU, AHB and APB busses clocks 
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0)!=HAL_OK) {
-    Error_Handler();
-  }
-  /** Initializes the peripherals clocks 
-  */
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
-  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
-  PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_SYSCLK;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit)!=HAL_OK) {
-    Error_Handler();
-  }
 }
 
-/**
+void configurar_relojes()
+{
+  /** Configurar los relojes del sistema según la aplicación */
+  RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P16);
+  RCC::configurar_prescaler_AHB(RCC::AHB_Prescaler::P1);
+
+  if(!RCC::is_HSI_ready())
+    error();
+
+  RCC::seleccionar_SYSCLK(RCC::SystemClockSwitch::HSISYS);
+  RCC::SystemClockSwitch fuente_sysclk = RCC::status_SYSCLK();
+
+  if(fuente_sysclk != RCC::SystemClockSwitch::HSISYS)
+    error();
+
+  RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P1);
+
+  /** Configurar los relojes de los periféricos, sus fuentes. */
+  RCC::seleccionar_reloj_USART2(RCC::RelojesUsart::PCLK);
+}
+
+
+/** la dejo como referencia
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM3 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
   * a global variable "uwTick" used as application time base.
   * @param  htim : TIM handle
   * @retval None
-  */
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
 
@@ -191,31 +173,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
   }
 
 }
+*/
 
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
+void error(void)
 {
   /* User can add his own implementation to report the HAL error return state */
   while (1);
 }
-
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* User can add his own implementation to report the file name and line number,
-     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-}
-#endif /* USE_FULL_ASSERT */
 
 #ifdef __cplusplus
 }

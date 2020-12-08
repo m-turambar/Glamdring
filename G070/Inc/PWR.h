@@ -22,6 +22,9 @@ namespace PWR {
     Range_2 = 2
   };
 
+  /** Configura el rango de voltajes que el regulador interno tendrá.
+   * Rango 1: Alto desempeño. 1.2V Freq <= 64MHz. Flash { Lectura y escritura normales }
+   * Rango 2: Bajo desempeño. 1.0V Freq <= 16MHz. Flash { Lectura más lenta. Escritura imposible }*/
   bool configurar_regulador(const Voltaje v);
 };
 
