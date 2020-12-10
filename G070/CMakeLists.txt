@@ -39,9 +39,11 @@ set(CMAKE_CXX_STANDARD 14)
 #add_definitions(-DARM_MATH_CM4 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -D__FPU_PRESENT=1)
 add_definitions(-D__weak=__attribute__\(\(weak\)\) -D__packed=__attribute__\(\(__packed__\)\) -DUSE_HAL_DRIVER -DSTM32G070xx)
 
-file(GLOB_RECURSE SOURCES "startup/*.*" "Drivers/*.*" "Src/*.*")
+#file(GLOB_RECURSE SOURCES "startup/*.*" "Drivers/*.*" "Src/*.*")
+file(GLOB_RECURSE SOURCES "startup/*.*" "Drivers/CMSIS/*.*" "Src/*.*")
 
-include_directories(Inc Drivers/STM32G0xx_HAL_Driver/Inc Drivers/STM32G0xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32G0xx/Include Drivers/CMSIS/Include)
+#include_directories(Inc Drivers/STM32G0xx_HAL_Driver/Inc Drivers/STM32G0xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32G0xx/Include Drivers/CMSIS/Include)
+include_directories(Inc Drivers/CMSIS/Include)
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
 

@@ -128,7 +128,7 @@
     if(nackf==1)
       return Status::NACKF;
 
-    uint32_t tickstart = HAL_GetTick();
+    //uint32_t tickstart = HAL_GetTick();
     const uint32_t wait_max = 25;
     if(write==0)
     {
@@ -138,10 +138,10 @@
         do{
           nackf = memoria(ISR) & NACKF(1);
           txis = memoria(ISR) & TXIS(1);
-          size_t current_tick = HAL_GetTick();
-          if(current_tick - tickstart > wait_max) {
-            return Status::Timeout;
-          }
+          //size_t current_tick = HAL_GetTick();
+          //if(current_tick - tickstart > wait_max) {
+          //  return Status::Timeout;
+          //}
         } while(txis==0 && nackf==0);
 
         if(nackf==1)

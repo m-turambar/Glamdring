@@ -81,8 +81,8 @@ LoopFillZerobss:
   cmp r2, r3
   bcc FillZerobss
 
-/* Call the clock system intitialization function.*/
-  bl  SystemInit
+/* Un toque personal - escribimos a SCB::VTOR la direccion de inicio de la flash*/
+  bl Bishi_Victorious
 /* Call static constructors */
   bl __libc_init_array
 /* Call the application's entry point.*/
@@ -114,7 +114,7 @@ Infinite_Loop:
 * 0x0000.0000.
 *
 ******************************************************************************/
-   .section .isr_vector,"a",%progbits
+    .section .isr_vector,"a",%progbits
   .type g_pfnVectors, %object
   .size g_pfnVectors, .-g_pfnVectors
 

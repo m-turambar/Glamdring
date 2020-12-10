@@ -6,7 +6,6 @@
 #define GLAMDRING_MI2C_H
 
 #include <cstddef>
-#include "stm32g0xx_hal.h"
 #include "helpers.h"
 
 #undef I2C1

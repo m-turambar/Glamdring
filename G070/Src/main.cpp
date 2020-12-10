@@ -5,23 +5,12 @@
 #include "basic_timer.h"
 #include "GPIO_Port.h"
 #include "RCC.h"
-#undef TIM15
-
-
-#undef TIM16
-#undef TIM17
-#undef USART1
-#undef USART2
-#undef USART3
-#undef USART4
-#undef PWR
-#undef FLASH
-
 #include "PWR.h"
 #include "FLASH.h"
-
 #include "general_timer.h"
 #include "UART.h"
+
+#include "NVIC.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,15 +18,8 @@ extern "C" {
 
 void inicializacion();
 void configurar_relojes();
-void set_pwm_value(uint16_t val);
-
 void error(void);
-void SystemClock_Config(void);
-
 void itoa(int num, unsigned char* buffer, int base);
-
-//const volatile size_t pwm_val = (rx_buf[0]-'0')*100+(rx_buf[1]-'0')*10+(rx_buf[2]-'0');
-// set_pwm_value(pwm_val);
 
 void test_callback(void)
 {
@@ -48,6 +30,20 @@ volatile uint8_t glb_flag=0;
 void callback1(void)
 {
   ++glb_flag;
+}
+
+/** Esto también es código de aplicación */
+UART* g_uart2{nullptr};
+void USART2_IRQHandler(void)
+{
+  auto& UART2 = *g_uart2;
+  constexpr static flag RXNE(5);
+  if(UART2.ISR.is_set(RXNE)) {
+    const uint8_t b = UART2.read_byte();
+    //UART2.callback_rx(b);
+    UART2 << b;
+  }
+  NVIC_ClearPendingIRQ(USART2_IRQn);
 }
 
 int main(void)
@@ -71,7 +67,8 @@ int main(void)
   t16.start();
 
   UART uart2(UART::Peripheral::USART2, 115200);
-  //uart2.enable_interrupt_rx(nullptr);
+  g_uart2 = &uart2;
+  uart2.enable_interrupt_rx(nullptr);
   uart2.enable_fifo().enable();
 
   /** Hasta que no encuentre un mejor mecanismo para hacer callbacks más sofisticados,
@@ -80,7 +77,7 @@ int main(void)
   uart3.enable_interrupt_rx(nullptr).enable();
 
   char tx_buf[64] = "---\n";
-  char greetings[32] = "Hey I just reset\n";
+  char greetings[32] = "Basura 123456789 Basura\n";
 
   auto led_callback = [](void) -> void {
     GPIO::PORTA.toggle(5);
@@ -98,8 +95,8 @@ int main(void)
   MPU6050 mpu(i2c2); //instancia que representa a nuestro acelerómetro
   mpu.set_sampling_rate();
 
-  //uart2.transmitq(greetings, strlen((const char*)greetings));
-  uart2 << greetings;
+  uart2.transmitq((const uint8_t *)greetings, strlen((const char*)greetings));
+  //uart2 << greetings;
   uint8_t buf[16] = {0};
   float acc[3] = {0};
 
@@ -157,29 +154,27 @@ void configurar_relojes()
 }
 
 
-/** la dejo como referencia
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM3 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
-{
-
-  if (htim->Instance==TIM3) {
-    HAL_IncTick();
-  }
-
-}
-*/
-
 void error(void)
 {
   /* User can add his own implementation to report the HAL error return state */
   while (1);
 }
+
+/*
+void set_pwm_value(uint16_t val);void set_pwm_value(uint16_t val)
+{
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = val;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+
+  HAL_TIM_PWM_ConfigChannel(&htim14, &sConfigOC, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+}*/
+//const volatile size_t pwm_val = (rx_buf[0]-'0')*100+(rx_buf[1]-'0')*10+(rx_buf[2]-'0');
+// set_pwm_value(pwm_val);
 
 #ifdef __cplusplus
 }

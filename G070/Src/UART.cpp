@@ -34,18 +34,6 @@ void USART1_IRQHandler(void)
   NVIC_ClearPendingIRQ(USART1_IRQn);
 }
 
-/** Esto también es código de aplicación. No pertenece aquí. */
-void USART2_IRQHandler(void)
-{
-  auto& UART2 = *UART2_ptr;
-  if(UART2.ISR.is_set(RXNE)) {
-    const uint8_t b = UART2.read_byte();
-    UART2.callback_rx(b);
-    //*UART2_ptr << b;
-  }
-  NVIC_ClearPendingIRQ(USART2_IRQn);
-}
-
 /** Por ahora no hagas la diferencia */
 /** Esto es código de aplicación en el driver. Está mal. Cambiarlo. O moverlo a código de aplicación. */
 void USART3_4_IRQHandler(void)
