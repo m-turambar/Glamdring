@@ -1,0 +1,78 @@
+* Este archivo servirá para tomar notas sobre mi progreso y saber en qué me quedé *
+
+Sería bueno poder usar nuestros drivers para configurar el coche. Para eliminar beep al hacer unlock.
+
+29/11/2020:
+Estoy retomando este proyecto en 29/11/2020. Lleva unos meses sin atención, debido a mi ingreso a Microsoft.
+
+Objetivo actual es deslindarme por completo de la HAL que ST te da. Usar tu propia HAL.
+Por qué? Porque así sólo dependes de los cambios de hardware. Y porque así puede ser código más limpio, y menos código.
+
+Menos código es mejor.
+
+Los drivers que hiciste anteriormente están incompletos, aunque son funcionales. Falta hacer uso de DMA.
+
+Drivers de ST a sustituir: (o funciones a implementar)
+Configuración de los relojes de buses. Bus de CPU, AHB, APB. Entender de qué depende esta configuración.
+Configurar y entender el regulador de voltage interno principal. Éste puede configurarse (y debe, al parecer).
+Funciones a sustituir:
+HAL_PWREx_ControlVoltageScaling
+HAL_RCC_OscConfig
+HAL_RCC_ClockConfig
+
+05/12/2020:
+No recordaba que había creado una rama llamada 'cleanup'
+Micro prende, e imprime "Hey I just reset" en la terminal de manera exitosa, a 115200bps
+No has cargado cambios de configuración de relojes ni PWR
+
+En el driver de UART hay demasiado código de aplicación.
+
+Gran cambio: reforma a bitfield. Mask va a estar shifteada siempre.
+
+#########################################################################
+
+Parece que la reforma a bitfield fue exitosa.
+Hay un bit de la flash y el prefetch buffer que hay que investigar.
+
+06/12/2020:
+Configurar relojes RCC.
+Tres funciones que usa la hal de st:
+HAL_RCC_OscConfig
+HAL_RCC_ClockConfig
+HAL_RCCEx_PeriphCLKConfig
+
+Nota: No tenemos todo el código con extern "C".
+Hay que investigar eso.
+DEBUG: Para debuggear correctamente, tuve que poner como default toolchain la que tengo de embedded.
+File->Settings->"Build, Execution, Deployment"->toolchains.
+Aunque mi toolchain se llame mingw, eso no tiene mucho que ver. Supongo que es por mingw32-make.
+
+Ya que mis compiladores y depuradores son los siguientes:
+Make: El de mingw(y creo que por eso puse como root C:\MinGW, pero modifiqué los compiladores y depurador!)
+C compiler: C:\Program Files (x86)\GNU Tools ARM Embedded\8 2019-q3-update\bin\arm-none-eabi-gcc.exe
+C++ compiler: C:\Program Files (x86)\GNU Tools ARM Embedded\8 2019-q3-update\bin\arm-none-eabi-g++.exe
+Debugger: C:\Program Files (x86)\GNU Tools ARM Embedded\8 2019-q3-update\bin\arm-none-eabi-gdb.exe
+
+07/12/2020:
+Creo que para configurar los relojes, al inicializar, movemos el prescaler a su valor más alto y luego al que queremos.
+Esto para evitar algún tipo de error por no-definición (como variables no inicializadas en C?)
+RCC::CFGR::PPRE = 0b111 (prescaler del APB)
+luego
+RCC::CFGR::HPRE = 0b000 (prescaler del AHB, es 0 por default)
+
+Dependiendo del reloj que seleccionemos como SYSCLK, debemos checar si está listo antes de usarlo.
+Esto en RCC::CR
+Ejemplos {HSIRDY, HSERDY, PLLRDY}
+
+Luego, muy importante, en el RCC::CFGR::SW, declaramos cuál es el reloj que se usará para sistema.
+Las opciones son: {HSISYS, HSE, PLLRCLK, LSI, LSE}
+
+Al parecer siempre hay que estar atentos a la latencia de la Flash, y ajustarla a la frecuencia de reloj que usemos.
+
+Cierra el driver configurando el prescaler del APB a 1:
+RCC::CFGR::PPRE = 0b000 (prescaler del APB)
+
+/*********************************************/
+Relojes de periféricos
+Usart 2:
+RCC::CCIPR::USART2SEL

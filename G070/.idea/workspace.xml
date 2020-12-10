@@ -12,12 +12,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1e1fd41-d4e8-4bd2-81b1-7b49beaf9dcc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/OCD_G070.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/OCD_G070.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Src/SCB.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Inc/UART.h" beforeDir="false" afterPath="$PROJECT_DIR$/Inc/UART.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Inc/usart.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Inc/I2C.h" beforeDir="false" afterPath="$PROJECT_DIR$/Inc/I2C.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Inc/stm32g0xx_hal_conf.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Inc/stm32g0xx_it.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Inc/tim.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/STM32G070RBTx_FLASH.ld" beforeDir="false" afterPath="$PROJECT_DIR$/STM32G070RBTx_FLASH.ld" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/I2C.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Src/I2C.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/UART.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Src/UART.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Src/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Src/usart.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/stm32g0xx_hal_msp.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/stm32g0xx_hal_timebase_tim.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/syscalls.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/system_stm32g0xx.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/tim.c" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/startup/startup_stm32g070xx.s" beforeDir="false" afterPath="$PROJECT_DIR$/startup/startup_stm32g070xx.s" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stm32g070cb.pdf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../STM32F767ZI/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/../STM32F767ZI/Src/main.c" afterDir="false" />
@@ -35,7 +45,7 @@
       <list>
         <option value="187" />
         <option value="254" />
-        <option value="272" />
+        <option value="441" />
       </list>
     </option>
     <option name="columnOrder">
@@ -53,58 +63,66 @@
     <option name="nodes">
       <map>
         <entry key="STM32G07x.svd" value="-E" />
-        <entry key="STM32G07x.svd|g:GPIO" value="-E" />
-        <entry key="STM32G07x.svd|g:USART" value="-E" />
-        <entry key="STM32G07x.svd|p:GPIOA" value="-E" />
-        <entry key="STM32G07x.svd|p:GPIOA|AFRH" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOA|AFRL" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOA|BRR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOA|BSRR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOA|IDR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOA|LCKR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOA|MODER" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOA|ODR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOA|OSPEEDR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOA|OTYPER" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOA|PUPDR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOD" value="-C" />
-        <entry key="STM32G07x.svd|p:GPIOD|AFRH" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOD|AFRL" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOD|BRR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOD|BSRR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOD|IDR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOD|LCKR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOD|MODER" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOD|ODR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOD|OSPEEDR" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOD|OTYPER" value="HC" />
-        <entry key="STM32G07x.svd|p:GPIOD|PUPDR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART2" value="-E" />
-        <entry key="STM32G07x.svd|p:USART2|BRR" value="HE" />
-        <entry key="STM32G07x.svd|p:USART2|CR1" value="HE" />
-        <entry key="STM32G07x.svd|p:USART2|CR2" value="HC" />
-        <entry key="STM32G07x.svd|p:USART2|CR3" value="HC" />
-        <entry key="STM32G07x.svd|p:USART2|GTPR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART2|ICR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART2|ISR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART2|PRESC" value="HC" />
-        <entry key="STM32G07x.svd|p:USART2|RDR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART2|RQR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART2|RTOR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART2|TDR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3" value="-C" />
-        <entry key="STM32G07x.svd|p:USART3|BRR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3|CR1" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3|CR2" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3|CR3" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3|GTPR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3|ICR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3|ISR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3|PRESC" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3|RDR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3|RQR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3|RTOR" value="HC" />
-        <entry key="STM32G07x.svd|p:USART3|TDR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH" value="-C" />
+        <entry key="STM32G07x.svd|p:FLASH|ACR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|CR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|ECCR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|KEYR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|OPTKEYR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|OPTR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|PCROP1AER" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|PCROP1ASR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|PCROP1BER" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|PCROP1BSR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|SECR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|SR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|WRP1AR" value="HC" />
+        <entry key="STM32G07x.svd|p:FLASH|WRP1BR" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC" value="-C" />
+        <entry key="STM32G07x.svd|p:NVIC|ICER" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC|ICPR" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC|IPR0" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC|IPR1" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC|IPR2" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC|IPR3" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC|IPR4" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC|IPR5" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC|IPR6" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC|IPR7" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC|ISER" value="HC" />
+        <entry key="STM32G07x.svd|p:NVIC|ISPR" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC" value="-E" />
+        <entry key="STM32G07x.svd|p:RCC|AHBENR" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|AHBRSTR" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|AHBSMENR" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|APBENR1" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|APBENR2" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|APBRSTR1" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|APBRSTR2" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|APBSMENR1" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|APBSMENR2" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|BDCR" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|CCIPR" value="HE" />
+        <entry key="STM32G07x.svd|p:RCC|CFGR" value="HE" />
+        <entry key="STM32G07x.svd|p:RCC|CICR" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|CIER" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|CIFR" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|CR" value="HE" />
+        <entry key="STM32G07x.svd|p:RCC|CSR" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|ICSCR" value="HE" />
+        <entry key="STM32G07x.svd|p:RCC|IOPENR" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|IOPRSTR" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|IOPSMENR" value="HC" />
+        <entry key="STM32G07x.svd|p:RCC|PLLSYSCFGR" value="HC" />
+        <entry key="STM32G07x.svd|p:SCB" value="-E" />
+        <entry key="STM32G07x.svd|p:SCB|AIRCR" value="HC" />
+        <entry key="STM32G07x.svd|p:SCB|CCR" value="HC" />
+        <entry key="STM32G07x.svd|p:SCB|CPUID" value="HC" />
+        <entry key="STM32G07x.svd|p:SCB|ICSR" value="HC" />
+        <entry key="STM32G07x.svd|p:SCB|SCR" value="HC" />
+        <entry key="STM32G07x.svd|p:SCB|SHPR2" value="HC" />
+        <entry key="STM32G07x.svd|p:SCB|SHPR3" value="HC" />
+        <entry key="STM32G07x.svd|p:SCB|VTOR" value="HE" />
       </map>
     </option>
   </component>
@@ -128,7 +146,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
-    <property name="last_opened_file_path" value="A:/STMicroelectronics/STM32G07x.svd" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -137,7 +155,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="project.propDebugger" />
+    <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -156,6 +174,7 @@
       <item itemvalue="OpenOCD Download &amp; Run.OCD G070" />
     </list>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -200,182 +219,215 @@
       <workItem from="1592592998023" duration="2019000" />
       <workItem from="1592597173934" duration="393000" />
       <workItem from="1592617238257" duration="11175000" />
-      <workItem from="1592656088329" duration="1364000" />
+      <workItem from="1592656088329" duration="2985000" />
+      <workItem from="1592841555724" duration="609000" />
+      <workItem from="1593038866775" duration="8417000" />
+      <workItem from="1593134604468" duration="3367000" />
+      <workItem from="1593228281483" duration="2431000" />
+      <workItem from="1593277267607" duration="2774000" />
+      <workItem from="1593328627593" duration="643000" />
+      <workItem from="1593358146900" duration="3053000" />
+      <workItem from="1593572966405" duration="682000" />
+      <workItem from="1593911484010" duration="402000" />
+      <workItem from="1594065170579" duration="17347000" />
+      <workItem from="1594160709903" duration="3755000" />
+      <workItem from="1594934878550" duration="2029000" />
+      <workItem from="1596168646615" duration="493000" />
+      <workItem from="1596169177687" duration="250000" />
+      <workItem from="1596169639573" duration="599000" />
+      <workItem from="1596293296397" duration="82000" />
+      <workItem from="1596841116187" duration="3001000" />
+      <workItem from="1597940196203" duration="1229000" />
+      <workItem from="1604421177338" duration="2535000" />
+      <workItem from="1604599095017" duration="2180000" />
+      <workItem from="1604624126274" duration="5281000" />
+      <workItem from="1604690880097" duration="653000" />
+      <workItem from="1604805506891" duration="2461000" />
+      <workItem from="1605149207988" duration="1013000" />
+      <workItem from="1606697091294" duration="5186000" />
+      <workItem from="1606804416214" duration="1615000" />
+      <workItem from="1607022609935" duration="15000" />
+      <workItem from="1607223281067" duration="11571000" />
+      <workItem from="1607314447657" duration="658000" />
+      <workItem from="1607315153830" duration="10421000" />
+      <workItem from="1607385705569" duration="8832000" />
+      <workItem from="1607550791994" duration="4562000" />
+      <workItem from="1607576714508" duration="4892000" />
+      <workItem from="1607581723324" duration="662000" />
+      <workItem from="1607620844777" duration="4038000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="2" />
+    <option name="version" value="3" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="2472" y="178" key="#New_File_Extensions" timestamp="1590565137577">
+    <state x="2334" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607529530685">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2472" y="178" key="#New_File_Extensions/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590565137577" />
-    <state x="2726" y="66" width="673" height="940" key="#Notifications" timestamp="1592278934014">
+    <state x="2334" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607529530685" />
+    <state x="2560" y="255" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1607315048486">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2726" y="66" width="673" height="940" key="#Notifications/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592278934014" />
-    <state x="2334" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1592283084827">
+    <state x="2560" y="255" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607315048486" />
+    <state width="457" height="466" key="DebuggerActiveHint" timestamp="1607390010753">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2334" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592283084827" />
-    <state x="2685" y="235" key="#com.intellij.ide.util.MemberChooser" timestamp="1591470021307">
+    <state width="457" height="466" key="DebuggerActiveHint/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607390010753" />
+    <state x="2660" y="274" key="FileChooserDialogImpl" timestamp="1606700355724">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2685" y="235" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591470021307" />
-    <state x="2635" y="222" key="#xdebugger.evaluate" timestamp="1591489365102">
+    <state x="2660" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606700355724" />
+    <state width="1107" height="285" key="GridCell.Tab.-1.bottom" timestamp="1607320223199">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2635" y="222" key="#xdebugger.evaluate/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591489365102" />
-    <state x="2682" y="107" width="638" height="824" key="ExperimentsDialog" timestamp="1591475604330">
+    <state width="1107" height="285" key="GridCell.Tab.-1.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607320223199" />
+    <state width="1107" height="285" key="GridCell.Tab.-1.center" timestamp="1607320223198">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2682" y="107" width="638" height="824" key="ExperimentsDialog/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591475604330" />
-    <state x="2660" y="274" key="FileChooserDialogImpl" timestamp="1590503655996">
+    <state width="1107" height="285" key="GridCell.Tab.-1.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607320223198" />
+    <state width="1107" height="285" key="GridCell.Tab.-1.left" timestamp="1607320223198">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2660" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1590503655996" />
-    <state width="1877" height="343" key="GridCell.Tab.-1.bottom" timestamp="1591803439422">
+    <state width="1107" height="285" key="GridCell.Tab.-1.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607320223198" />
+    <state width="1107" height="285" key="GridCell.Tab.-1.right" timestamp="1607320223199">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.-1.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591803439422" />
-    <state width="1877" height="343" key="GridCell.Tab.-1.center" timestamp="1591803439421">
+    <state width="1107" height="285" key="GridCell.Tab.-1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607320223199" />
+    <state width="960" height="289" key="GridCell.Tab.0.bottom" timestamp="1607623819411">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.-1.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591803439421" />
-    <state width="1877" height="343" key="GridCell.Tab.-1.left" timestamp="1591803439421">
+    <state width="960" height="289" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607623819411" />
+    <state width="960" height="289" key="GridCell.Tab.0.center" timestamp="1607623819411">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.-1.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591803439421" />
-    <state width="1877" height="343" key="GridCell.Tab.-1.right" timestamp="1591803439421">
+    <state width="960" height="289" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607623819411" />
+    <state width="960" height="289" key="GridCell.Tab.0.left" timestamp="1607623819411">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.-1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591803439421" />
-    <state width="1921" height="289" key="GridCell.Tab.0.bottom" timestamp="1592657431729">
+    <state width="960" height="289" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607623819411" />
+    <state width="960" height="289" key="GridCell.Tab.0.right" timestamp="1607623819411">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1921" height="289" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657431729" />
-    <state width="1921" height="289" key="GridCell.Tab.0.center" timestamp="1592657431729">
+    <state width="960" height="289" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607623819411" />
+    <state width="1084" height="297" key="GridCell.Tab.1.bottom" timestamp="1607582390731">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1921" height="289" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657431729" />
-    <state width="1921" height="289" key="GridCell.Tab.0.left" timestamp="1592657431729">
+    <state width="1084" height="297" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607582390731" />
+    <state width="1084" height="297" key="GridCell.Tab.1.center" timestamp="1607582390731">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1921" height="289" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657431729" />
-    <state width="1921" height="289" key="GridCell.Tab.0.right" timestamp="1592657431729">
+    <state width="1084" height="297" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607582390731" />
+    <state width="1084" height="297" key="GridCell.Tab.1.left" timestamp="1607582390731">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1921" height="289" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657431729" />
-    <state width="1921" height="285" key="GridCell.Tab.1.bottom" timestamp="1592657156185">
+    <state width="1084" height="297" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607582390731" />
+    <state width="1084" height="297" key="GridCell.Tab.1.right" timestamp="1607582390731">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1921" height="285" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
-    <state width="1921" height="285" key="GridCell.Tab.1.center" timestamp="1592657156185">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1921" height="285" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
-    <state width="1921" height="285" key="GridCell.Tab.1.left" timestamp="1592657156185">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1921" height="285" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
-    <state width="1921" height="285" key="GridCell.Tab.1.right" timestamp="1592657156185">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1921" height="285" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.bottom" timestamp="1592657156185">
+    <state width="1084" height="297" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607582390731" />
+    <state x="990" y="0" width="921" height="978" key="GridCell.Tab.2.bottom" timestamp="1607582390728">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.center" timestamp="1592657156185">
+    <state x="990" y="0" width="921" height="978" key="GridCell.Tab.2.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607582390728" />
+    <state x="990" y="0" width="921" height="978" key="GridCell.Tab.2.center" timestamp="1607582390728">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.left" timestamp="1592657156185">
+    <state x="990" y="0" width="921" height="978" key="GridCell.Tab.2.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607582390728" />
+    <state x="990" y="0" width="921" height="978" key="GridCell.Tab.2.left" timestamp="1607582390731">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.right" timestamp="1592657156185">
+    <state x="990" y="0" width="921" height="978" key="GridCell.Tab.2.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607582390731" />
+    <state x="990" y="0" width="921" height="978" key="GridCell.Tab.2.right" timestamp="1607582390728">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.2.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657156185" />
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.bottom" timestamp="1592632036382">
+    <state x="990" y="0" width="921" height="978" key="GridCell.Tab.2.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607582390728" />
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.3.bottom" timestamp="1604644074624">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592632036382" />
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.center" timestamp="1592632036381">
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.3.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1604644074624" />
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.3.center" timestamp="1604644074623">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592632036381" />
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.left" timestamp="1592632036381">
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.3.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1604644074623" />
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.3.left" timestamp="1604644084285">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592632036381" />
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.right" timestamp="1592632036382">
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.3.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1604644084285" />
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.3.right" timestamp="1604644074623">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1159" y="3" width="752" height="968" key="GridCell.Tab.3.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592632036382" />
-    <state x="2187" y="150" key="SettingsEditor" timestamp="1592283148868">
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.3.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1604644074623" />
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.4.bottom" timestamp="1604644074583">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.4.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1604644074583" />
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.4.center" timestamp="1604644074583">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.4.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1604644074583" />
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.4.left" timestamp="1604644074583">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.4.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1604644074583" />
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.4.right" timestamp="1604644074583">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="952" y="0" width="958" height="978" key="GridCell.Tab.4.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1604644074583" />
+    <state x="2408" y="80" key="SettingsEditor" timestamp="1607320168241">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2187" y="150" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592283148868" />
-    <state x="2012" y="92" width="1736" height="856" maximized="true" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1591376759859">
+    <state x="2408" y="80" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607320168241" />
+    <state x="2012" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1606700744904">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2012" y="92" width="1736" height="856" maximized="true" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591376759859" />
-    <state x="2434" y="248" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1592539280464">
+    <state x="2012" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606700744904" />
+    <state x="990" y="0" width="937" height="1046" key="dock-window-1" timestamp="1607582390825">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="990" y="0" width="937" height="1046" key="dock-window-1/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607582390825" />
+    <state x="990" y="0" width="937" height="1046" key="dock-window-2" timestamp="1607582390825">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="990" y="0" width="937" height="1046" key="dock-window-2/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607582390825" />
+    <state x="990" y="0" width="937" height="1046" key="dock-window-3" timestamp="1607582390825">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="990" y="0" width="937" height="1046" key="dock-window-3/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607582390825" />
+    <state x="990" y="0" width="937" height="1046" key="dock-window-4" timestamp="1607581649310">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="990" y="0" width="937" height="1046" key="dock-window-4/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607581649310" />
+    <state x="990" y="0" width="937" height="1046" key="dock-window-5" timestamp="1607393498485">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="990" y="0" width="937" height="1046" key="dock-window-5/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607393498485" />
+    <state x="990" y="0" width="937" height="1046" key="dock-window-6" timestamp="1607395554331">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="990" y="0" width="937" height="1046" key="dock-window-6/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607395554331" />
+    <state x="990" y="0" width="937" height="1046" key="dock-window-7" timestamp="1607325831245">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="990" y="0" width="937" height="1046" key="dock-window-7/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607325831245" />
+    <state x="990" y="0" width="937" height="1046" key="dock-window-8" timestamp="1607326804165">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="990" y="0" width="937" height="1046" key="dock-window-8/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607326804165" />
+    <state x="2587" y="253" width="585" height="534" key="find.popup" timestamp="1607623121581">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2434" y="248" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592539280464" />
-    <state x="1159" y="3" width="768" height="1036" key="dock-window-1" timestamp="1592657009853">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1159" y="3" width="768" height="1036" key="dock-window-1/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592657009853" />
-    <state x="1159" y="3" width="768" height="1036" key="dock-window-2" timestamp="1592619711034">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1159" y="3" width="768" height="1036" key="dock-window-2/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592619711034" />
-    <state x="1159" y="3" width="768" height="1036" key="dock-window-3" timestamp="1592625073273">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1159" y="3" width="768" height="1036" key="dock-window-3/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592625073273" />
-    <state x="1159" y="3" width="768" height="1036" key="dock-window-4" timestamp="1592635940838">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1159" y="3" width="768" height="1036" key="dock-window-4/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592635940838" />
-    <state x="1159" y="3" width="768" height="1036" key="dock-window-5" timestamp="1592635940838">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1159" y="3" width="768" height="1036" key="dock-window-5/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592635940838" />
-    <state x="1018" y="18" width="908" height="992" key="dock-window-6" timestamp="1592591851169">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1018" y="18" width="908" height="992" key="dock-window-6/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592591851169" />
-    <state x="1018" y="18" width="908" height="992" key="dock-window-7" timestamp="1592591851169">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="1018" y="18" width="908" height="992" key="dock-window-7/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592591851169" />
-    <state x="2526" y="36" width="908" height="862" key="dock-window-8" timestamp="1592592977578">
+    <state x="2587" y="253" width="585" height="534" key="find.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607623121581" />
+    <state x="2543" y="225" key="search.everywhere.popup" timestamp="1607237186279">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2526" y="36" width="908" height="862" key="dock-window-8/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592592977578" />
-    <state x="2987" y="91" width="864" height="975" key="dock-window-9" timestamp="1591656866388">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state x="2987" y="91" width="864" height="975" key="dock-window-9/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591656866388" />
-    <state x="2422" y="101" width="1287" height="801" key="find.popup" timestamp="1592346653069">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state x="667" y="119" width="585" height="801" key="find.popup/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1591471950596" />
-    <state x="2422" y="101" width="1287" height="801" key="find.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592346653069" />
-    <state x="2536" y="240" key="run.anything.popup" timestamp="1592261625978">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state x="2536" y="240" key="run.anything.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1592261625978" />
-    <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1591646326051">
-      <screen x="1920" y="0" width="1920" height="1040" />
-    </state>
-    <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1591646326051" />
+    <state x="2543" y="225" key="search.everywhere.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607237186279" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="com.jetbrains.cidr.embedded.openocd.conf.type">
+        <watch expression="greetings" language="ObjectiveC" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

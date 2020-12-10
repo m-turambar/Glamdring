@@ -38,13 +38,11 @@ basic_timer::basic_timer(const BasicTimer tim, const Mode mode, const uint16_t p
   /* Habilitamos los relojes de los periféricos y configuramos los ptrs para las interrupciones */
   if (peripheral==BasicTimer::TIM6) {
     tim6_ptr = this;
-    const bitfield TIM6EN(1, 4);
-    memoria(RCC::APBENR1) |= TIM6EN(1);
+    RCC::enable_TIM6_clock();
   }
   else if (peripheral==BasicTimer::TIM7) {
     tim7_ptr = this;
-    const bitfield TIM7EN(1, 5);
-    memoria(RCC::APBENR1) |= TIM7EN(1);
+    RCC::enable_TIM7_clock();
   }
 
   configure(mode);

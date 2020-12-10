@@ -18,6 +18,16 @@ extern "C" {
 
 /* super incomplete - will be filled in as new functionality is needed */
 namespace RCC {
+  /** Cuál es el valor de los otros relojes? Son precisos? Dependen de cada aplicación.
+   * No deberían ser constantes, o sí? */
+  enum class PrimaryClock {
+    HSI_RC = 16000000,
+    HSE_OSC,
+    LSI_RC = 32000,
+    LSE_OSC = 32768,
+    I2S_CKIN
+  };
+
   enum class GPIO_Port : uint8_t {
     A = 0,
     B = 1,
@@ -26,38 +36,58 @@ namespace RCC {
     F = 5
   };
 
-  constexpr size_t base = 0x40021000;
+  /** Esto se ve sospechosamente ineficiente, pero lo es? */
+  enum class APB_Prescaler : uint8_t {
+    P1 = 0,
+    P2 = 4,
+    P4 = 5,
+    P8 = 6,
+    P16 = 7
+  };
 
-  constexpr registro CR{base};
-  constexpr registro ICSCR{base+0x4};
-  constexpr registro CFGR{base+0x8};
-  constexpr registro PLLCFGR{base+0xC};
-  /**********************************************/
-  /**********************************************/
-  constexpr registro CIER{base+0x18};
-  constexpr registro CIFR{base+0x1C};
+  enum class AHB_Prescaler : uint8_t {
+    P1 = 0,
+    P2 = 8,
+    P4 = 9,
+    P8 = 10,
+    P16 = 11,
+    P64 = 12,
+    P128 = 13,
+    P256 = 14,
+    P512 = 0b1111,
+  };
 
-  constexpr registro CICR{base+0x20};
-  constexpr registro IOPRSTR{base+0x24};
-  constexpr registro AHBRSTR{base+0x28};
-  constexpr registro APBRSTR1{base+0x2C};
-  constexpr registro APBRSTR2{base+0x30};
-  constexpr registro IOPENR{base+0x34};
-  constexpr registro AHBENR{base+0x38};
-  constexpr registro APBENR1{base+0x3C};
+  enum class SystemClockSwitch : uint8_t {
+    HSISYS = 0,
+    HSE = 1,
+    PLLRCLK = 2,
+    LSI = 3,
+    LSE = 4
+  };
 
-  constexpr registro APBENR2{base+0x40};
-  constexpr registro IOPSMENR{base+0x44};
-  constexpr registro AHBSMENR{base+0x48};
-  constexpr registro APBSMENR1{base+0x4C};
-  constexpr registro APBSMENR2{base+0x50};
-  constexpr registro CCIPR{base+0x54};
-  /**********************************************/
-  constexpr registro BDCR{base+0x5C};
+  enum class RelojesUsart : uint8_t {
+    PCLK = 0,
+    SYSCLK = 1,
+    HSI16 = 2,
+    LSE = 3
+  };
 
-  constexpr registro CSR{base+0x60};
+  enum class RelojesI2C : uint8_t {
+    PCLK = 0,
+    SYSCLK = 1,
+    HSI16 = 2
+  };
 
-  void enable_port_clock(const GPIO_Port port);
+  /** Sí. Para el ADC, SYSCLK no es 1. */
+  enum class RelojesADC : uint8_t {
+    SYSCLK = 0,
+    PLLPCLK = 1,
+    HSI16 = 2
+  };
+
+  /** Hay un periodo de espera que el software debe tomar en consideración, de 2 ciclos, después de habilitar
+   * el reloj de un periférico. */
+  void enable_port_clock(const GPIO_Port& port);
 
   void enable_I2C1_clock();
   void enable_I2C2_clock();
@@ -66,6 +96,31 @@ namespace RCC {
   void enable_USART2_clock();
   void enable_USART3_clock();
   void enable_USART4_clock();
+
+  void enable_TIM15_clock();
+  void enable_TIM16_clock();
+  void enable_TIM17_clock();
+
+
+
+  void enable_TIM6_clock();
+  void enable_TIM7_clock();
+
+  /** Funciones para relojes del sistema */
+  void enable_SYSCFG_clock();
+  void enable_power_clock();
+
+  void configurar_prescaler_APB(APB_Prescaler pre);
+  void configurar_prescaler_AHB(AHB_Prescaler pre);
+  void seleccionar_SYSCLK(SystemClockSwitch clock);
+  SystemClockSwitch status_SYSCLK();
+  bool is_HSI_ready();
+
+  /** Funciones para origen de relojes de periféricos */
+  void seleccionar_reloj_USART1(RelojesUsart reloj);
+  void seleccionar_reloj_USART2(RelojesUsart reloj);
+  void seleccionar_reloj_I2C1(RelojesI2C reloj);
+  void seleccionar_reloj_ADC(RelojesADC reloj);
 } ;
 
 };

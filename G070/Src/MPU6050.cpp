@@ -9,12 +9,13 @@ mi2c(i2c_arg)
   mi2c.write(MPUADDR, buf, 2);
 }
 
+/* configurar frecuencia de muestreo a 1KHz */
 I2C::Status MPU6050::set_sampling_rate() const
 {
   uint8_t buf[2];
   buf[0] = 0x19;
   buf[1] = 0x07;
-  return mi2c.write(MPUADDR, buf, 2); //configurar frecuencia de muestreo a 1KHz
+  return mi2c.write(MPUADDR, buf, 2);
 }
 
 I2C::Status MPU6050::posicionar_en_registro_ax() const

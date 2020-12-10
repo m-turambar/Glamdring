@@ -6,7 +6,6 @@
 #define GLAMDRING_MI2C_H
 
 #include <cstddef>
-#include "stm32g0xx_hal.h"
 #include "helpers.h"
 
 #undef I2C1
@@ -14,6 +13,10 @@
 
 extern "C" {
 
+/*! \brief Clase que representa un puerto I2C.
+ * Usar asi:
+ * I2C i2c2(I2C::Peripheral::I2C1);
+ * i2c2.enable(I2C::Timing::Standard);*/
 struct I2C {
 
   enum class Peripheral : std::size_t {

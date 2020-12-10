@@ -6,6 +6,7 @@
 #include "RCC.h"
 #include "GPIO_Port.h"
 #include "NVIC.h"
+#include <cstring>
 
 /** Banderas que se usan mucho en las rutinas de comunicacion. Declararlas en el stack una y otra
  * vez no tiene mucho sentido, así que las hacemos globales */
@@ -16,12 +17,13 @@ constexpr static flag TC(6);
 /** No queue */
 const flag TXE(3);
 
+/** sospechoso */
 UART* UART1_ptr{nullptr};
 UART* UART2_ptr{nullptr};
 UART* UART3_ptr{nullptr};
 UART* UART4_ptr{nullptr};
 
-/** Rutinas de serviceo a interrupciones */
+/** Rutinas de serviceo a interrupciones. Igual. Es aplicación. */
 void USART1_IRQHandler(void)
 {
   auto& UART1 = *UART1_ptr;
@@ -32,24 +34,15 @@ void USART1_IRQHandler(void)
   NVIC_ClearPendingIRQ(USART1_IRQn);
 }
 
-void USART2_IRQHandler(void)
-{
-  auto& UART2 = *UART2_ptr;
-  if(UART2.ISR.is_set(RXNE)) {
-    const uint8_t b = UART2.read_byte();
-    UART2.callback_rx(b);
-  }
-  NVIC_ClearPendingIRQ(USART2_IRQn);
-}
-
 /** Por ahora no hagas la diferencia */
+/** Esto es código de aplicación en el driver. Está mal. Cambiarlo. O moverlo a código de aplicación. */
 void USART3_4_IRQHandler(void)
 {
   auto& UART3 = *UART3_ptr;
   auto& UART4 = *UART4_ptr;
   if(UART3.ISR.is_set(RXNE)) {
     const uint8_t b = UART3.read_byte();
-    /** El problema de esto es que cómo le paso una referencia al UART2 al callback
+    /** El problema de esto es que ¿cómo le paso una referencia al UART2 al callback?
      * Tienes que hacer el UART2 global, para que no sea un argumento del callback.
      * Ya hay que encontrar una solución a este patrón recurrente. */
     //UART3.callback_rx(b);
@@ -171,7 +164,7 @@ void UART::cfg_word_length(const UART::WordLength len) const
 {
   constexpr bitfield M0(1, 12);
   constexpr bitfield M1(1, 28);
-  size_t temp = (memoria(CR1) & !M0 & !M1);
+  size_t temp = (memoria(CR1) & !M0 & !M1); /** súper críptico. Claramente hay que mejorar la API. */
   temp = temp | M0(0x01 & static_cast<uint8_t>(len)) | M1(0x10 & static_cast<uint8_t>(len));
   memoria(CR1) |= temp;
 }
@@ -263,6 +256,23 @@ const UART& UART::operator<<(uint8_t b) const
   return *this;
 }
 
+/** No estoy 100% feliz con esta implementación. Duplica mucho código. Sacrifico este espacio por la conveniencia
+ * de usar char* como tipo base en esta operación, vs unsigned char *. Probablemente el segundo es más seguro pero
+ * el tiempo y las pruebas confirmarán. */
+const UART& UART::operator<<(const char* buffer) const
+{
+  const size_t sz = std::strlen(buffer);
+  bitfield tdr(9,0);
+  CR1.set(TE);
+
+  for(size_t i=0; i<sz; ++i)
+  {
+    while(ISR.is_reset(TXFNF)) {} /** esperamos hasta que la queue de tranmision deje de estar llena */
+    memoria(TDR) = tdr(buffer[i]);
+  }
+  while(ISR.is_reset(TC)) {} /** esperamos hasta que la transmision termine */
+  return *this;
+}
 
 
 

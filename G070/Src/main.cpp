@@ -1,4 +1,3 @@
-#include "main.h"
 #include <cstring>
 #include <cstdio>
 #include "I2C.h"
@@ -6,30 +5,21 @@
 #include "basic_timer.h"
 #include "GPIO_Port.h"
 #include "RCC.h"
-
-#undef TIM15
-#undef TIM16
-#undef TIM17
-#undef USART1
-#undef USART2
-#undef USART3
-#undef USART4
-
+#include "PWR.h"
+#include "FLASH.h"
 #include "general_timer.h"
 #include "UART.h"
+
+#include "NVIC.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void set_pwm_value(uint16_t val);
-
-void SystemClock_Config(void);
-
+void inicializacion();
+void configurar_relojes();
+void error(void);
 void itoa(int num, unsigned char* buffer, int base);
-
-//const volatile size_t pwm_val = (rx_buf[0]-'0')*100+(rx_buf[1]-'0')*10+(rx_buf[2]-'0');
-// set_pwm_value(pwm_val);
 
 void test_callback(void)
 {
@@ -42,15 +32,24 @@ void callback1(void)
   ++glb_flag;
 }
 
+/** Esto también es código de aplicación */
+UART* g_uart2{nullptr};
+void USART2_IRQHandler(void)
+{
+  auto& UART2 = *g_uart2;
+  constexpr static flag RXNE(5);
+  if(UART2.ISR.is_set(RXNE)) {
+    const uint8_t b = UART2.read_byte();
+    //UART2.callback_rx(b);
+    UART2 << b;
+  }
+  NVIC_ClearPendingIRQ(USART2_IRQn);
+}
+
 int main(void)
 {
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-
-  /* Configure the system clock */
-  SystemClock_Config();
+  inicializacion();
+  configurar_relojes();
   //mIWDG::set_and_go(6, 0xFF);
 
   /* Initialize all configured peripherals */
@@ -59,10 +58,17 @@ int main(void)
   RCC::enable_port_clock(RCC::GPIO_Port::C);
   GPIO::PORTA.entrada(1);
   GPIO::PORTA.salida(5);
+  GPIO::PORTA.salida(6).cfg_mode(GPIO::Mode::Alternate).cfg_alternate(GPIO::AlternFunct::AF5_TIM16);
   auto blue_btn = GPIO::PORTC.entrada(13);
   /************************************/
 
+  general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic, 0x8, 0x100); /* each tick is 1ms*/
+  t16.enable_output_compare(0x1);
+  t16.start();
+
   UART uart2(UART::Peripheral::USART2, 115200);
+  g_uart2 = &uart2;
+  uart2.enable_interrupt_rx(nullptr);
   uart2.enable_fifo().enable();
 
   /** Hasta que no encuentre un mejor mecanismo para hacer callbacks más sofisticados,
@@ -70,8 +76,8 @@ int main(void)
   UART uart3(UART::Peripheral::USART3, 9600);
   uart3.enable_interrupt_rx(nullptr).enable();
 
-  uint8_t tx_buf[64] = "---\n";
-  uint8_t greetings[32] = "Hey I just reset\n";
+  char tx_buf[64] = "---\n";
+  char greetings[32] = "Basura 123456789 Basura\n";
 
   auto led_callback = [](void) -> void {
     GPIO::PORTA.toggle(5);
@@ -86,14 +92,14 @@ int main(void)
   I2C i2c2(I2C::Peripheral::I2C1);
   i2c2.enable(I2C::Timing::Standard);
 
-  MPU6050 mpu(i2c2); //pasa una referencia al objeto i2c
-  I2C::Status res = mpu.set_sampling_rate();
+  MPU6050 mpu(i2c2); //instancia que representa a nuestro acelerómetro
+  mpu.set_sampling_rate();
 
-  uart2.transmitq(greetings, strlen((const char*)greetings));
+  uart2.transmitq((const uint8_t *)greetings, strlen((const char*)greetings));
+  //uart2 << greetings;
   uint8_t buf[16] = {0};
   float acc[3] = {0};
 
-  /* HAL_GetTick regresa en milisegundos. ;/ */
   while (1) {
 
     if(glb_flag%2 == 1) {
@@ -101,9 +107,10 @@ int main(void)
       mpu.leer(buf, 6);
       mpu.convert_to_float(acc, buf, 3);
 
-      std::sprintf((char*)tx_buf, "ax=%.2f\t ay=%.2f\t az=%.2f\n\r", acc[0], acc[1], acc[2]);
+      std::sprintf(tx_buf, "ax=%.2f\t ay=%.2f\t az=%.2f\n\r", acc[0], acc[1], acc[2]);
 
-      uart2.transmitq(tx_buf, std::strlen((const char*)tx_buf));
+      //uart2.transmitq(tx_buf, std::strlen((const char*)tx_buf));
+      uart2 << tx_buf;
       glb_flag = 0;
     }
 
@@ -111,106 +118,63 @@ int main(void)
       t17.start();
     }
 
-    /** Forwardeo del UART3 al UART2 */
-    if(uart3.available()) {
-      uart2.write_byte(uart3.read_byte());
-    }
-
-    /** Pass through to UART 3 */
-    if(uart2.available()) {
-      uart3.write_byte(uart2.read_byte());
-    }
-
-
+    if(uart2.available())
+      uart3 << uart2.read_byte();
   }
-
 }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
+void inicializacion()
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
-
-  /** Configure the main internal regulator output voltage 
-  */
-  HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
-  /** Initializes the CPU, AHB and APB busses clocks 
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct)!=HAL_OK) {
-    Error_Handler();
-  }
-  /** Initializes the CPU, AHB and APB busses clocks 
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
-      | RCC_CLOCKTYPE_PCLK1;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0)!=HAL_OK) {
-    Error_Handler();
-  }
-  /** Initializes the peripherals clocks 
-  */
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
-  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
-  PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_SYSCLK;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit)!=HAL_OK) {
-    Error_Handler();
-  }
+  FLASH::prefetch_buffer_enable();
+  RCC::enable_SYSCFG_clock();
+  RCC::enable_power_clock();
+  //NVIC_SetPriority(PendSV_IRQn, 3, 0);
+  PWR::configurar_regulador(PWR::Voltaje::Range_1);
 }
 
-/**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM3 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+void configurar_relojes()
 {
+  /** Configurar los relojes del sistema según la aplicación */
+  RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P16);
+  RCC::configurar_prescaler_AHB(RCC::AHB_Prescaler::P1);
 
-  if (htim->Instance==TIM3) {
-    HAL_IncTick();
-  }
+  if(!RCC::is_HSI_ready())
+    error();
 
+  RCC::seleccionar_SYSCLK(RCC::SystemClockSwitch::HSISYS);
+  RCC::SystemClockSwitch fuente_sysclk = RCC::status_SYSCLK();
+
+  if(fuente_sysclk != RCC::SystemClockSwitch::HSISYS)
+    error();
+
+  RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P1);
+
+  /** Configurar los relojes de los periféricos, sus fuentes. */
+  RCC::seleccionar_reloj_USART2(RCC::RelojesUsart::PCLK);
 }
 
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
+
+void error(void)
 {
   /* User can add his own implementation to report the HAL error return state */
   while (1);
 }
 
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
+/*
+void set_pwm_value(uint16_t val);void set_pwm_value(uint16_t val)
 {
-  /* User can add his own implementation to report the file name and line number,
-     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-}
-#endif /* USE_FULL_ASSERT */
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = val;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+
+  HAL_TIM_PWM_ConfigChannel(&htim14, &sConfigOC, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+}*/
+//const volatile size_t pwm_val = (rx_buf[0]-'0')*100+(rx_buf[1]-'0')*10+(rx_buf[2]-'0');
+// set_pwm_value(pwm_val);
 
 #ifdef __cplusplus
 }

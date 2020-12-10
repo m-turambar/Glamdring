@@ -40,23 +40,26 @@ general_timer::general_timer(const GeneralTimer tim, const Mode mode, const uint
     EGR(base+0x14),
     CNT(base+0x24),
     PSC(base+0x28),
-    ARR(base+0x2C)
+    ARR(base+0x2C),
+    /*** general timer ***/
+    CCMR1(base+0x18),
+    CCER(base+0x20),
+    CCR1(base+0x34),
+    BDTR(base+0x44)
 {
   /* Habilitamos los relojes de los periféricos y configuramos los ptrs para las interrupciones */
+  /** TODO: move this to RCC */
   if (peripheral==GeneralTimer::TIM15) {
     tim15_ptr = this;
-    bitfield TIM15EN(1, 16);
-    memoria(RCC::APBENR2) |= TIM15EN(1);
+    RCC::enable_TIM15_clock();
   }
   else if (peripheral==GeneralTimer::TIM16) {
     tim16_ptr = this;
-    bitfield TIM16EN(1, 17);
-    memoria(RCC::APBENR2) |= TIM16EN(1);
+    RCC::enable_TIM16_clock();
   }
   else if (peripheral==GeneralTimer::TIM17) {
     tim17_ptr = this;
-    bitfield TIM17EN(1, 18);
-    memoria(RCC::APBENR2) |= TIM17EN(1);
+    RCC::enable_TIM17_clock();
   }
 
   configure(mode);
@@ -98,8 +101,8 @@ void general_timer::enable_interrupt(void (*callback_fn)(void),const uint8_t isr
         (peripheral==GeneralTimer::TIM16 ? TIM16_IRQn :
         (peripheral==GeneralTimer::TIM17 ? TIM17_IRQn : HardFault_IRQn)));
 
-  bitfield UIE(1,0);
-  memoria(DIER) |= UIE(1);
+  flag UIE(0);
+  DIER.set(UIE);
 
   NVIC_SetPriority(mIRQn, isr_priority);
   NVIC_EnableIRQ(mIRQn);
@@ -109,4 +112,25 @@ void general_timer::enable_interrupt(void (*callback_fn)(void),const uint8_t isr
 void general_timer::start(void) const
 {
   memoria(CR1) |= (0x1);
+}
+
+/** esto lo escribiste crudo, has double check */
+void general_timer::enable_output_compare(uint16_t cmp) const
+{
+  bitfield CC1S(2,0); /* seleccion de capture/compare. 00 es ouput. 01,10,11 son inputs. */
+  bitfield OC1M(2,4);
+  size_t temp = memoria(CCMR1);
+  temp &= (!CC1S | !OC1M);
+  temp |= CC1S(0) | OC1M(3);
+  /** Configura el registro para que haga toggle */
+  memoria(CCMR1) = temp;
+  /** Configura el valor a comparar. Hace falta seleccionar el canal. */
+  memoria(CCR1) = cmp;
+  /* Habilita OC */
+  memoria(CCER) |= 1;
+
+  flag MOE(15);
+  flag BKP(13);
+  BDTR.set(BKP);
+  BDTR.set(MOE);
 }
