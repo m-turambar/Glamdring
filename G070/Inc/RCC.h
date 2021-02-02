@@ -97,6 +97,9 @@ namespace RCC {
   void enable_USART3_clock();
   void enable_USART4_clock();
 
+  void enable_SPI1_I2S1_clock();
+  void enable_SPI2_clock();
+
   void enable_TIM15_clock();
   void enable_TIM16_clock();
   void enable_TIM17_clock();

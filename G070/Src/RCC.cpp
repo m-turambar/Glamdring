@@ -85,6 +85,20 @@ namespace RCC
 
   /*******************************************/
 
+  void enable_SPI1_I2S1_clock()
+  {
+    const flag SPI1EN(12);
+    APBENR2.set(SPI1EN);
+  }
+
+  void enable_SPI2_clock()
+  {
+    const flag SPI2EN(14);
+    APBENR1.set(SPI2EN);
+  }
+
+  /*******************************************/
+
   void enable_TIM6_clock()
   {
     const flag TIM6EN(4);

@@ -9,8 +9,9 @@
 #include "FLASH.h"
 #include "general_timer.h"
 #include "UART.h"
-
+#include "SPI.h"
 #include "NVIC.h"
+#include "NRF24.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,6 +47,83 @@ void USART2_IRQHandler(void)
   NVIC_ClearPendingIRQ(USART2_IRQn);
 }
 
+int spi_loopback_test(SPI& spi)
+{
+  int n_errors = 0;
+  for(uint8_t i = 0; i<255; ++i)
+  {
+    spi.escribir(i);
+    uint8_t msg = spi.leer();
+    if(msg != i)
+      n_errors++;
+  }
+  return n_errors;
+}
+
+int test_radio_status(NRF24& radio, const uint8_t status_esperado)
+{
+  uint8_t status = 0;
+  uint32_t err_cnt = 0;
+  for(uint32_t i=0; i<1000; ++i)
+  {
+    status = radio.leer_registro(NRF24::Registro::Status);
+    if(status != status_esperado)
+      err_cnt++;
+  }
+  return err_cnt;
+}
+
+int test_radio_register_write_read(NRF24& radio)
+{
+  uint8_t val = 0;
+  uint32_t err_cnt = 0;
+  for(uint32_t i=0; i<128; ++i)
+  {
+    radio.escribir_registro(NRF24::Registro::Config, i);
+    val = radio.leer_registro(NRF24::Registro::Config);
+    if(val != i)
+      err_cnt++;
+  }
+  return err_cnt;
+}
+
+/** Al tercer byte hay problemas, 14,30. Por? MAX_RT se activa en el YC*/
+int test_radio_tx_rx(NRF24& tx, NRF24& rx)
+{
+  uint32_t err_cnt = 0;
+  for(uint32_t i=0; i<255; ++i)
+  {
+    tx.transmitir_byte(i);
+    volatile uint8_t status = rx.leer_registro(NRF24::Registro::Status);
+    volatile uint8_t status_tx = tx.leer_registro(NRF24::Registro::Status);
+    while((status & (1 << 6)) == 0)
+    {
+      status_tx = tx.leer_registro(NRF24::Registro::Status);
+      if((status_tx & (1 << 4)) != 0) //Si MAX_RT...:
+      {
+        tx.clear_interrupts();
+        tx.flush_tx_fifo();
+        tx.transmitir_byte(i);
+      }
+      status = rx.leer_registro(NRF24::Registro::Status);
+    }
+    uint8_t rcvd = rx.recibir_byte();
+    rx.clear_interrupts(); //TODO solo clear RX_DR
+    tx.clear_interrupts(); //TODO solo clear TX_DS
+    rx.flush_rx_fifo();
+    tx.flush_tx_fifo();
+    status = rx.leer_registro(NRF24::Registro::Status);
+    status_tx = tx.leer_registro(NRF24::Registro::Status);
+    if((status & (1 << 6)) == 0)
+    {
+      uint8_t recibido_de_nuevo = rx.recibir_byte();
+    }
+
+    if(rcvd != i) { err_cnt++; }
+  }
+  return err_cnt;
+}
+
 int main(void)
 {
   inicializacion();
@@ -60,6 +138,7 @@ int main(void)
   GPIO::PORTA.salida(5);
   GPIO::PORTA.salida(6).cfg_mode(GPIO::Mode::Alternate).cfg_alternate(GPIO::AlternFunct::AF5_TIM16);
   auto blue_btn = GPIO::PORTC.entrada(13);
+
   /************************************/
 
   general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic, 0x8, 0x100); /* each tick is 1ms*/
@@ -75,6 +154,43 @@ int main(void)
    * seguiré haciendo cochinadas en las interrupciones. Hay que buscar una solución. */
   UART uart3(UART::Peripheral::USART3, 9600);
   uart3.enable_interrupt_rx(nullptr).enable();
+
+  /************************************/
+  const GPIO::pin pin_enable_radio1(GPIO::PORTC, 5); //TODO
+  GPIO::PORTC.salida(5);
+  const GPIO::pin pin_enable_radio2(GPIO::PORTC, 4); //TODO
+  GPIO::PORTC.salida(6);
+  GPIO::pin ss_radio1(GPIO::PORTA, 9);
+  GPIO::PORTA.salida(9);
+  GPIO::pin ss_radio2(GPIO::PORTA, 10);
+  GPIO::PORTA.salida(10);
+
+  /** SPI1 tal vez sí funcionaba, pero por la paz vamos spi 2. */
+  SPI spi2(SPI::Peripheral::SPI2);
+  spi2.inicializar();
+
+  NRF24 radio1(spi2, ss_radio1, pin_enable_radio1);
+  NRF24 radio2(spi2, ss_radio2, pin_enable_radio2);
+
+  radio1.config_default();
+  radio2.config_default();
+  auto config = radio1.leer_registro(NRF24::Registro::Config);
+  auto config2 = radio2.leer_registro(NRF24::Registro::Config);
+
+  radio2.encender(NRF24::Modo::RX);
+  radio1.encender(NRF24::Modo::TX);
+  auto status1 = radio1.leer_registro(NRF24::Registro::Status);
+  auto status2 = radio2.leer_registro(NRF24::Registro::Status);
+
+  auto errors = test_radio_status(radio2, 14);
+
+  config = radio1.leer_registro(NRF24::Registro::Config);
+  config2 = radio2.leer_registro(NRF24::Registro::Config);
+  errors = test_radio_tx_rx(radio1, radio2);
+
+  status2 = radio2.leer_registro(NRF24::Registro::Status);
+  status1 = radio1.leer_registro(NRF24::Registro::Status);
+  /************************************/
 
   char tx_buf[64] = "---\n";
   char greetings[32] = "Basura 123456789 Basura\n";
@@ -96,7 +212,7 @@ int main(void)
   mpu.set_sampling_rate();
 
   uart2.transmitq((const uint8_t *)greetings, strlen((const char*)greetings));
-  //uart2 << greetings;
+  uart2 << greetings;
   uint8_t buf[16] = {0};
   float acc[3] = {0};
 
