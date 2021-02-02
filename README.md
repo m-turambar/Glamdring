@@ -35,3 +35,7 @@ Example, that conditionally changes the definition of the interrupt handler for 
 #endif
 
 Porting to other MCUs will be easy, but we need to split application code from driver code, and share drivers that can be shared.
+
+****************************************
+Necesitamos considerar seriamente si podríamos tener una rama master con toda la funcionalidad en común, y ramas especiales para cada micro.
+ESO suena como una idea muy interesante.
