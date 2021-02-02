@@ -17,7 +17,7 @@ namespace GPIO {
     AF0_OSC          = 0x0,  /*!< OSC (By pass and Enable) Alternate Function mapping */
     AF0_OSC32        = 0x0,  /*!< OSC32 (By pass and Enable) Alternate Function mapping */
     AF0_SWJ          = 0x0,  /*!< SWJ (SWD) Alternate Function mapping */
-    AF0_SPI1         = 0x0,  /*!< SPI1 Alternate Function mapping */
+    AF0_SPI1         = 0x0,  /*!< SPI1_SCK, I2S1_CK, SPI1_MOSI, SPI1_MISO, SPI1_NSS */
     AF0_SPI2         = 0x0,  /*!< SPI2 Alternate Function mapping */
     AF0_TIM14        = 0x0,  /*!< TIM14 Alternate Function mapping */
     AF0_USART1       = 0x0,  /*!< USART1 Alternate Function mapping */
@@ -48,7 +48,7 @@ namespace GPIO {
     AF4_USART3       = 0x4,  /*!< USART3 Alternate Function mapping */
     AF4_USART4       = 0x4,  /*!< USART4 Alternate Function mapping */
 
-    AF5_SPI1         = 0x5,  /*!< SPI2 Alternate Function mapping */
+    AF5_SPI1         = 0x5,  /*!< SPI1 Alternate Function mapping */
     AF5_SPI2         = 0x5,  /*!< SPI2 Alternate Function mapping */
     AF5_TIM1         = 0x5,  /*!< TIM1 Alternate Function mapping */
     AF5_TIM15        = 0x5,  /*!< TIM15 Alternate Function mapping */
