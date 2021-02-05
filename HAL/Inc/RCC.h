@@ -3,8 +3,10 @@
 
 #ifdef STM32L475xx
 #include "RCC_L475.h"
-#else
+#elif defined(STM32G070xx)
 #include "RCC_G070.h"
+#elif defined(STM32F767xx)
+#include "RCC_F767.h"
 #endif
 
 #endif

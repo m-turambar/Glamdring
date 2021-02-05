@@ -190,6 +190,7 @@ void UART::cfg_parity(const UART::Parity parity) const
 
 void UART::init_gpios()
 {
+#if defined(STM32G070xx)
   if(peripheral == Peripheral::USART2) {
     RCC::enable_port_clock(RCC::GPIO_Port::A);
     GPIO::PORTA.pin_for_UART(2, GPIO::AlternFunct::AF1_USART2);
@@ -201,8 +202,16 @@ void UART::init_gpios()
     GPIO::PORTD.pin_for_UART(8, GPIO::AlternFunct::AF0_USART3);
     GPIO::PORTD.pin_for_UART(9, GPIO::AlternFunct::AF0_USART3);
   }
-}
 
+#elif defined(STM32F767xx)
+  if(peripheral == Peripheral::USART3) {
+    RCC::enable_port_clock(RCC::GPIO_Port::D);
+    GPIO::PORTD.pin_for_UART(8, GPIO::AlternFunct::AF7_USART3);
+    GPIO::PORTD.pin_for_UART(9, GPIO::AlternFunct::AF7_USART3);
+  }
+#endif
+
+}
 /** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
 /** ** ** ** ** ** ** ** ** ** ** COMMS RX TX ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
 /** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
@@ -273,6 +282,5 @@ const UART& UART::operator<<(const char* buffer) const
   while(ISR.is_reset(TC)) {} /** esperamos hasta que la transmision termine */
   return *this;
 }
-
 
 

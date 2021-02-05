@@ -5,7 +5,7 @@
 #define L475_NVIC_H
 
 /**
-  * @brief Configuration of the Cortex-M0+ Processor and Core Peripherals
+  * @brief Configuration of the Cortex-M0+ Processor and Core Peripherals. Lol esto es un M4. Actualizar
    */
 #define __CM0PLUS_REV             0 /*!< Core Revision r0p0                            */
 #define __MPU_PRESENT             1 /*!< STM32G0xx  provides an MPU                    */

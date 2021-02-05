@@ -13,7 +13,7 @@
 
 /** recuerda que las interrupciones deben tener C linkage. Por eso agregar esto aquí en lugar del
  * cpp funciona. */
-#ifdef STM32L475xx
+#if defined(STM32L475xx) || defined(STM32F767xx)
 #define TIM6_IRQHandler(void) TIM6_DAC_IRQHandler(void)
 #endif
 

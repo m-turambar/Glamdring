@@ -8,8 +8,10 @@
 #include <helpers.h>
 #ifdef STM32L475xx
 #include <l475_gpio_af.h>
-#else
+#elif defined(STM32G070xx)
 #include <g070_gpio_af.h>
+#elif defined(STM32F767xx)
+#include <f767_gpio_af.h>
 #endif
 
 #undef GPIO
@@ -27,7 +29,7 @@ namespace GPIO {
     F = 0x48001400
   };
 
-#else
+#elif defined(STM32G070xx)
 
   /* Deberíamos poner el puerto 'E' para compatibilidad con otros dispositivos? */
   enum class Port {
@@ -36,6 +38,22 @@ namespace GPIO {
     C = 0x50000800,
     D = 0x50000C00,
     F = 0x50001400
+  };
+
+#elif defined(STM32F767xx)
+
+  enum class Port {
+    A = 0x40020000,
+    B = 0x40020400,
+    C = 0x40020800,
+    D = 0x40020C00,
+    E = 0x40021000,
+    F = 0x40021400,
+    G = 0x40021800,
+    H = 0x40021C00,
+    I = 0x40022000,
+    J = 0x40022400,
+    K = 0x40022800
   };
 
 #endif

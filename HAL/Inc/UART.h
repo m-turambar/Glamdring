@@ -24,8 +24,15 @@ class UART {
 
 public:
 
+  //esto se ve horrible así, Tal vez hay que crear un archivo que se llame mem map o algo así
   enum class Peripheral {
+#ifdef STM32L475xx
     USART1 = 0x40013800,
+#elif defined(STM32G070xx)
+    USART1 = 0x40013800,
+#elif defined(STM32F767xx)
+    USART1 = 0x40011000,
+#endif
     USART2 = 0x40004400,
     USART3 = 0x40004800,
     USART4 = 0x40004C00,

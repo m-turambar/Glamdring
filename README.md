@@ -37,5 +37,31 @@ Example, that conditionally changes the definition of the interrupt handler for 
 Porting to other MCUs will be easy, but we need to split application code from driver code, and share drivers that can be shared.
 
 ****************************************
-Necesitamos considerar seriamente si podríamos tener una rama master con toda la funcionalidad en común, y ramas especiales para cada micro.
-ESO suena como una idea muy interesante.
+
+OK Porting to other MCUs is *not* easy.
+
+I just ported to STM32F767 and there were nuances.
+
+Ok español: El M7 tiene cosas en común con el M0+. La enumeración de
+selección de relojes para SYSCLK es más parecida al M0+ que al M4.
+Supongo que esto es por arquitectura de ST y no de ARM.
+
+El módulo PWR también debe ser específico de cada micro. Varios bitfields cambian
+de offset en registros como CR. El M7 bootea más "listo" que el M4, similar
+al M0+. Para un arranque con el HSI16 no hace falta demasiada configuración.
+
+En el RCC el bitfield SYSCFGEN me lo movieron también y tomó tiempo verlo.
+
+La dirección de UART1 también cambia. UART 2,3,4 tienen las mismas direcciones.
+SPI 1 y 2 tienen las mismas direcciones.
+
+Dividí el proyecto en folders de aplicación para cada micro, y una HAL en
+común para todos.
+
+******************************************
+
+Problemas con el USART vs UART - no son lo mismo
+
+*****************************************
+
+Lee esto después: Todo el documento pues https://www.mouser.mx/news/stmicroelectronics-stspin-ebook/mobile/index.html#p=18
