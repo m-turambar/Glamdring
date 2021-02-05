@@ -8,7 +8,8 @@
 *.d
 *.obj
 *.cmake
-G070/Martillo/CMakeFiles/*
+G070/HAL
 G070/CMakeCache.txt
 G070/en.stm32g0_cad
 G070/cmake-build-debug
+L475/cmake-build-debug

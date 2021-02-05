@@ -39,7 +39,7 @@ int main(void)
     GPIO::PORTC.toggle(9);
   };
 
-  basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic, 0x1800, 0x800);
+  basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic, 0x1800, 0x1000);
   t7.enable_interrupt(led_callback);
   t7.start();
 
