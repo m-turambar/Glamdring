@@ -31,7 +31,7 @@ public:
   void encender(Modo modo) const;
 
   void transmitir_byte(const uint8_t b) const;
-  uint8_t recibir_byte() const;
+  uint8_t leer_rx() const;
 
   uint8_t leer_registro(Registro reg) const;
   void escribir_registro(Registro reg, uint8_t val) const;

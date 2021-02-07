@@ -44,13 +44,13 @@
 
     if(peripheral==Peripheral::I2C2) {
       RCC::enable_port_clock(RCC::GPIO_Port::B);
-      GPIO::PORTB.pin_for_I2C(10, GPIO::AlternFunct::AF6_I2C2);
-      GPIO::PORTB.pin_for_I2C(11, GPIO::AlternFunct::AF6_I2C2);
+      GPIO::PORTB.pin_for_I2C(10, GPIO::AlternFunct::AF6);
+      GPIO::PORTB.pin_for_I2C(11, GPIO::AlternFunct::AF6);
     }
     else if(peripheral==Peripheral::I2C1) {
       RCC::enable_port_clock(RCC::GPIO_Port::A);
-      GPIO::PORTA.pin_for_I2C(9, GPIO::AlternFunct::AF6_I2C1);
-      GPIO::PORTA.pin_for_I2C(10, GPIO::AlternFunct::AF6_I2C1);
+      GPIO::PORTA.pin_for_I2C(9, GPIO::AlternFunct::AF6);
+      GPIO::PORTA.pin_for_I2C(10, GPIO::AlternFunct::AF6);
     }
   }
 

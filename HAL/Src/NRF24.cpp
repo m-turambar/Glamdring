@@ -43,7 +43,7 @@ void NRF24::transmitir_byte(const uint8_t b) const
   SS_pin.set();
 }
 
-uint8_t NRF24::recibir_byte() const
+uint8_t NRF24::leer_rx() const
 {
   SS_pin.reset();
   spi.escribir(static_cast<uint8_t>(Commands::R_RX_PAYLOAD));

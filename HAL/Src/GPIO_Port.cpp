@@ -217,4 +217,16 @@ namespace GPIO
   {
     port.reset_output(num);
   }
+
+  const pin& pin::entrada() const
+  {
+    port.entrada(num);
+    return *this;
+  }
+
+  const pin& pin::salida() const
+  {
+    port.salida(num);
+    return *this;
+  }
 }

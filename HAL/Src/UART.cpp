@@ -193,21 +193,21 @@ void UART::init_gpios()
 #if defined(STM32G070xx)
   if(peripheral == Peripheral::USART2) {
     RCC::enable_port_clock(RCC::GPIO_Port::A);
-    GPIO::PORTA.pin_for_UART(2, GPIO::AlternFunct::AF1_USART2);
-    GPIO::PORTA.pin_for_UART(3, GPIO::AlternFunct::AF1_USART2);
+    GPIO::PORTA.pin_for_UART(2, GPIO::AlternFunct::AF1);
+    GPIO::PORTA.pin_for_UART(3, GPIO::AlternFunct::AF1);
   }
   else if(peripheral == Peripheral::USART3) {
     /** No es la única configuración posible, también es viable en puerto C 4,11 con otro AF val */
     RCC::enable_port_clock(RCC::GPIO_Port::D);
-    GPIO::PORTD.pin_for_UART(8, GPIO::AlternFunct::AF0_USART3);
-    GPIO::PORTD.pin_for_UART(9, GPIO::AlternFunct::AF0_USART3);
+    GPIO::PORTD.pin_for_UART(8, GPIO::AlternFunct::AF0); // TX
+    GPIO::PORTD.pin_for_UART(9, GPIO::AlternFunct::AF0); // RX
   }
 
 #elif defined(STM32F767xx)
   if(peripheral == Peripheral::USART3) {
     RCC::enable_port_clock(RCC::GPIO_Port::D);
-    GPIO::PORTD.pin_for_UART(8, GPIO::AlternFunct::AF7_USART3);
-    GPIO::PORTD.pin_for_UART(9, GPIO::AlternFunct::AF7_USART3);
+    GPIO::PORTD.pin_for_UART(8, GPIO::AlternFunct::AF7); // TX
+    GPIO::PORTD.pin_for_UART(9, GPIO::AlternFunct::AF7); // RX
   }
 #endif
 

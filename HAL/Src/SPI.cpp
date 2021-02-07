@@ -79,6 +79,7 @@ void SPI::config_LSB_first() const
 /** Habilita los relojes de los gpios que se usarán para la comunicación. */
 void SPI::init_gpios() const
 {
+#ifdef STM32G070xx
   /**
    * No son las únicas posibles configuraciones. Hay más GPIOS que pueden usarse para cada función.
    * También no necesariamente tienes que usar todos en AF0 o todos en AF1
@@ -107,18 +108,28 @@ void SPI::init_gpios() const
 
   if(peripheral==Peripheral::SPI1_I2S1) {
     RCC::enable_port_clock(RCC::GPIO_Port::A);
-    GPIO::PORTA.pin_for_SPI(12, GPIO::AlternFunct::AF0_SPI1);
-    GPIO::PORTA.pin_for_SPI(11, GPIO::AlternFunct::AF0_SPI1);
-    GPIO::PORTA.pin_for_SPI(1, GPIO::AlternFunct::AF0_SPI1);
+    GPIO::PORTA.pin_for_SPI(12, GPIO::AlternFunct::AF0);
+    GPIO::PORTA.pin_for_SPI(11, GPIO::AlternFunct::AF0);
+    GPIO::PORTA.pin_for_SPI(1, GPIO::AlternFunct::AF0);
     //GPIO::PORTA.pin_for_UART_or_SPI(4, GPIO::AlternFunct::AF0_SPI1); //Cómo usarlo con dos esclavos en bus?
   }
   else if(peripheral==Peripheral::SPI2) {
     RCC::enable_port_clock(RCC::GPIO_Port::B);
-    GPIO::PORTB.pin_for_SPI(11, GPIO::AlternFunct::AF0_SPI2);
-    GPIO::PORTB.pin_for_SPI(14, GPIO::AlternFunct::AF0_SPI2);
-    GPIO::PORTB.pin_for_SPI(13, GPIO::AlternFunct::AF0_SPI2);
+    GPIO::PORTB.pin_for_SPI(11, GPIO::AlternFunct::AF0);
+    GPIO::PORTB.pin_for_SPI(14, GPIO::AlternFunct::AF0);
+    GPIO::PORTB.pin_for_SPI(13, GPIO::AlternFunct::AF0);
     //GPIO::PORTB.pin_for_UART_or_SPI(12, GPIO::AlternFunct::AF0_SPI2);
   }
+#elif defined(STM32F767xx)
+  if(peripheral==Peripheral::SPI1_I2S1) {
+    RCC::enable_port_clock(RCC::GPIO_Port::A);
+    //GPIO::PORTA.pin_for_SPI(4, GPIO::AlternFunct::AF5); // NSS
+    GPIO::PORTA.pin_for_SPI(5, GPIO::AlternFunct::AF5); // CLK
+    GPIO::PORTA.pin_for_SPI(6, GPIO::AlternFunct::AF5); //MISO
+    GPIO::PORTA.pin_for_SPI(7, GPIO::AlternFunct::AF5); //MOSI
+  }
+#endif
+
 }
 
 

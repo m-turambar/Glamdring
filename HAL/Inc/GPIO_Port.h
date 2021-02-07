@@ -169,6 +169,8 @@ namespace GPIO {
     const pin& cfg_speed(Speed speed) const;
     const pin& cfg_pull(PullResistor pupd) const;
     const pin& cfg_alternate(AlternFunct afsel) const;
+    const pin& entrada() const;
+    const pin& salida() const;
     uint8_t read_input() const;
     uint8_t read_output() const;
     void set() const;
