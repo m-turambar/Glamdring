@@ -8,9 +8,6 @@
 #include "helpers.h"
 #include "RCC.h"
 
-#undef TIM6
-#undef TIM7
-
 /** recuerda que las interrupciones deben tener C linkage. Por eso agregar esto aquí en lugar del
  * cpp funciona. */
 #if defined(STM32L475xx) || defined(STM32F767xx)

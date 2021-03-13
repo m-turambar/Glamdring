@@ -6,15 +6,7 @@
 #define G070_GPIO_PORT_H
 
 #include <helpers.h>
-#ifdef STM32L475xx
-#include <l475_gpio_af.h>
-#elif defined(STM32G070xx)
-#include <g070_gpio_af.h>
-#elif defined(STM32F767xx)
-#include <f767_gpio_af.h>
-#endif
-
-#undef GPIO
+#include <gpio_af.h>
 
 namespace GPIO {
   class pin;

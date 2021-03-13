@@ -16,9 +16,6 @@ namespace GPIO
    * operaciones atómicas. */
   const GPIO_Port& GPIO_Port::cfg_mode(const uint8_t pin, const Mode mode) const
   {
-    //const bitfield MODEx(2, pin*2);
-    //const size_t temp = memoria(MODER) & !MODEx;
-    //memoria(MODER) = temp | MODEx(static_cast<size_t>(mode)); //parece trabalenguas, pero es preciso
     const bitfield MODERx(2, pin*2, static_cast<uint8_t>(mode));
     MODER.write(MODERx);
     return *this;

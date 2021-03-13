@@ -8,9 +8,6 @@
 #include "helpers.h"
 #include "RCC.h"
 
-#undef TIM6
-#undef TIM7
-
 extern "C"
 {
 
