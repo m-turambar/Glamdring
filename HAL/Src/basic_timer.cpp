@@ -83,8 +83,8 @@ void basic_timer::enable_interrupt(void (*callback_fn)(void),const uint8_t isr_p
 
   const IRQn_Type mIRQn = (peripheral==BasicTimer::TIM6 ? TIM6_IRQn :
                           (peripheral==BasicTimer::TIM7 ? TIM7_IRQn : HardFault_IRQn));
-  const bitfield UIE(1,0);
-  memoria(DIER) |= UIE(1);
+  const flag UIE(0);
+  DIER.set(UIE);
   NVIC_SetPriority(mIRQn, isr_priority);
   NVIC_EnableIRQ(mIRQn);
 }
@@ -100,4 +100,18 @@ void basic_timer::start(void) const
   //memoria(EGR) |= 1;
 
   memoria(CR1) |= (0x1);
+}
+
+/** válido de 1us* a 65ms */
+void basic_timer::configurar_periodo_us(uint16_t periodo)
+{
+  memoria(PSC) = 0x10; // 16, para que cada "tick" sea de 1us
+  memoria(ARR) = periodo;
+}
+
+/** válido de 1ms a 65s */
+void basic_timer::configurar_periodo_ms(uint16_t periodo)
+{
+  memoria(PSC) = 0x3E80; // 16000, para que cada "tick" sea de 1ms
+  memoria(ARR) = periodo;
 }

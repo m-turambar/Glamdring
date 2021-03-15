@@ -63,7 +63,7 @@ public:
 
   void enable() const;
 
-  const UART& enable_interrupt_rx(void (*callback_arg)(const uint8_t byte), const uint8_t priority=3);
+  const UART& enable_interrupt_rx(void (*callback_arg)(), const uint8_t priority=3);
 
   void cfg_word_length(const WordLength len) const;
 
@@ -91,7 +91,7 @@ public:
   const UART& operator<<(const char* buffer) const;
 
   const Peripheral peripheral;
-  void (*callback_rx)(const uint8_t byte) {nullptr};
+  void (*callback)() {nullptr};
   const size_t base, baud;
   const registro CR1, CR2, CR3, BRR, GTPR, RTOT, RQR, ISR, ICR, RDR, TDR, PRESC;
 };

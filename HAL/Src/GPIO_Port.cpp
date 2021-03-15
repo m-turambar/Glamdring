@@ -160,6 +160,15 @@ namespace GPIO
     cfg_speed(pin, Speed::VeryLow);
   }
 
+  void GPIO_Port::pin_for_timer(const uint8_t pin, const AlternFunct af) const
+  {
+    cfg_mode(pin, Mode::Alternate);
+    cfg_alternate(pin, af);
+    cfg_output_type(pin, OutputType::PushPull);
+    cfg_pull(pin, PullResistor::NoPull);
+    cfg_speed(pin, Speed::VeryLow); //ayuda a reducir el ruido
+  }
+
   /*************************************************************************************************************/
   /*************************************************************************************************************/
   /*************************************************************************************************************/

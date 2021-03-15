@@ -36,15 +36,6 @@ public:
     PWM
   };
 
-
-  /**
-  \brief   Basic Timer constructor
-  \details Creates a timer with basic periodic interrupt, or One_Pulse_Mode capabilities.
-  \param [in]   tim         BasicTimer peripheral selector
-  \param [in]   prescaler   Prescaler value
-  \param [in]   autoreload  Reload value for the timer counter
-
- */
   general_timer(const GeneralTimer tim, const Mode mode, const uint16_t prescaler, const uint16_t autoreload);
 
 
@@ -57,10 +48,14 @@ public:
   void start(void) const;
 
   void set_prescaler(const uint16_t prescaler) const;
-
   void set_autoreload(const uint16_t autoreload) const;
+  void set_ccr1(const uint16_t ccr1) const;
 
   void enable_output_compare(uint16_t cmp) const;
+
+  void configurar_periodo_us(uint16_t periodo);
+  void configurar_periodo_ms(uint16_t periodo);
+  void enable_output();
 
 
   void (*callback)(void) {nullptr};

@@ -78,6 +78,11 @@ void general_timer::set_autoreload(const uint16_t autoreload) const
   memoria(ARR) = autoreload;
 }
 
+void general_timer::set_ccr1(const uint16_t ccr1) const
+{
+  memoria(CCR1) = ccr1;
+}
+
 
 void general_timer::configure(const Mode mode, uint8_t auto_reload_preload, uint8_t update_request_source,
     const uint8_t update_disable, const uint8_t status_bit_remap) const
@@ -114,23 +119,59 @@ void general_timer::start(void) const
   memoria(CR1) |= (0x1);
 }
 
-/** esto lo escribiste crudo, has double check */
+/** Esto lo revistaste comparandolo con la HAL de ST.
+ * Al final todo era un problema de GPIOs */
 void general_timer::enable_output_compare(uint16_t cmp) const
 {
-  bitfield CC1S(2,0); /* seleccion de capture/compare. 00 es ouput. 01,10,11 son inputs. */
-  bitfield OC1M(2,4);
-  size_t temp = memoria(CCMR1);
-  temp &= (!CC1S | !OC1M);
-  temp |= CC1S(0) | OC1M(3);
-  /** Configura el registro para que haga toggle */
-  memoria(CCMR1) = temp;
-  /** Configura el valor a comparar. Hace falta seleccionar el canal. */
-  memoria(CCR1) = cmp;
-  /* Habilita OC */
-  memoria(CCER) |= 1;
+  /** Configuramos el registro CCMR1. Vamos a indicar que es una salida, y que es modo PWM. Hay 7 modos. */
+  const bitfield CC1S(2,0, 0); /** Nos aseguramos de que valga 0, para ser salida */
+  const bitfield OC1M(3,4, 6); /** Valor 6 para este bitfield es PWM modo 1. */
+  CCMR1.write(CC1S);
+  CCMR1.write(OC1M);
 
-  flag MOE(15);
-  flag BKP(13);
-  BDTR.set(BKP);
-  BDTR.set(MOE);
+  /** Habilitamos lectura/escritura al Preload Register. Sin esto, el timer no sacaba ninguna señal.
+   * Seguramente es porque la escritura a CCR1 no estaba teniendo ningún efecto. */
+  const flag OC1PE(3);
+  CCMR1.set(OC1PE);
+
+  /** Configuramos el umbral de conteo para PWM. Osea a los cuantos ticks el pulso se va a bajar (en modo 1). */
+  memoria(CCR1) = cmp;
+
+  /** Experimentalmente, vimos que sí necesitas setear este par de bits. Ahora, si el registro no existe en TIM14,
+   * cómo le haces en ese? */
+   const flag MOE(15);
+   const flag BKP(13);
+   BDTR.set(MOE);
+   BDTR.set(BKP);
+
+   /** Experimentalmente vimos que estos bits están igual diferentes: */
+   const flag URS(2);
+   const flag ARPE(7);
+   CR1.reset(URS);
+   CR1.reset(ARPE);
+
+  /** Finalmente, encendemos el modo OC. Otras opciones en este registro modifican la polaridad,
+   * o nos permiten encender el canal negado. */
+  const flag CC1E(0);
+  CCER.set(CC1E);
+}
+
+/** válido de 1us* a 65ms */
+void general_timer::configurar_periodo_us(uint16_t periodo)
+{
+  memoria(PSC) = 0x1; // 16, para que cada "tick" sea de 1us
+  memoria(ARR) = periodo-1;
+}
+
+/** válido de 1ms a 65s */
+void general_timer::configurar_periodo_ms(uint16_t periodo)
+{
+  memoria(PSC) = 0x3E80; // 16000, para que cada "tick" sea de 1ms
+  memoria(ARR) = periodo-1;
+}
+
+void general_timer::enable_output()
+{
+  constexpr flag CC1E(0);
+  CCER.set(CC1E);
 }

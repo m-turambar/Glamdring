@@ -23,34 +23,29 @@ UART* UART2_ptr{nullptr};
 UART* UART3_ptr{nullptr};
 UART* UART4_ptr{nullptr};
 
-/** Rutinas de serviceo a interrupciones. Igual. Es aplicación. */
+
 void USART1_IRQHandler(void)
 {
-  auto& UART1 = *UART1_ptr;
-  if(UART1.ISR.is_set(RXNE)) {
-    const uint8_t b = UART1.read_byte();
-    UART1.callback_rx(b);
-  }
+  UART1_ptr->callback();
+
   NVIC_ClearPendingIRQ(USART1_IRQn);
 }
 
-/** Por ahora no hagas la diferencia */
-/** Esto es código de aplicación en el driver. Está mal. Cambiarlo. O moverlo a código de aplicación. */
+void USART2_IRQHandler(void)
+{
+  UART2_ptr->callback();
+  NVIC_ClearPendingIRQ(USART2_IRQn);
+}
+
 void USART3_4_IRQHandler(void)
 {
-  auto& UART3 = *UART3_ptr;
-  auto& UART4 = *UART4_ptr;
-  if(UART3.ISR.is_set(RXNE)) {
-    const uint8_t b = UART3.read_byte();
-    /** El problema de esto es que ¿cómo le paso una referencia al UART2 al callback?
-     * Tienes que hacer el UART2 global, para que no sea un argumento del callback.
-     * Ya hay que encontrar una solución a este patrón recurrente. */
-    //UART3.callback_rx(b);
-    *UART2_ptr << b; //vaya pero qué necedad
-  }
-  else if(UART4.ISR.is_set(RXNE)) {
+  // no supe cómo seleccionar la UART correcta en función de la interrupción. Si puedes hacerlo, házlo.
+  // Dado que rara vez usaré las dos, dejé esto así.
+  if(UART3_ptr != nullptr)
+    UART3_ptr->callback();
+  if(UART4_ptr != nullptr)
+    UART4_ptr->callback();
 
-  }
   NVIC_ClearPendingIRQ(USART3_4_IRQn);
 }
 
@@ -141,9 +136,9 @@ void UART::enable() const
   CR1.set(RE);
 }
 
-const UART& UART::enable_interrupt_rx(void (*callback_arg)(const uint8_t byte), uint8_t priority)
+const UART& UART::enable_interrupt_rx(void (*callback_arg)(), uint8_t priority)
 {
-  callback_rx = callback_arg;
+  callback = callback_arg;
   flag RXNEIE(5);
   CR1.set(RXNEIE);
   const IRQn_Type mIRQn = (peripheral==Peripheral::USART1 ? USART1_IRQn :

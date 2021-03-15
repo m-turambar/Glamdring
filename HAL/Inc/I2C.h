@@ -8,8 +8,6 @@
 #include <cstddef>
 #include "helpers.h"
 
-#undef I2C1
-#undef I2C2
 
 extern "C" {
 

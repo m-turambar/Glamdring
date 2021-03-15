@@ -46,6 +46,9 @@ public:
   void configure(const Mode mode, const uint8_t auto_reload_preload = 1, const uint8_t update_request_source = 1,
       const uint8_t update_disable = 0, const uint8_t status_bit_remap = 0) const;
 
+  void configurar_periodo_us(uint16_t periodo);
+  void configurar_periodo_ms(uint16_t periodo);
+
   /* maybe i should split this in two functions, and request just isr priority and a fn ptr as callback */
   void enable_interrupt(void (*callback_fn)(void),const uint8_t isr_priority = 3);
 

@@ -1,24 +1,18 @@
-#include <cstring>
-#include <cstdio>
-#include <array>
-#include "I2C.h"
-#include "basic_timer.h"
-#include "GPIO_Port.h"
-#include "RCC.h"
-#include "PWR.h"
-#include "FLASH.h"
-#include "general_timer.h"
-#include "UART.h"
-#include "NVIC.h"
-#include "NRF24.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+void set_pwm_value(uint16_t val)
+{
+  TIM_OC_InitTypeDef sConfigOC = {0};
 
-void inicializacion();
-void configurar_relojes();
-void error(void);
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = val;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+
+  HAL_TIM_PWM_ConfigChannel(&htim14, &sConfigOC, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+}
+
+set_pwm_value(pwm_val);
 
 general_timer* tim_ptr{nullptr};
 std::array<uint8_t, 16> timer_cfg_buf{0xFF};
@@ -118,45 +112,3 @@ int main(void)
   }
 
 }
-
-void inicializacion()
-{
-  FLASH::prefetch_buffer_enable();
-  RCC::enable_SYSCFG_clock();
-  RCC::enable_power_clock();
-  //NVIC_SetPriority(PendSV_IRQn, 3, 0);
-  PWR::configurar_regulador(PWR::Voltaje::Range_1);
-}
-
-void configurar_relojes()
-{
-  /** Configurar los relojes del sistema según la aplicación */
-  RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P16);
-  RCC::configurar_prescaler_AHB(RCC::AHB_Prescaler::P1);
-
-  if(!RCC::is_HSI_ready())
-    error();
-
-  RCC::seleccionar_SYSCLK(RCC::SystemClockSwitch::HSISYS);
-  RCC::SystemClockSwitch fuente_sysclk = RCC::status_SYSCLK();
-
-  if(fuente_sysclk != RCC::SystemClockSwitch::HSISYS)
-    error();
-
-  RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P1);
-
-  /** Configurar los relojes de los periféricos, sus fuentes. */
-  RCC::seleccionar_reloj_USART2(RCC::RelojesUsart::PCLK);
-}
-
-
-void error(void)
-{
-  /* User can add his own implementation to report the HAL error return state */
-  while (1);
-}
-
-
-#ifdef __cplusplus
-}
-#endif

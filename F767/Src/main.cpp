@@ -77,7 +77,7 @@ int main(void)
   uart_ref = &uart3;
   uart3 << "hola";
 
-  basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic, 0x1800, 0x100);
+  basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic, 0x1800, 0x40);
   t7.enable_interrupt(checar_rx);
   t7.start();
 
