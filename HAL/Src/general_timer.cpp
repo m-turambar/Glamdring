@@ -156,10 +156,19 @@ void general_timer::enable_output_compare(uint16_t cmp) const
   CCER.set(CC1E);
 }
 
+/** Notas 06/Jul/2021
+ * Para configurar una señal PWM, se usan tres registros:
+ * PSC (prescaler)
+ * ARR (umbral)
+ * CCR1 (comparador)
+ * El código de parser que se encuentra en pruebas_timers.cpp incluye un parser de UART para experimentar con
+ * estos valores. Permite un control fino sobre la frecuencia, el tiempo arriba, y el tiempo abajo de cada timer.
+ * Falta crear un algoritmo correcto para establecer periodos fijos*/
+
 /** válido de 1us* a 65ms */
 void general_timer::configurar_periodo_us(uint16_t periodo)
 {
-  memoria(PSC) = 0x1; // 16, para que cada "tick" sea de 1us
+  memoria(PSC) = 0x1; // 16, para que cada "tick" sea de 1us. 16 qué?
   memoria(ARR) = periodo-1;
 }
 

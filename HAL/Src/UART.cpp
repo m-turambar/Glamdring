@@ -142,9 +142,9 @@ const UART& UART::enable_interrupt_rx(void (*callback_arg)(), uint8_t priority)
   flag RXNEIE(5);
   CR1.set(RXNEIE);
   const IRQn_Type mIRQn = (peripheral==Peripheral::USART1 ? USART1_IRQn :
-                           (peripheral==Peripheral::USART2 ? USART2_IRQn:
-                           (peripheral==Peripheral::USART3 ? USART3_4_IRQn:
-                           (peripheral==Peripheral::USART4 ? USART3_4_IRQn: HardFault_IRQn))));
+                          (peripheral==Peripheral::USART2 ? USART2_IRQn:
+                          (peripheral==Peripheral::USART3 ? USART3_4_IRQn:
+                          (peripheral==Peripheral::USART4 ? USART3_4_IRQn: HardFault_IRQn))));
 
   NVIC_SetPriority(mIRQn, priority);
   NVIC_EnableIRQ(mIRQn);

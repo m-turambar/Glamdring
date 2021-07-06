@@ -12,5 +12,6 @@ G070/HAL
 G070/CMakeCache.txt
 G070/en.stm32g0_cad
 G070/cmake-build-debug
+G070/cmake-build-debug-mingw
 L475/cmake-build-debug
 F767/cmake-build-debug

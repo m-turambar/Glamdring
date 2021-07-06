@@ -24,51 +24,9 @@ general_timer* tim_ptr{nullptr};
 std::array<uint8_t, 16> timer_cfg_buf{0xFF};
 uint8_t idx=0;
 
-void pasar_caracter(uint8_t b)
-{
-  auto& bb = timer_cfg_buf;
-  if(b == '\n')
-  {
-    uint16_t pre = 0;
-    uint16_t arr = 0;
-    uint16_t ccr1 = 0;
-    int i = 0;
-    while(bb[i] != ',')
-    {
-      pre = pre*10 + bb[i]-48;
-      ++i;
-    }
-    ++i;
-
-    while(bb[i] != ',')
-    {
-      arr = arr*10 + bb[i]-48;
-      ++i;
-    }
-    ++i;
-
-    while(bb[i] != ',')
-    {
-      ccr1 = ccr1*10 + bb[i]-48;
-      ++i;
-    }
-    tim_ptr->set_prescaler(pre);
-    tim_ptr->set_autoreload(arr);
-    tim_ptr->set_ccr1(ccr1);
-
-    idx=0;
-  }
-
-  else
-  {
-    bb[idx] = b;
-    ++idx;
-  }
-
-}
-
 /** Esto también es código de aplicación */
 UART* g_uart2{nullptr};
+void parser(uint8_t b);
 
 void callback_uart2()
 {
@@ -76,12 +34,46 @@ void callback_uart2()
   constexpr static flag RXNE(5);
   if(UART2.ISR.is_set(RXNE)) {
     const uint8_t b = UART2.read_byte();
-    UART2 << b;
+
     if(tim_ptr != nullptr)
-      pasar_caracter(b);
+        parser(b);
+
+    UART2 << b;
   }
 }
 
+void parser(uint8_t b)
+{
+    static volatile uint16_t n1;
+    static volatile uint16_t n2;
+    static volatile uint16_t n3;
+    static volatile uint8_t estado = 0;
+    if(b == ',') {
+        ++estado;
+        if(estado > 2) {
+            memoria(tim_ptr->PSC) = n1;
+            memoria(tim_ptr->ARR) = n2;
+            memoria(tim_ptr->CCR1) = n3;
+            n1 = n2 = n3 = 0;
+            estado = 0;
+        }
+        return;
+    }
+
+    b = b - '0';
+    if(estado == 0) {
+        n1 *= 10;
+        n1 += b;
+    }
+    else if(estado == 1) {
+        n2 *= 10;
+        n2 += b;
+    }
+    else if(estado == 2) {
+        n3 *= 10;
+        n3 += b;
+    }
+}
 
 int main(void)
 {
@@ -92,12 +84,13 @@ int main(void)
   RCC::enable_port_clock(RCC::GPIO_Port::C);
 
   GPIO::PORTA.salida(5); //LED
-  GPIO::PORTA.pin_for_timer(6,GPIO::AlternFunct::AF5);
+
 
   auto toggle_led = []() { GPIO::PORTA.toggle(5); };
 
   basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic, 0x1800, 0x200);
   t7.enable_interrupt(toggle_led);
+  t7.configurar_periodo_ms(100);
   t7.start();
 
   UART uart2(UART::Peripheral::USART2, 115200);
@@ -109,6 +102,7 @@ int main(void)
   general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic, 0x13f, 0x3e8);
   t16.configurar_periodo_us(8);
   t16.enable_output_compare(4);
+  GPIO::PORTA.pin_for_timer(6,GPIO::AlternFunct::AF5);
   t16.start();
   tim_ptr = &t16;
 

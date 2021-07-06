@@ -141,3 +141,46 @@ errors = test_radio_tx_rx(radio1, radio2);
 status2 = radio2.leer_registro(NRF24::Registro::Status);
 status1 = radio1.leer_registro(NRF24::Registro::Status);
 /************************************
+
+void pasar_caracter(uint8_t b)
+{
+  auto& bb = timer_cfg_buf;
+  if(b == '\n')
+  {
+    uint16_t pre = 0;
+    uint16_t arr = 0;
+    uint16_t ccr1 = 0;
+    int i = 0;
+    while(bb[i] != ',')
+    {
+      pre = pre*10 + bb[i]-48;
+      ++i;
+    }
+    ++i;
+
+    while(bb[i] != ',')
+    {
+      arr = arr*10 + bb[i]-48;
+      ++i;
+    }
+    ++i;
+
+    while(bb[i] != ',')
+    {
+      ccr1 = ccr1*10 + bb[i]-48;
+      ++i;
+    }
+    tim_ptr->set_prescaler(pre);
+    tim_ptr->set_autoreload(arr);
+    tim_ptr->set_ccr1(ccr1);
+
+    idx=0;
+  }
+
+  else
+  {
+    bb[idx] = b;
+    ++idx;
+  }
+
+}
