@@ -1,7 +1,7 @@
 #include <cstring>
 #include <cstdio>
-#include <array>
-#include "I2C.h"
+//#include <array>
+//#include "I2C.h"
 #include "basic_timer.h"
 #include "GPIO_Port.h"
 #include "RCC.h"
@@ -21,7 +21,6 @@ void configurar_relojes();
 void error(void);
 
 general_timer* tim_ptr{nullptr};
-std::array<uint8_t, 16> timer_cfg_buf{0xFF};
 uint8_t idx=0;
 
 /** Esto también es código de aplicación */
@@ -48,6 +47,10 @@ void parser(uint8_t b)
     static volatile uint16_t n2;
     static volatile uint16_t n3;
     static volatile uint8_t estado = 0;
+    if(b == 'z') {
+        n1 = n2 = n3 = 0;
+        estado = 0;
+    }
     if(b == ',') {
         ++estado;
         if(estado > 2) {
@@ -90,7 +93,7 @@ int main(void)
 
   basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic, 0x1800, 0x200);
   t7.enable_interrupt(toggle_led);
-  t7.configurar_periodo_ms(100);
+  t7.configurar_periodo_ms(1000);
   t7.start();
 
   UART uart2(UART::Peripheral::USART2, 115200);
