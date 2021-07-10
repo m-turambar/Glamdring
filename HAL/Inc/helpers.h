@@ -17,8 +17,8 @@ struct bitfield;
 
 struct flag
 {
-  constexpr flag(const uint8_t offset):
-  mask(1 << offset) {}
+  constexpr flag(const uint8_t offset) :
+    mask(1 << offset) {}
   constexpr size_t operator !() const { return ~(mask); }
   const size_t mask;
 };
@@ -71,6 +71,7 @@ struct reg16
 volatile size_t& memoria(const size_t loc);
 volatile uint16_t& memoria16(const size_t loc);
 volatile size_t& memoria(const registro reg);
+volatile uint16_t& memoria16(const reg16 reg);
 
 /** Abstracción para interactuar con los campos de bits de un registro.
  * Es preferible que el usuario use las funciones miembro de registro,

@@ -36,7 +36,7 @@ public:
     PWM
   };
 
-  general_timer(const GeneralTimer tim, const Mode mode, const uint16_t prescaler, const uint16_t autoreload);
+  general_timer(const GeneralTimer tim, const Mode mode);
 
 
   void configure(const Mode mode, const uint8_t auto_reload_preload = 1, const uint8_t update_request_source = 1,

@@ -29,7 +29,7 @@ void TIM17_IRQHandler(void)
   memoria(tim17_ptr->SR) &= (~(1u)); //clear timer's status register
 }
 
-general_timer::general_timer(const GeneralTimer tim, const Mode mode, const uint16_t prescaler, const uint16_t autoreload)
+general_timer::general_timer(const GeneralTimer tim, const Mode mode)
     :
     peripheral(tim),
     base(static_cast<size_t>(tim)),
@@ -63,8 +63,6 @@ general_timer::general_timer(const GeneralTimer tim, const Mode mode, const uint
   }
 
   configure(mode);
-  set_autoreload(autoreload);
-  set_prescaler(prescaler);
 }
 
 

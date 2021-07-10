@@ -16,6 +16,10 @@
  * frecuencia base!
  * */
 
+/** TODO
+ * Hay que hacer pruebas reales en este archivo. Que sea compilable y las pruebas ejecutables por un framework de
+ * testing. */
+
 void pedazos()
 {
     general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic, 0x8, 0x100); //cada tick es de 1ms, con HSI de 16 MHz

@@ -8,21 +8,36 @@
 const basic_timer* tim6_ptr = nullptr;
 const basic_timer* tim7_ptr = nullptr;
 
+bool t6_first_time;
 void TIM6_IRQHandler(void)
 {
-  tim6_ptr->callback();
+  if(t6_first_time == false)
+    tim6_ptr->callback();
   NVIC_ClearPendingIRQ(TIM6_IRQn);
-  memoria(tim6_ptr->SR) &= (~(1u)); //clear timer's status register
+  memoria(tim6_ptr->SR) &= (~(1u)); // cleareamos el update interrupt flag
+  t6_first_time = false;
 }
 
+bool t7_first_time;
 void TIM7_IRQHandler(void)
 {
-  tim7_ptr->callback();
+  //if(t7_first_time == false)
+    tim7_ptr->callback();
   NVIC_ClearPendingIRQ(TIM7_IRQn);
-  memoria(tim7_ptr->SR) &= (~(1u)); //clear timer's status register
+  memoria(tim7_ptr->SR) &= (~(1u)); // cleareamos el update interrupt flag
+  t7_first_time = false;
 }
 
-basic_timer::basic_timer(const BasicTimer tim, const Mode mode, const uint16_t prescaler, const uint16_t autoreload)
+namespace CR1_Flags {
+    const flag UIFRE_MAP(11);
+    const flag ARPE(7);
+    const flag OPM(3);
+    const flag URS(2);
+    const flag UDIS(1);
+    const flag CEN(0);
+};
+
+basic_timer::basic_timer(const BasicTimer tim, const Mode mode)
     :
     peripheral(tim),
     base(static_cast<size_t>(tim)),
@@ -39,42 +54,37 @@ basic_timer::basic_timer(const BasicTimer tim, const Mode mode, const uint16_t p
   if (peripheral==BasicTimer::TIM6) {
     tim6_ptr = this;
     RCC::enable_TIM6_clock();
+    t6_first_time = true;
   }
   else if (peripheral==BasicTimer::TIM7) {
     tim7_ptr = this;
     RCC::enable_TIM7_clock();
+    t7_first_time = true;
   }
 
-  configure(mode);
-  set_autoreload(autoreload);
-  set_prescaler(prescaler);
+  configure_mode(mode);
+  //set_cr1_flag(CR1_Flags::URS);
 }
 
 
 void basic_timer::set_prescaler(const uint16_t prescaler) const
 {
-  memoria(PSC) = prescaler;
+  const bitfield PSC_bf(16,0,prescaler);
+  PSC.write(PSC_bf);
 }
 
 void basic_timer::set_autoreload(const uint16_t autoreload) const
 {
-  memoria(ARR) = autoreload;
+  const bitfield ARR_bf(16, 0, autoreload);
+  ARR.write(ARR_bf);
 }
 
-
-void basic_timer::configure(const Mode mode, uint8_t auto_reload_preload, uint8_t update_request_source,
-    const uint8_t update_disable, const uint8_t status_bit_remap) const
+void basic_timer::configure_mode(const Mode mode)
 {
-  const bitfield UIFRE_MAP(1, 11);
-  const bitfield ARPE(1, 7);
-  const bitfield OPM(1, 3);
-  const bitfield URS(1, 2);
-  const bitfield UDIS(1, 1);
-  const bitfield CEN(1, 0);
-  size_t cr1 = UIFRE_MAP(status_bit_remap) | ARPE(auto_reload_preload) | OPM(static_cast<uint8_t>(mode)) |
-      URS(update_request_source) | UDIS(update_disable) | CEN(0);
-  memoria(CR1) |= cr1;
-  //memoria(CNT) = 0; //this causes a hardfault for some reason
+  if(mode == Mode::OnePulseMode)
+    set_cr1_flag(CR1_Flags::OPM);
+  else
+    clear_cr1_flag(CR1_Flags::OPM);
 }
 
 void basic_timer::enable_interrupt(void (*callback_fn)(void),const uint8_t isr_priority)
@@ -92,26 +102,48 @@ void basic_timer::enable_interrupt(void (*callback_fn)(void),const uint8_t isr_p
 /* solo cuidado con One Pulse Mode ya que en la primera habilitación ocurre una interrupción */
 void basic_timer::start(void) const
 {
-  // no funciona para reiniciar el reloj
-  //const bitfield lwr16(16, 0);
-  //const bitfield upr16(16, 16);
-  //memoria(CNT) = lwr16(ARR) | upr16(CNT);
-  // tempoco funciona
-  //memoria(EGR) |= 1;
+  const flag CEN(0);
+  CR1.set(CEN);
 
-  memoria(CR1) |= (0x1);
+  //clear_cr1_flag(CR1_Flags::UDIS);
+}
+
+void basic_timer::stop(void) const
+{
+  const flag CEN(0);
+  CR1.reset(CEN);
 }
 
 /** válido de 1us* a 65ms */
 void basic_timer::configurar_periodo_us(uint16_t periodo)
 {
-  memoria(PSC) = 0x10; // 16, para que cada "tick" sea de 1us
-  memoria(ARR) = periodo;
+  set_prescaler(15); //para que cada "tick" sea de 1us
+  set_autoreload(periodo);
 }
 
 /** válido de 1ms a 65s */
 void basic_timer::configurar_periodo_ms(uint16_t periodo)
 {
-  memoria(PSC) = 0x3E80; // 16000, para que cada "tick" sea de 1ms
-  memoria(ARR) = periodo;
+  //memoria(PSC) = 7999; // para que cada "tick" sea de 1ms, divides 8MHz entre 8000
+  set_prescaler(15999); // O tal vez, sí es de 16MHz? divides 16MHz entre 16000. PWM y periodic son diferentes? no.
+  set_autoreload(periodo);
 }
+
+void basic_timer::set_cr1_flag(flag f) const {
+  CR1.set(f);
+}
+
+void basic_timer::clear_cr1_flag(flag f) const {
+  CR1.reset(f);
+}
+
+void basic_timer::generate_update() const {
+  const flag UG(0);
+  EGR.set(UG);
+}
+
+void basic_timer::clear_update() const {
+  const flag UIF(0);
+  SR.reset(UIF);
+}
+

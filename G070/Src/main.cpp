@@ -21,6 +21,7 @@ void configurar_relojes();
 void error(void);
 
 general_timer* tim_ptr{nullptr};
+basic_timer* basic_tim_ptr{nullptr};
 uint8_t idx=0;
 
 /** Esto también es código de aplicación */
@@ -50,6 +51,12 @@ void parser(uint8_t b)
     if(b == 'z') {
         n1 = n2 = n3 = 0;
         estado = 0;
+        return;
+    }
+    if(b == 't') {
+        if(basic_tim_ptr != nullptr) {
+            basic_tim_ptr->start();
+        }
     }
     if(b == ',') {
         ++estado;
@@ -89,12 +96,17 @@ int main(void)
   GPIO::PORTA.salida(5); //LED
 
 
-  auto toggle_led = []() { GPIO::PORTA.toggle(5); };
+  auto toggle_led = []() {
+    GPIO::PORTA.toggle(5);
+  };
 
-  basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic, 0x1800, 0x200);
-  t7.enable_interrupt(toggle_led);
+  basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::OnePulseMode);
   t7.configurar_periodo_ms(1000);
-  t7.start();
+  t7.generate_update();
+  t7.clear_update();
+  t7.enable_interrupt(toggle_led);
+  basic_tim_ptr = &t7;
+  //t7.start();
 
   UART uart2(UART::Peripheral::USART2, 115200);
   g_uart2 = &uart2;
@@ -102,8 +114,8 @@ int main(void)
   uart2.enable_fifo().enable();
 
 
-  general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic, 0x13f, 0x3e8);
-  t16.configurar_periodo_us(8);
+  general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
+  t16.configurar_periodo_us(1000);
   t16.enable_output_compare(4);
   GPIO::PORTA.pin_for_timer(6,GPIO::AlternFunct::AF5);
   t16.start();

@@ -25,6 +25,7 @@ enum class BasicTimer : std::size_t {
 };
 
 class basic_timer {
+
 public:
 
   enum class Mode{
@@ -40,12 +41,13 @@ public:
   \param [in]   prescaler   Prescaler value
   \param [in]   autoreload  Reload value for the timer counter
  */
-  basic_timer(const BasicTimer tim, const Mode mode, const uint16_t prescaler, const uint16_t autoreload);
+  basic_timer(const BasicTimer tim, const Mode mode);
 
 
-  void configure(const Mode mode, const uint8_t auto_reload_preload = 1, const uint8_t update_request_source = 1,
-      const uint8_t update_disable = 0, const uint8_t status_bit_remap = 0) const;
+  //void configure(const Mode mode, const uint8_t auto_reload_preload = 1, const uint8_t update_request_source = 1,
+    //  const uint8_t update_disable = 0, const uint8_t status_bit_remap = 0) const;
 
+  void configure_mode(const Mode mode);
   void configurar_periodo_us(uint16_t periodo);
   void configurar_periodo_ms(uint16_t periodo);
 
@@ -53,15 +55,22 @@ public:
   void enable_interrupt(void (*callback_fn)(void),const uint8_t isr_priority = 3);
 
   void start(void) const;
+  void stop(void) const;
 
   void set_prescaler(const uint16_t prescaler) const;
 
   void set_autoreload(const uint16_t autoreload) const;
 
+  void generate_update() const;
+  void clear_update() const;
+
   void (*callback)(void) {nullptr};
   const BasicTimer peripheral;
   const size_t base;
   registro CR1, CR2, DIER, SR, EGR, CNT, PSC, ARR;
+
+  void set_cr1_flag(flag f) const;
+  void clear_cr1_flag(flag f) const;
 };
 
 }

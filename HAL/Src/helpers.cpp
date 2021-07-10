@@ -27,6 +27,11 @@ volatile size_t& memoria(const registro reg)
   return *reinterpret_cast<size_t*>(reg.addr);
 }
 
+volatile uint16_t& memoria16(const reg16 reg)
+{
+  return *reinterpret_cast<uint16_t *>(reg.addr);
+}
+
 void registro::set(flag f) const
 {
   memoria(addr) |= f.mask;
