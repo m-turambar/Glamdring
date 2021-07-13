@@ -118,20 +118,34 @@ int main(void)
 
   general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
   t16.configurar_periodo_ms(1000);
-  t16.enable_output_compare(4);
+  t16.enable_output_compare(7);
   GPIO::PORTA.pin_for_timer(6,GPIO::AlternFunct::AF5);
   t16.start();
   tim16_ptr = &t16;
 
   auto input_capture_callback = [] () {
+    static bool rising{true};
+    static uint16_t fall_cnt{0};
+    static uint16_t rise_cnt{0};
     uint16_t cnt = memoria(tim17_ptr->CCR1);
+    if(rising) {
+      rise_cnt = cnt;
+      tim17_ptr->set_capture_compare_polarity_falling();
+      rising = false;
+    }
+    else {
+      fall_cnt = cnt;
+      tim17_ptr->set_capture_compare_polarity_rising();
+      rising = true;
+      *g_uart2 << static_cast<uint16_t>(fall_cnt - rise_cnt);
+    }
     //*g_uart2 << "ah!\n";
-    *g_uart2 << cnt;
+
   };
 
   general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
   t17.enable_input_capture(true);
-  t17.configurar_periodo_ms(1000);
+  t17.configurar_periodo_ms(50000);
   t17.generate_update();
   t17.clear_update();
   GPIO::PORTA.pin_for_timer(7,GPIO::AlternFunct::AF5);

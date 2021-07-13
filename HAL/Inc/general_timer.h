@@ -39,6 +39,7 @@ public:
     BIE = 7
   };
 
+
   general_timer(const GeneralTimer tim, const Mode mode);
 
 
@@ -62,7 +63,11 @@ public:
 
   void generate_update() const;
   void clear_update() const;
-  void enable_input_capture(bool rising_edge) const;
+  void enable_input_capture(bool rising_edge, uint8_t filtro=0) const;
+
+  // atajos, para rápidamente hacer toggle del tipo de flanco que dispara la interrupción, para medir pulsos.
+  void set_capture_compare_polarity_rising() const;
+  void set_capture_compare_polarity_falling() const;
 
   void callback_selector(); //ahorra un poco de código
   void (*callback_update)(void) {nullptr}; // el callback normal que se usa en el basic timer

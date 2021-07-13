@@ -240,11 +240,17 @@ void general_timer::clear_update() const {
  *    Para configurar un timer como Input Capture:
  *    CCER->CC1E = 1    Habilitar captura
  *    CCER->CC1P = 0 o 1    Captura en Rising/Falling edge
+ *    Para ver el comportamiento del filtro, consulta el datasheet.
  */
-void general_timer::enable_input_capture(bool rising_edge) const {
-  /** Configuramos el registro CCMR1. Vamos a indicar que es una entrada. */
+void general_timer::enable_input_capture(bool rising_edge, uint8_t filtro) const {
+  /** Configuramos el registro CCMR1. Vamos a indicar que es una entrada.
+   * Parece que esto debe ocurrir antes de escribir al CCER.
+   * De otro modo, CCMR1 no se estaba actualizando. */
   const bitfield CC1S(2,0, 1); /** Puede valer 1, 2 o 3. Qué son TI1, TI2 y TRC? */
   CCMR1.write(CC1S);
+
+  const bitfield IC1F(4, 4, filtro & 0x0F); // el BW AND es para solo tomar los 4 bits menores.
+  CCMR1.write(IC1F);
 
   const flag CC1E(0);
   const flag CC1P(1);
@@ -253,5 +259,18 @@ void general_timer::enable_input_capture(bool rising_edge) const {
   if(!rising_edge)
     CCER.set(CC1P);
 
+  else
+    CCER.reset(CC1P);
 
+
+}
+
+void general_timer::set_capture_compare_polarity_rising() const {
+  const flag CC1P(1);
+  CCER.reset(CC1P);
+}
+
+void general_timer::set_capture_compare_polarity_falling() const {
+  const flag CC1P(1);
+  CCER.set(CC1P);
 }

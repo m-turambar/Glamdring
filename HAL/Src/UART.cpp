@@ -262,8 +262,8 @@ const UART& UART::operator<<(uint8_t b) const
 
 const UART& UART::operator<<(uint16_t hw) const
 {
-  write_byte(hw & 0xFF);
   write_byte((hw >> 8) & 0xFF);
+  write_byte(hw & 0xFF);
   return *this;
 }
 
