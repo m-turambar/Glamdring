@@ -118,7 +118,7 @@ void basic_timer::stop(void) const
 void basic_timer::configurar_periodo_us(uint16_t periodo)
 {
   set_prescaler(15); //para que cada "tick" sea de 1us
-  set_autoreload(periodo);
+  set_autoreload(periodo-1);
 }
 
 /** válido de 1ms a 65s */
@@ -126,7 +126,7 @@ void basic_timer::configurar_periodo_ms(uint16_t periodo)
 {
   //memoria(PSC) = 7999; // para que cada "tick" sea de 1ms, divides 8MHz entre 8000
   set_prescaler(15999); // O tal vez, sí es de 16MHz? divides 16MHz entre 16000. PWM y periodic son diferentes? no.
-  set_autoreload(periodo);
+  set_autoreload(periodo-1);
 }
 
 void basic_timer::set_cr1_flag(flag f) const {

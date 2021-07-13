@@ -5,28 +5,57 @@
 #include "general_timer.h"
 #include "NVIC.h"
 
-const general_timer* tim15_ptr = nullptr;
-const general_timer* tim16_ptr = nullptr;
-const general_timer* tim17_ptr = nullptr;
+general_timer* tim15_ptr = nullptr;
+general_timer* tim16_ptr = nullptr;
+general_timer* tim17_ptr = nullptr;
+
+/** Las flags para habilitar cada interrupción en DIER tienen el mismo offset que para leer su estado en SR.
+ * Excepto por la OverCapture interrupt (CC1OF), que no he usado aún. */
+
+static const flag UIF(0); // Update Interrupt
+static const flag CC1IF(1); // Capture/Compare Interrupt
+static const flag COMIF(5); // COM Interrupt
+static const flag BIF(7); // Break Interrupt
+// static const flag CC1OF(9); // Break Interrupt
+
+void general_timer::callback_selector() {
+  if(SR.is_set(UIF)) {
+    SR.reset(UIF);
+    if(callback_update != nullptr)
+      callback_update();
+  }
+  if(SR.is_set(CC1IF)) {
+    SR.reset(CC1IF);
+    if(callback_capture_compare != nullptr)
+      callback_capture_compare();
+  }
+  if(SR.is_set(COMIF)) {
+    SR.reset(COMIF);
+    if(callback_COM != nullptr)
+      callback_COM();
+  }
+  if(SR.is_set(BIF)) {
+    SR.reset(BIF);
+    if(callback_break != nullptr)
+      callback_break();
+  }
+}
 
 void TIM15_IRQHandler(void)
 {
-  tim15_ptr->callback();
-  NVIC_ClearPendingIRQ(TIM6_IRQn);
-  memoria(tim15_ptr->SR) &= (~(1u)); //clear timer's status register
+  tim15_ptr->callback_selector();
+  NVIC_ClearPendingIRQ(TIM15_IRQn);
   
 }void TIM16_IRQHandler(void)
 {
-  tim16_ptr->callback();
-  NVIC_ClearPendingIRQ(TIM6_IRQn);
-  memoria(tim16_ptr->SR) &= (~(1u)); //clear timer's status register
+  tim16_ptr->callback_selector();
+  NVIC_ClearPendingIRQ(TIM16_IRQn);
 }
 
 void TIM17_IRQHandler(void)
 {
-  tim17_ptr->callback();
-  NVIC_ClearPendingIRQ(TIM7_IRQn);
-  memoria(tim17_ptr->SR) &= (~(1u)); //clear timer's status register
+  tim17_ptr->callback_selector();
+  NVIC_ClearPendingIRQ(TIM17_IRQn);
 }
 
 general_timer::general_timer(const GeneralTimer tim, const Mode mode)
@@ -96,16 +125,29 @@ void general_timer::configure(const Mode mode, uint8_t auto_reload_preload, uint
   memoria(CR1) |= cr1;
 }
 
-void general_timer::enable_interrupt(void (*callback_fn)(void),const uint8_t isr_priority)
+void general_timer::enable_interrupt(void (*callback_fn)(void), InterruptType it, const uint8_t isr_priority)
 {
-  callback = callback_fn;
+  switch(it) {
+    case InterruptType::UIE:
+      callback_update = callback_fn;
+      break;
+    case InterruptType::CCIE:
+      callback_capture_compare = callback_fn;
+      break;
+    case InterruptType::COMIE:
+      callback_COM = callback_fn;
+      break;
+    case InterruptType::BIE:
+      callback_break = callback_fn;
+  }
+
   const IRQn_Type mIRQn =
         (peripheral==GeneralTimer::TIM15 ? TIM15_IRQn :
         (peripheral==GeneralTimer::TIM16 ? TIM16_IRQn :
         (peripheral==GeneralTimer::TIM17 ? TIM17_IRQn : HardFault_IRQn)));
 
-  flag UIE(0);
-  DIER.set(UIE);
+  const flag tipo_interr(static_cast<uint8_t>(it)); // Así no duplicamos código. Puede que necesites más callbacks.
+  DIER.set(tipo_interr);
 
   NVIC_SetPriority(mIRQn, isr_priority);
   NVIC_EnableIRQ(mIRQn);
@@ -166,19 +208,50 @@ void general_timer::enable_output_compare(uint16_t cmp) const
 /** válido de 1us* a 65ms */
 void general_timer::configurar_periodo_us(uint16_t periodo)
 {
-  memoria(PSC) = 0x1; // 16, para que cada "tick" sea de 1us. 16 qué?
-  memoria(ARR) = periodo-1;
+  set_prescaler(15); //para que cada "tick" sea de 1us
+  set_autoreload(periodo-1);
 }
 
 /** válido de 1ms a 65s */
 void general_timer::configurar_periodo_ms(uint16_t periodo)
 {
-  memoria(PSC) = 0x3E80; // 16000, para que cada "tick" sea de 1ms
-  memoria(ARR) = periodo-1;
+  //memoria(PSC) = 7999; // para que cada "tick" sea de 1ms, divides 8MHz entre 8000
+  set_prescaler(15999); // O tal vez, sí es de 16MHz? divides 16MHz entre 16000. PWM y periodic son diferentes? no.
+  set_autoreload(periodo-1);
 }
 
 void general_timer::enable_output()
 {
   constexpr flag CC1E(0);
   CCER.set(CC1E);
+}
+
+void general_timer::generate_update() const {
+  const flag UG(0);
+  EGR.set(UG);
+}
+
+void general_timer::clear_update() const {
+  const flag UIF(0);
+  SR.reset(UIF);
+}
+
+/**
+ *    Para configurar un timer como Input Capture:
+ *    CCER->CC1E = 1    Habilitar captura
+ *    CCER->CC1P = 0 o 1    Captura en Rising/Falling edge
+ */
+void general_timer::enable_input_capture(bool rising_edge) const {
+  /** Configuramos el registro CCMR1. Vamos a indicar que es una entrada. */
+  const bitfield CC1S(2,0, 1); /** Puede valer 1, 2 o 3. Qué son TI1, TI2 y TRC? */
+  CCMR1.write(CC1S);
+
+  const flag CC1E(0);
+  const flag CC1P(1);
+  CCER.set(CC1E);
+
+  if(!rising_edge)
+    CCER.set(CC1P);
+
+
 }

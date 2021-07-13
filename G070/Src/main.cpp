@@ -20,7 +20,9 @@ void inicializacion();
 void configurar_relojes();
 void error(void);
 
-general_timer* tim_ptr{nullptr};
+extern general_timer* tim16_ptr;
+extern general_timer* tim17_ptr;
+
 basic_timer* basic_tim_ptr{nullptr};
 uint8_t idx=0;
 
@@ -35,7 +37,7 @@ void callback_uart2()
   if(UART2.ISR.is_set(RXNE)) {
     const uint8_t b = UART2.read_byte();
 
-    if(tim_ptr != nullptr)
+    if(basic_tim_ptr != nullptr)
         parser(b);
 
     UART2 << b;
@@ -61,9 +63,9 @@ void parser(uint8_t b)
     if(b == ',') {
         ++estado;
         if(estado > 2) {
-            memoria(tim_ptr->PSC) = n1;
-            memoria(tim_ptr->ARR) = n2;
-            memoria(tim_ptr->CCR1) = n3;
+            memoria(tim16_ptr->PSC) = n1;
+            memoria(tim16_ptr->ARR) = n2;
+            memoria(tim16_ptr->CCR1) = n3;
             n1 = n2 = n3 = 0;
             estado = 0;
         }
@@ -115,11 +117,26 @@ int main(void)
 
 
   general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
-  t16.configurar_periodo_us(1000);
+  t16.configurar_periodo_ms(1000);
   t16.enable_output_compare(4);
   GPIO::PORTA.pin_for_timer(6,GPIO::AlternFunct::AF5);
   t16.start();
-  tim_ptr = &t16;
+  tim16_ptr = &t16;
+
+  auto input_capture_callback = [] () {
+    uint16_t cnt = memoria(tim17_ptr->CCR1);
+    //*g_uart2 << "ah!\n";
+    *g_uart2 << cnt;
+  };
+
+  general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
+  t17.enable_input_capture(true);
+  t17.configurar_periodo_ms(1000);
+  t17.generate_update();
+  t17.clear_update();
+  GPIO::PORTA.pin_for_timer(7,GPIO::AlternFunct::AF5);
+  t17.start();
+  t17.enable_interrupt(input_capture_callback, general_timer::InterruptType::CCIE);
 
   while(true)
   {

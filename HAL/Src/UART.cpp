@@ -260,6 +260,13 @@ const UART& UART::operator<<(uint8_t b) const
   return *this;
 }
 
+const UART& UART::operator<<(uint16_t hw) const
+{
+  write_byte(hw & 0xFF);
+  write_byte((hw >> 8) & 0xFF);
+  return *this;
+}
+
 /** No estoy 100% feliz con esta implementación. Duplica mucho código. Sacrifico este espacio por la conveniencia
  * de usar char* como tipo base en esta operación, vs unsigned char *. Probablemente el segundo es más seguro pero
  * el tiempo y las pruebas confirmarán. */

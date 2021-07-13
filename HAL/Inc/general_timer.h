@@ -21,19 +21,22 @@ enum class GeneralTimer : std::size_t {
   TIM17 = 0x40014800
 };
 
-/**
- *    Ejemplo:\n
-    general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic, 0x8, 0x100); //each tick is 1ms
-    t16.enable_output_compare(0x1);
-    t16.start();
- */
+
 class general_timer {
 public:
 
   enum class Mode{
     Periodic=0,
     OnePulseMode=1,
-    PWM
+    PWM,
+    InputCapture
+  };
+
+  enum class InterruptType {
+    UIE = 0,
+    CCIE = 1,
+    COMIE = 5,
+    BIE = 7
   };
 
   general_timer(const GeneralTimer tim, const Mode mode);
@@ -43,7 +46,7 @@ public:
       const uint8_t update_disable = 0, const uint8_t status_bit_remap = 0) const;
 
 
-  void enable_interrupt(void (*callback_fn)(void),const uint8_t isr_priority = 3);
+  void enable_interrupt(void (*callback_fn)(void), InterruptType it, const uint8_t isr_priority = 3);
 
   void start(void) const;
 
@@ -57,8 +60,15 @@ public:
   void configurar_periodo_ms(uint16_t periodo);
   void enable_output();
 
+  void generate_update() const;
+  void clear_update() const;
+  void enable_input_capture(bool rising_edge) const;
 
-  void (*callback)(void) {nullptr};
+  void callback_selector(); //ahorra un poco de código
+  void (*callback_update)(void) {nullptr}; // el callback normal que se usa en el basic timer
+  void (*callback_capture_compare)(void) {nullptr}; // un callback para el evento de CC.
+  void (*callback_COM)(void) {nullptr}; // un callback para el evento COM.
+  void (*callback_break)(void) {nullptr}; // un callback para el evento break.
   const GeneralTimer peripheral;
   const size_t base;
   registro CR1, CR2, DIER, SR, EGR, CNT, PSC, ARR, CCMR1, CCER, CCR1, BDTR;

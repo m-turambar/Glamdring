@@ -88,6 +88,7 @@ public:
 
   void write_byte(const uint8_t b) const;
   const UART& operator<<(const uint8_t b) const;
+  const UART& operator<<(const uint16_t hw) const;
   const UART& operator<<(const char* buffer) const;
 
   const Peripheral peripheral;
