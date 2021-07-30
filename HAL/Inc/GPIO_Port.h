@@ -21,7 +21,7 @@ namespace GPIO {
     F = 0x48001400
   };
 
-#elif defined(STM32G070xx)
+#elif defined(STM32G070xx) || defined(STM32G031xx)
 
   /* Deberíamos poner el puerto 'E' para compatibilidad con otros dispositivos? */
   enum class Port {

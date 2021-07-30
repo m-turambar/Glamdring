@@ -56,8 +56,8 @@ void parser(uint8_t b)
         return;
     }
     if(b == 't') {
-        if(basic_tim_ptr != nullptr) {
-            basic_tim_ptr->start();
+        if(tim16_ptr != nullptr) {
+            tim16_ptr->start();
         }
     }
     if(b == ',') {
@@ -95,20 +95,30 @@ int main(void)
   RCC::enable_port_clock(RCC::GPIO_Port::A);
   RCC::enable_port_clock(RCC::GPIO_Port::C);
 
-  GPIO::PORTA.salida(5); //LED
+  GPIO::PORTA.salida(9); //LED
 
 
   auto toggle_led = []() {
-    GPIO::PORTA.toggle(5);
+    //GPIO::PORTA.toggle(5);
+    static bool ent = false;
+    if(!ent) {
+      GPIO::PORTA.entrada(9, GPIO::PullResistor::NoPull);
+      ent = true;
+    }
+    else {
+      GPIO::PORTA.salida(9);
+      GPIO::PORTA.reset_output(9);
+      ent = false;
+    }
   };
 
-  basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::OnePulseMode);
+  basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic);
   t7.configurar_periodo_ms(1000);
   t7.generate_update();
   t7.clear_update();
   t7.enable_interrupt(toggle_led);
   basic_tim_ptr = &t7;
-  //t7.start();
+  t7.start();
 
   UART uart2(UART::Peripheral::USART2, 115200);
   g_uart2 = &uart2;
@@ -117,8 +127,11 @@ int main(void)
 
 
   general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
-  t16.configurar_periodo_ms(1000);
-  t16.enable_output_compare(7);
+  //algo irrelevante, pero bueno. Está esperandose 1ms después de ser iniciado, para generar un pulso de 10us.
+  //t16.configurar_periodo_us(1000);
+  t16.set_prescaler(160 - 1);
+  t16.set_autoreload(50000 - 1);
+  t16.enable_output_compare(1);
   GPIO::PORTA.pin_for_timer(6,GPIO::AlternFunct::AF5);
   t16.start();
   tim16_ptr = &t16;
@@ -127,25 +140,45 @@ int main(void)
     static bool rising{true};
     static uint16_t fall_cnt{0};
     static uint16_t rise_cnt{0};
+
     uint16_t cnt = memoria(tim17_ptr->CCR1);
+
     if(rising) {
       rise_cnt = cnt;
       tim17_ptr->set_capture_compare_polarity_falling();
-      rising = false;
     }
+
     else {
       fall_cnt = cnt;
       tim17_ptr->set_capture_compare_polarity_rising();
-      rising = true;
-      *g_uart2 << static_cast<uint16_t>(fall_cnt - rise_cnt);
+      uint16_t dif = (fall_cnt - rise_cnt);
+      /** el ancho de pulso te dice el tiempo que la señal viajó...osea que la distancia es la mitad.
+       * v = d/t -> d = t*v -> 2d = dif * 340m/s -> d = dif * 170m/s
+       * Se pone complicado con las unidades. Queremos cm. Nuestra dif está en deca-micro-segundos. (10 us).
+       * x metros = dif / 100,000 * 170 m/s
+       * x milímetros = dif / 100 * 170
+       * */
+      uint16_t distancia_mm = uint16_t (float(dif * 1.7));
+      uint8_t arr[6] = {0};
+      int8_t idx = 0;
+      while (distancia_mm > 0) {
+        uint8_t digito = (distancia_mm % 10) + '0';
+        arr[idx] = digito;
+        ++idx;
+        distancia_mm = distancia_mm / 10;
+      }
+      --idx;
+      while(idx >= 0) {
+        *g_uart2 << arr[idx];
+        --idx;
+      }
+      *g_uart2 << '\n';
     }
-    //*g_uart2 << "ah!\n";
-
+    rising = !rising;
   };
 
   general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
-  t17.enable_input_capture(true);
-  t17.configurar_periodo_ms(50000);
+  t17.enable_input_capture(true, 10);
   t17.generate_update();
   t17.clear_update();
   GPIO::PORTA.pin_for_timer(7,GPIO::AlternFunct::AF5);

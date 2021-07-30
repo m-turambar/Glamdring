@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/F767.iml" filepath="$PROJECT_DIR$/.idea/F767.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/STM32F767ZI.iml" filepath="$PROJECT_DIR$/.idea/STM32F767ZI.iml" />
     </modules>
   </component>

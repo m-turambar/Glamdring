@@ -63,7 +63,7 @@ public:
 
   void generate_update() const;
   void clear_update() const;
-  void enable_input_capture(bool rising_edge, uint8_t filtro=0) const;
+  void enable_input_capture(bool rising_edge, uint16_t microsegundos_por_conteo, uint8_t filtro=0) const;
 
   // atajos, para rápidamente hacer toggle del tipo de flanco que dispara la interrupción, para medir pulsos.
   void set_capture_compare_polarity_rising() const;

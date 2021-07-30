@@ -242,7 +242,7 @@ void general_timer::clear_update() const {
  *    CCER->CC1P = 0 o 1    Captura en Rising/Falling edge
  *    Para ver el comportamiento del filtro, consulta el datasheet.
  */
-void general_timer::enable_input_capture(bool rising_edge, uint8_t filtro) const {
+void general_timer::enable_input_capture(bool rising_edge, uint16_t microsegundos_por_conteo, uint8_t filtro) const {
   /** Configuramos el registro CCMR1. Vamos a indicar que es una entrada.
    * Parece que esto debe ocurrir antes de escribir al CCER.
    * De otro modo, CCMR1 no se estaba actualizando. */
@@ -262,7 +262,20 @@ void general_timer::enable_input_capture(bool rising_edge, uint8_t filtro) const
   else
     CCER.reset(CC1P);
 
+  /** Ya sea que queremos medir ancho de pulso o frecuencia, el contador va a hacer overflow.
+   * La aritmética en C y C++ hace que al haber overflows o underflows se tome el modulo del tipo de la variable que
+   * hizo overflow.
+   * Así que restar e.g. 6 - 4999 nos da (-4993) % 2^16 - 1. Esto no es igual al 7 que nos gustaría tener.
+   * Por ende hacer el ARR 2^16 - 1 hace que esa resta nos dé el resultado correcto.
+   *
+   * Evita usar las funciones configurar_periodo_x, pues restan 1 al valor del ARR. Eso puede llevar a unos bugs muy
+   * sutiles.*/
+  set_autoreload(0xFFFF);
 
+  /** Para obtener un conteo de 1us (actualización de CNT), prescaler debe valer 15. (16 MHz entre 16 es 1 MHz).
+   * Para que cada conteo valga 1ms, debe valer 15999.
+   * Para que cada conteo valga 1 segundo? no alcanza. */
+  set_prescaler(microsegundos_por_conteo*16 - 1);
 }
 
 void general_timer::set_capture_compare_polarity_rising() const {

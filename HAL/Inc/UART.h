@@ -28,7 +28,7 @@ public:
   enum class Peripheral {
 #ifdef STM32L475xx
     USART1 = 0x40013800,
-#elif defined(STM32G070xx)
+#elif defined(STM32G070xx) || defined(STM32G031xx)
     USART1 = 0x40013800,
 #elif defined(STM32F767xx)
     USART1 = 0x40011000,
@@ -88,6 +88,7 @@ public:
 
   void write_byte(const uint8_t b) const;
   const UART& operator<<(const uint8_t b) const;
+  const UART& operator<<(const char b) const;
   const UART& operator<<(const uint16_t hw) const;
   const UART& operator<<(const char* buffer) const;
 

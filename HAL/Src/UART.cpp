@@ -198,6 +198,13 @@ void UART::init_gpios()
     GPIO::PORTD.pin_for_UART(9, GPIO::AlternFunct::AF0); // RX
   }
 
+  #elif defined(STM32G031xx)
+  if(peripheral == Peripheral::USART2) {
+    RCC::enable_port_clock(RCC::GPIO_Port::A);
+    GPIO::PORTA.pin_for_UART(2, GPIO::AlternFunct::AF1);
+    GPIO::PORTA.pin_for_UART(3, GPIO::AlternFunct::AF1);
+  }
+
 #elif defined(STM32F767xx)
   if(peripheral == Peripheral::USART3) {
     RCC::enable_port_clock(RCC::GPIO_Port::D);
@@ -256,6 +263,11 @@ void UART::write_byte(uint8_t b) const
 
 const UART& UART::operator<<(uint8_t b) const
 {
+  write_byte(b);
+  return *this;
+}
+
+const UART &UART::operator<<(const char b) const {
   write_byte(b);
   return *this;
 }
