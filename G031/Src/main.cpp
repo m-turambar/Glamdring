@@ -29,8 +29,7 @@ UART* g_uart2{nullptr};
 void callback_uart2()
 {
   auto& UART2 = *g_uart2;
-  constexpr static flag RXNE(5);
-  if(UART2.ISR.is_set(RXNE)) {
+  if(UART2.available()) {
     const uint8_t b = UART2.read_byte();
 
     UART2 << b;
@@ -48,20 +47,24 @@ int main(void)
 
   auto toggle_led = []() {
     GPIO::PORTA.toggle(12);
+    *g_uart2 << "huh\n";
   };
 
+
   general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
-  t17.configurar_periodo_ms(100);
+  t17.configurar_periodo_ms(1000);
   t17.generate_update();
   t17.clear_update();
   t17.enable_interrupt(toggle_led, general_timer::InterruptType::UIE);
   tim17_ptr = &t17;
   t17.start();
 
+
   UART uart2(UART::Peripheral::USART2, 115200);
   g_uart2 = &uart2;
-  //uart2.enable_interrupt_rx(callback_uart2);
-  uart2.enable_fifo().enable();
+  uart2.enable();
+  uart2.enable_interrupt_rx(callback_uart2);
+  uart2 << "boot\n";
 
 
   while(true)

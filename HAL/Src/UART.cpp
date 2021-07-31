@@ -15,7 +15,7 @@ constexpr static flag TE(3);
 constexpr static flag TXFNF(7); /** Reset value = 1. Exactamente el mismo bit con o sin FIFO:TXE*/
 constexpr static flag TC(6);
 /** No queue */
-const flag TXE(3);
+constexpr static flag TXE(7);
 
 /** sospechoso */
 UART* UART1_ptr{nullptr};
@@ -119,10 +119,12 @@ void UART::enable_clock() const
   }
 }
 
-const UART& UART::enable_fifo() const
+const UART& UART::enable_fifo()
 {
   flag FIFOEN(29);
   CR1.set(FIFOEN);
+  con_fifo = true;
+
   return *this;
 }
 
@@ -256,19 +258,27 @@ void UART::transmitq(const uint8_t* buffer, size_t sz) const
 void UART::write_byte(uint8_t b) const
 {
   CR1.set(TE);
-  while(ISR.is_reset(TXFNF)) {} /** Es lo mismo que TXE. Es el mismo bit en el mismo registro */
-  memoria(TDR) = b;
-  while(ISR.is_reset(TC)) {} /** esperamos hasta que la transmision termine */
+  if(con_fifo) {
+    while(ISR.is_reset(TXFNF)) {}
+    memoria(TDR) = b;
+
+  }
+  else {
+    while(ISR.is_reset(TXE)) {}
+    memoria(TDR) = b;
+  }
 }
 
 const UART& UART::operator<<(uint8_t b) const
 {
   write_byte(b);
+  while(ISR.is_reset(TC)) {} /** esperamos hasta que la transmision termine */
   return *this;
 }
 
 const UART &UART::operator<<(const char b) const {
   write_byte(b);
+  while(ISR.is_reset(TC)) {} /** esperamos hasta que la transmision termine */
   return *this;
 }
 
@@ -276,22 +286,19 @@ const UART& UART::operator<<(uint16_t hw) const
 {
   write_byte((hw >> 8) & 0xFF);
   write_byte(hw & 0xFF);
+  while(ISR.is_reset(TC)) {} /** esperamos hasta que la transmision termine */
   return *this;
 }
 
-/** No estoy 100% feliz con esta implementación. Duplica mucho código. Sacrifico este espacio por la conveniencia
- * de usar char* como tipo base en esta operación, vs unsigned char *. Probablemente el segundo es más seguro pero
- * el tiempo y las pruebas confirmarán. */
+/** el chequeo de TC sólo se hace al finalizar la tramisión de todos los caracteres */
 const UART& UART::operator<<(const char* buffer) const
 {
   const size_t sz = std::strlen(buffer);
-  bitfield tdr(9,0);
   CR1.set(TE);
 
   for(size_t i=0; i<sz; ++i)
   {
-    while(ISR.is_reset(TXFNF)) {} /** esperamos hasta que la queue de tranmision deje de estar llena */
-    memoria(TDR) = tdr(buffer[i]);
+    write_byte(buffer[i]);
   }
   while(ISR.is_reset(TC)) {} /** esperamos hasta que la transmision termine */
   return *this;

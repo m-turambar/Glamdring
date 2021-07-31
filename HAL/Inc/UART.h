@@ -73,7 +73,7 @@ public:
 
   void cfg_baud(const size_t baud) const;
 
-  const UART& enable_fifo() const;
+  const UART& enable_fifo();
 
   void init_gpios();
 
@@ -96,6 +96,7 @@ public:
   void (*callback)() {nullptr};
   const size_t base, baud;
   const registro CR1, CR2, CR3, BRR, GTPR, RTOT, RQR, ISR, ICR, RDR, TDR, PRESC;
+  bool con_fifo = false;
 };
 
 
