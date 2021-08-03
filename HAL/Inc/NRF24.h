@@ -15,6 +15,7 @@ class NRF24
 public:
   enum class Registro {
     Config = 0,
+    RF_CH = 5,
     Status = 7,
     RX_PW_P0 = 0x11,
     FIFO_STATUS = 0x17

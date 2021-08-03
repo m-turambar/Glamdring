@@ -32,6 +32,8 @@
    * más de 1 pin a la vez. */
   void I2C::init_gpios()
   {
+
+#ifdef STM32G070xx
     /**
      * I2C2 GPIO Configuration
      * PB10     ------> I2C2_SCL
@@ -52,6 +54,13 @@
       GPIO::PORTA.pin_for_I2C(9, GPIO::AlternFunct::AF6);
       GPIO::PORTA.pin_for_I2C(10, GPIO::AlternFunct::AF6);
     }
+
+#elif defined(STM32G031xx)
+    RCC::enable_port_clock(RCC::GPIO_Port::B);
+    GPIO::PORTB.pin_for_I2C(6, GPIO::AlternFunct::AF6); // CLK
+    GPIO::PORTB.pin_for_I2C(7, GPIO::AlternFunct::AF6); // DA
+
+#endif
   }
 
   /** Nota

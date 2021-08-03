@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP STM32G031F8Px
+D Paquete TSSOP-20 del G031. Tiene 64kB de Flash y 8kB de RAM.
+K STM32G0
+$ENDCMP
+#
+#End Doc Library

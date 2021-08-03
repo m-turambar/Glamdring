@@ -105,7 +105,7 @@ void demo()
   auto config = radio.leer_registro(NRF24::Registro::Config);
   radio.encender(NRF24::Modo::TX);
   config = radio.leer_registro(NRF24::Registro::Config);
-  
+
   basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic, 0x1800, 0x100);
   t7.enable_interrupt(transmitir_tx);
   t7.start();
@@ -142,45 +142,3 @@ status2 = radio2.leer_registro(NRF24::Registro::Status);
 status1 = radio1.leer_registro(NRF24::Registro::Status);
 /************************************
 
-void pasar_caracter(uint8_t b)
-{
-  auto& bb = timer_cfg_buf;
-  if(b == '\n')
-  {
-    uint16_t pre = 0;
-    uint16_t arr = 0;
-    uint16_t ccr1 = 0;
-    int i = 0;
-    while(bb[i] != ',')
-    {
-      pre = pre*10 + bb[i]-48;
-      ++i;
-    }
-    ++i;
-
-    while(bb[i] != ',')
-    {
-      arr = arr*10 + bb[i]-48;
-      ++i;
-    }
-    ++i;
-
-    while(bb[i] != ',')
-    {
-      ccr1 = ccr1*10 + bb[i]-48;
-      ++i;
-    }
-    tim_ptr->set_prescaler(pre);
-    tim_ptr->set_autoreload(arr);
-    tim_ptr->set_ccr1(ccr1);
-
-    idx=0;
-  }
-
-  else
-  {
-    bb[idx] = b;
-    ++idx;
-  }
-
-}
