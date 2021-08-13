@@ -61,48 +61,23 @@ void callback_uart2()
   auto& UART2 = *g_uart2;
   if(UART2.available()) {
     const uint8_t b = UART2.read_byte();
-    /*
+
     if(b == '/' or parsing) {
       parse_radio(b);
     }
     else {
       UART2 << b;
+      if(nrf_ptr != nullptr) {
+        *nrf_ptr << b;
+      }
     }
-     */
-    UART2 << b;
+
   }
 }
-
 
 
 const char* numeros = "012345678\n";
 uint16_t idx = 0;
-
-void transmitir_tx(void)
-{
-  if(nrf_ptr ==nullptr)
-    return;
-  nrf_ptr->clear_interrupts();
-  nrf_ptr->flush_tx_fifo();
-  const uint8_t b = numeros[idx%10];
-  nrf_ptr->transmitir_byte(b);
-  ++idx;
-}
-
-bool checar_rx(uint8_t& dato)
-{
-  NRF24& rx = *nrf_ptr;
-  volatile uint8_t status = rx.leer_registro(NRF24::Registro::Status);
-  /** El bit[6] del STATUS register es RX_DR e indica Data Ready. Se setea cuando llegan datos*/
-  if((status & (1 << 6))) //que significa 1 << 6 por el amor de dios
-  {
-    dato = rx.leer_rx();
-    rx.clear_interrupts(); //TODO solo clear RX_DR
-    rx.flush_rx_fifo();
-    return true;
-  }
-  return false;
-}
 
 int main(void)
 {
@@ -114,53 +89,62 @@ int main(void)
 
   GPIO::PORTA.salida(12); //LED
 
+  // Agregar un tiempo de espera de algunos milisegundos para asegurar que todo ya se inicializó
+/*
   I2C i2c1(I2C::Peripheral::I2C1);
   i2c1.enable(I2C::Timing::Standard);
 
   MPU6050 mpu(i2c1); //instancia que representa a nuestro acelerómetro
   mpu.set_sampling_rate();
   mpu_ptr = &mpu;
-
+*/
   ///////////////
-/*
-  const GPIO::pin cen(GPIO::PORTA, 11); //TODO
-  cen.salida();
-
-  const GPIO::pin nss(GPIO::PORTB, 0);
-  nss.salida(); //considerar hacer por hardware
-
-  SPI spi1(SPI::Peripheral::SPI1_I2S1);
-  spi1.inicializar();
-
-  NRF24 radio(spi1, nss, cen);
-  nrf_ptr = &radio;
-  radio.config_default();
-  auto config = radio.leer_registro(NRF24::Registro::Config);
-  radio.encender(NRF24::Modo::RX);
-  config = radio.leer_registro(NRF24::Registro::Config);
-  auto rf_ch = radio.leer_registro(NRF24::Registro::RF_CH);
-  radio.escribir_registro(NRF24::Registro::RF_CH, 0b111111);
-  rf_ch = radio.leer_registro(NRF24::Registro::RF_CH);
-
-  ///////////////
-
 
   auto callback_rx = []() {
     GPIO::PORTA.toggle(12);
-    //*g_uart2 << "huh\n";
-    uint8_t dato = 0;
-    if(checar_rx(dato)) {
+    NRF24& rx = *nrf_ptr;
+
+    //uint8_t status = rx.leer_registro(NRF24::Registro::Status);
+    //todo lee status para saber de qué canal vino el paquete
+
+    uint8_t fifo_status = rx.leer_registro(NRF24::Registro::FIFO_STATUS);
+    while (fifo_status % 2 == 0) /// el bit menos significativo de FIFO_STATUS es RX_EMPTY
+    {
+      uint8_t dato = rx.leer_rx();
       *g_uart2 << dato;
+      fifo_status = rx.leer_registro(NRF24::Registro::FIFO_STATUS);
     }
+
   };
 
   auto callback_tx = []() {
     GPIO::PORTA.toggle(12);
-    transmitir_tx();
+    if(nrf_ptr ==nullptr)
+      return;
+    const uint8_t b = numeros[idx%10];
+    *nrf_ptr << b;
+    ++idx;
   };
-*/
+
+  ///////////////
+
+  const GPIO::pin radio_en(GPIO::PORTA, 11);
+  const GPIO::pin radio_nss(GPIO::PORTB, 0);
+  const GPIO::pin radio_irq(GPIO::PORTA, 4);
+
+  SPI spi1(SPI::Peripheral::SPI1_I2S1);
+  spi1.inicializar();
+
+  NRF24 radio(spi1, radio_nss, radio_en, radio_irq);
+
+  nrf_ptr = &radio;
+  radio.config_default();
+  radio.encender(NRF24::Modo::TX);
+  radio.escribir_registro(NRF24::Registro::RF_CH, 0b100000);
+  radio.rx_dr_callback = callback_rx;
 
 
+  ///////////////
 
   auto callback_MPU = []() {
     uint8_t buf[16] = {0};
@@ -173,17 +157,20 @@ int main(void)
     mpu_ptr->leer(buf, 6);
     mpu_ptr->convert_to_float(acc, buf, 3);
 
-    std::sprintf(tx_buf, "ax=%.2f\t ay=%.2f\t az=%.2f\n\r", acc[0], acc[1], acc[2]);
+    std::sprintf(tx_buf, "ax=%.3f\t ay=%.3f\t az=%.3f\n\r", acc[0], acc[1], acc[2]);
 
     *g_uart2 << tx_buf;
   };
 
+  auto callback_led = []() {
+    GPIO::PORTA.toggle(12);
+  };
 
   general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
-  t17.configurar_periodo_ms(200);
+  t17.configurar_periodo_ms(500);
   t17.generate_update();
   t17.clear_update();
-  t17.enable_interrupt(callback_MPU, general_timer::InterruptType::UIE);
+  t17.enable_interrupt(callback_tx, general_timer::InterruptType::UIE);
   tim17_ptr = &t17;
   t17.start();
 
@@ -192,7 +179,7 @@ int main(void)
   g_uart2 = &uart2;
   uart2.enable();
   uart2.enable_interrupt_rx(callback_uart2);
-  uart2 << "boot\n";
+  uart2 << "boom\n";
 
 
 

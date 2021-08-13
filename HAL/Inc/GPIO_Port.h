@@ -132,6 +132,7 @@ namespace GPIO {
     void pin_for_UART(const uint8_t pin, const AlternFunct af) const;
     void pin_for_SPI(const uint8_t pin, const AlternFunct af) const;
     void pin_for_timer(const uint8_t pin, const AlternFunct af) const;
+    void pin_for_interrupt(const uint8_t pin) const;
     /* can only be written once per MCU reset */
     uint8_t lock_bits(const uint16_t bits) const;
 
@@ -163,11 +164,13 @@ namespace GPIO {
     const pin& cfg_alternate(AlternFunct afsel) const;
     const pin& entrada() const;
     const pin& salida() const;
+    const pin& pin_for_interrupt() const;
+
     uint8_t read_input() const;
     uint8_t read_output() const;
     void set() const;
     void reset() const;
-    void toggle_output() const;
+    void toggle() const;
 
   private:
     const GPIO_Port& port;

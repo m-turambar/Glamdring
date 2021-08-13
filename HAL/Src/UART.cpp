@@ -16,6 +16,7 @@ constexpr static flag TXFNF(7); /** Reset value = 1. Exactamente el mismo bit co
 constexpr static flag TC(6);
 /** No queue */
 constexpr static flag TXE(7);
+constexpr static flag ORE(3);
 
 /** sospechoso */
 UART* UART1_ptr{nullptr};
@@ -31,9 +32,17 @@ void USART1_IRQHandler(void)
   NVIC_ClearPendingIRQ(USART1_IRQn);
 }
 
+/** TODO: buffer circular para evitar (hacer más difícil) interrupciones ORE
+ * ORE ocurre cuando hay una sobreescritura al shift register. Si escribes un chingo de caracteres al mismo tiempo eso pasa*/
 void USART2_IRQHandler(void)
 {
-  UART2_ptr->callback();
+  if(UART2_ptr->ISR.is_set(ORE)) {
+    UART2_ptr->ISR.reset(ORE);
+    UART2_ptr->ore_cnt++;
+  }
+  else{
+    UART2_ptr->callback();
+  }
   NVIC_ClearPendingIRQ(USART2_IRQn);
 }
 

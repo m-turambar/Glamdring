@@ -3,6 +3,32 @@
 //
 
 #include <NRF24.h>
+#include <NVIC.h>
+#include <EXTI.h>
+#include <cstring>
+
+NRF24* NRF24_ptr{nullptr};
+
+/** interrumpir esta funcion con un breakpoint hace que no vuelva a entrar. Por qué?
+ * Osea si el pin se baja y no "atrapamos" ese flanco de bajada, a menos que modifiquemos el diseño
+ * nunca vamos a salir de ese estado. Digo, podrías poner un watchdog o un timer a que resetee las interrupciones del
+ * nrf, pero me sorprende que después de resumir la interrrupción no agarre la onda.*/
+extern "C" {
+  void EXTI4_15_IRQHandler(void) {
+    if(NRF24_ptr != nullptr)
+      NRF24_ptr->irq_handler();
+
+    //todo hay que probablemente clerear una flag del EXTI. Creo que estamos entrando reiteradamente aquí.
+    EXTI::clear_pending_interrupt(4);
+    NVIC_ClearPendingIRQ(EXTI4_15_IRQn);
+    NRF24_ptr->clear_all_interrupts();
+  }
+}
+
+/** Las tres banderas de interrupción que se pueden leer/clearear desde el registro STATUS */
+constexpr uint8_t RX_DR = (1 << 6);
+constexpr uint8_t TX_DS = (1 << 5);
+constexpr uint8_t MAX_RT = (1 << 4);
 
 enum class Commands : uint8_t {
   R_REGISTER = 0b00000000, //orear con un registro
@@ -20,17 +46,27 @@ enum class Commands : uint8_t {
 
 
 
-NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin) :
+NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin, const GPIO::pin& IRQ_pin) :
   spi(spi_arg),
   CEN_pin(CEN_pin),
-  SS_pin(SS_pin)
+  SS_pin(SS_pin),
+  IRQ_pin(IRQ_pin)
 {
+  CEN_pin.salida(); //considerar hacer por hardware
+  SS_pin.salida();
   SS_pin.set(); //disable SS
   flush_rx_fifo();
   flush_tx_fifo();
-  clear_interrupts();
-  config_payload_widths(1);
+  clear_all_interrupts();
+  config_payload_widths(1); //todo dinamico
+  NRF24_ptr = this;
+
+  IRQ_pin.pin_for_interrupt();
+  const IRQn_Type mIRQn = EXTI4_15_IRQn; //TODO: esto tiene que depender de la aplicación, no del driver!
+  NVIC_SetPriority(mIRQn, 3);
+  NVIC_EnableIRQ(mIRQn);
 }
+
 
 
 void NRF24::transmitir_byte(const uint8_t b) const
@@ -57,7 +93,7 @@ uint8_t NRF24::leer_rx() const
 void NRF24::encender(NRF24::Modo modo) const
 {
   auto config = leer_registro(Registro::Config);
-  config = config | 2u | static_cast<uint8_t>(modo); //PWR_UP y modo. TODO
+  config = config | 2u | static_cast<uint8_t>(modo); //PWR_UP y modo.
   escribir_registro(Registro::Config, config);
 
   CEN_pin.set(); //turn on
@@ -103,8 +139,11 @@ uint8_t NRF24::leer_registro(NRF24::Registro reg) const
 
 void NRF24::config_default() const
 {
-  const uint8_t default_cfg = (1 << 3) + (1 << 2); //EN_CRC, y CRC de 2 bytes
+  const uint8_t default_cfg = (1 << 3); //EN_CRC
   escribir_registro(Registro::Config, default_cfg);
+
+  const uint8_t setup_retr = 8 + (1 << 4); /// 8 intentos de transmitir, 500uS entre cada intento
+  escribir_registro(Registro::SETUP_RETR, setup_retr);
 }
 
 uint8_t NRF24::flush_tx_fifo() const
@@ -125,7 +164,14 @@ uint8_t NRF24::flush_rx_fifo() const
   return status;
 }
 
-void NRF24::clear_interrupts() const
+
+void NRF24::config_payload_widths(uint8_t width) const
+{
+  width = width & 0b11111;
+  escribir_registro(Registro::RX_PW_P0, width);
+}
+
+void NRF24::clear_all_interrupts() const
 {
   SS_pin.reset();
   uint8_t status = leer_registro(Registro::Status);
@@ -137,10 +183,67 @@ void NRF24::clear_interrupts() const
   SS_pin.set();
 }
 
-void NRF24::config_payload_widths(uint8_t width) const
-{
-  width = width & 0b11111;
-  escribir_registro(Registro::RX_PW_P0, width);
+/** Este callback lo pondremos dentro de la interrupción del pin.
+ * El pin del NRF24 interrumpirá cuando cualquiera de estas condiciones se cumpla,
+ * siempre y cuando estén habilitadas en CONFIG.
+ * El loop de lectura de la RX_FIFO debe ocurrir en el rx_dr_callback(). */
+void NRF24::irq_handler() {
+  volatile uint8_t status = leer_registro(Registro::Status);
+  if(status & RX_DR) {
+    if(rx_dr_callback != nullptr) {
+      rx_dr_callback();
+    }
+  }
+
+  if(status & TX_DS) {
+    ++idx_enviar;
+    if(idx_enviar == idx_llenar) {
+      transmitiendo = false;
+    }
+    else {
+      transmitir_byte(tx_buf[idx_enviar]);
+    }
+
+    if(tx_ds_callback != nullptr) {
+      tx_ds_callback();
+    }
+  }
+
+  if(status & MAX_RT) {
+    transmitir_byte(tx_buf[idx_enviar]);
+    if(max_rt_callback != nullptr) {
+      max_rt_callback();
+    }
+  }
+
+}
+
+NRF24& NRF24::operator<<(uint8_t byte) {
+  tx_buf[idx_llenar] = byte;
+  ++idx_llenar;
+  if(transmitiendo == false) {
+    transmitiendo = true;
+    transmitir_byte(tx_buf[idx_enviar]);
+  }
+  return *this;
+}
+
+NRF24& NRF24::operator<<(char c) {
+  return this->operator<<(static_cast<uint8_t>(c));
+}
+
+NRF24& NRF24::operator<<(char *buffer) {
+  const auto sz = std::strlen(buffer);
+  for(int i = 0; i < sz; ++i) {
+    tx_buf[idx_llenar] = buffer[i];
+    ++idx_llenar;
+  }
+  if(transmitiendo == false) {
+    transmitiendo = true;
+    transmitir_byte(tx_buf[idx_enviar]);
+  }
+
+  return *this;
 }
 
 

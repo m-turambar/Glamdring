@@ -4,6 +4,7 @@
 
 #include "GPIO_Port.h"
 #include "RCC.h"
+#include "EXTI.h"
 
 
 namespace GPIO
@@ -169,6 +170,13 @@ namespace GPIO
     cfg_speed(pin, Speed::VeryLow); //ayuda a reducir el ruido
   }
 
+  void GPIO_Port::pin_for_interrupt(const uint8_t pin) const
+  {
+    cfg_mode(pin, Mode::Input);
+    cfg_pull(pin, PullResistor::NoPull);
+    cfg_speed(pin, Speed::VeryLow);
+    EXTI::enable_falling_interrupt(pin);
+  }
 
   /*************************************************************************************************************/
   /*************************************************************************************************************/
@@ -235,5 +243,14 @@ namespace GPIO
   {
     port.salida(num);
     return *this;
+  }
+
+  const pin& pin::pin_for_interrupt() const {
+    port.pin_for_interrupt(num);
+    return *this;
+  }
+
+  void pin::toggle() const {
+    port.toggle(num);
   }
 }
