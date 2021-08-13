@@ -17,6 +17,7 @@ constexpr static flag TC(6);
 /** No queue */
 constexpr static flag TXE(7);
 constexpr static flag ORE(3);
+constexpr static flag ORECF(3); // ICRE Interrupt flag clear register
 
 /** sospechoso */
 UART* UART1_ptr{nullptr};
@@ -37,7 +38,8 @@ void USART1_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   if(UART2_ptr->ISR.is_set(ORE)) {
-    UART2_ptr->ISR.reset(ORE);
+    //UART2_ptr->ISR.reset(ORE); Esto no funciona. Así no se clearea ORE, o cualquier otra interrupción. Hay que usar ICR.
+    UART2_ptr->ICR.set(ORECF);
     UART2_ptr->ore_cnt++;
   }
   else{

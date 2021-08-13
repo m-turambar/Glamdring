@@ -197,7 +197,7 @@ void NRF24::irq_handler() {
 
   if(status & TX_DS) {
     ++idx_enviar;
-    if(idx_enviar == idx_llenar) {
+    if(idx_enviar == idx_llenar) { /// si ya transmitimos lo que teníamos que transmitir...
       transmitiendo = false;
     }
     else {
@@ -210,7 +210,7 @@ void NRF24::irq_handler() {
   }
 
   if(status & MAX_RT) {
-    transmitir_byte(tx_buf[idx_enviar]);
+    /// No hay necesidad de iniciar una re-transmisión aquí. Lo que podrías hacer es telemetría y medir errores.
     if(max_rt_callback != nullptr) {
       max_rt_callback();
     }
