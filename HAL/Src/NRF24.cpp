@@ -246,4 +246,18 @@ NRF24& NRF24::operator<<(char *buffer) {
   return *this;
 }
 
+NRF24 &NRF24::operator<<(const char *buffer) {
+  const auto sz = std::strlen(buffer);
+  for(int i = 0; i < sz; ++i) {
+    tx_buf[idx_llenar] = buffer[i];
+    ++idx_llenar;
+  }
+  if(transmitiendo == false) {
+    transmitiendo = true;
+    transmitir_byte(tx_buf[idx_enviar]);
+  }
+
+  return *this;
+}
+
 

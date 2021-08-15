@@ -56,6 +56,30 @@ void parse_radio(uint8_t b)
   freq = freq * 10 + b;
 }
 
+static const char* pwd = "bishi\n";
+uint8_t estado_pwd=0;
+bool rele_prendido = false;
+void parse_pwd(uint8_t b) {
+  const char c = static_cast<char>(b);
+
+    if(c == pwd[estado_pwd]) {
+      ++estado_pwd;
+      if(estado_pwd > 5) { //explotame. jaja
+        //activar relé con un OnePulseTimer y apagarlo después.
+        if(tim17_ptr != nullptr) {
+          GPIO::PORTA.salida(1, GPIO::OutputType::OpenDrain);
+          GPIO::PORTA.reset_output(1);
+          tim17_ptr->start();
+        }
+
+      }
+    }
+    else {
+      estado_pwd = 0;
+    }
+
+}
+
 void callback_uart2()
 {
   auto& UART2 = *g_uart2;
@@ -86,8 +110,11 @@ int main(void)
 
   RCC::enable_port_clock(RCC::GPIO_Port::A);
   RCC::enable_port_clock(RCC::GPIO_Port::B);
+  RCC::enable_port_clock(RCC::GPIO_Port::C);
 
   GPIO::PORTA.salida(12); //LED
+  GPIO::PORTC.entrada(15); //pushbutton, con pull-up interno. Apretamos y se pone a GND.
+  GPIO::PORTA.entrada(1, GPIO::PullResistor::NoPull);
 
   // Agregar un tiempo de espera de algunos milisegundos para asegurar que todo ya se inicializó
 /*
@@ -112,6 +139,7 @@ int main(void)
     {
       uint8_t dato = rx.leer_rx();
       *g_uart2 << dato;
+      parse_pwd(dato);
       fifo_status = rx.leer_registro(NRF24::Registro::FIFO_STATUS);
     }
 
@@ -166,11 +194,43 @@ int main(void)
     GPIO::PORTA.toggle(12);
   };
 
+
+  auto callback_boton = []() {
+    static const char* pwd = "bishi\n";
+    uint8_t v_boton = GPIO::PORTC.read_input(15);
+    if(v_boton == 0) {
+      if(nrf_ptr != nullptr) {
+        GPIO::PORTA.toggle(12);
+        *nrf_ptr << pwd;
+      }
+    }
+    else {
+      GPIO::PORTA.reset_output(12);
+    }
+  };
+
+  auto callback_rele = [] () {
+    static bool bb;
+    bb = !bb;
+    if(bb) {
+      GPIO::PORTA.entrada(1, GPIO::PullResistor::NoPull);
+    }
+    else {
+      GPIO::PORTA.salida(1, GPIO::OutputType::OpenDrain);
+      GPIO::PORTA.reset_output(1);
+    }
+  };
+
+  auto callback_apagar_rele = [] () {
+    GPIO::PORTA.entrada(1, GPIO::PullResistor::NoPull);
+    GPIO::PORTA.reset_output(12);
+  };
+
   general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
-  t17.configurar_periodo_ms(500);
+  t17.configurar_periodo_ms(50);
   t17.generate_update();
   t17.clear_update();
-  t17.enable_interrupt(callback_tx, general_timer::InterruptType::UIE);
+  t17.enable_interrupt(callback_boton, general_timer::InterruptType::UIE);
   tim17_ptr = &t17;
   t17.start();
 
