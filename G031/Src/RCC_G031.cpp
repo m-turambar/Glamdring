@@ -129,6 +129,12 @@ namespace RCC
     APBENR2.set(TIM17EN);
   }
 
+  void enable_TIM2_clock()
+  {
+    const flag TIM2EN(0);
+    APBENR1.set(TIM2EN);
+  }
+
   /*********************************************************/
   /** Funciones para configurar o leer relojes del sistema */
   /*********************************************************/
