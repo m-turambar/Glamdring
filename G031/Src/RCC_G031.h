@@ -103,8 +103,7 @@ namespace RCC {
   void enable_TIM15_clock();
   void enable_TIM16_clock();
   void enable_TIM17_clock();
-
-
+  void enable_TIM2_clock();
 
   void enable_TIM6_clock();
   void enable_TIM7_clock();

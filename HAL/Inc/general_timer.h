@@ -11,11 +11,13 @@
 extern "C"
 {
 
+void TIM2_IRQHandler(void);
 void TIM15_IRQHandler(void);
 void TIM16_IRQHandler(void);
 void TIM17_IRQHandler(void);
 
 enum class GeneralTimer : std::size_t {
+  TIM2  = 0x40000000,
   TIM15 = 0x40014000,
   TIM16 = 0x40014400,
   TIM17 = 0x40014800
@@ -53,9 +55,10 @@ public:
 
   void set_prescaler(const uint16_t prescaler) const;
   void set_autoreload(const uint16_t autoreload) const;
-  void set_ccr1(const uint16_t ccr1) const;
+  void set_ccr1(const uint16_t val) const;
+  void set_ccr2(const uint16_t val) const;
 
-  void enable_output_compare(uint16_t cmp) const;
+  void enable_output_compare(uint16_t cmp, const uint8_t canal=1) const; //algunos timers tienen más de un canal
 
   void configurar_periodo_us(uint16_t periodo);
   void configurar_periodo_ms(uint16_t periodo);
@@ -63,7 +66,7 @@ public:
 
   void generate_update() const;
   void clear_update() const;
-  void enable_input_capture(bool rising_edge, uint16_t microsegundos_por_conteo, uint8_t filtro=0) const;
+  void enable_input_capture(bool rising_edge, uint16_t microsegundos_por_conteo, uint8_t filtro=0, const uint8_t canal=1) const;
 
   // atajos, para rápidamente hacer toggle del tipo de flanco que dispara la interrupción, para medir pulsos.
   void set_capture_compare_polarity_rising() const;
@@ -76,7 +79,7 @@ public:
   void (*callback_break)(void) {nullptr}; // un callback para el evento break.
   const GeneralTimer peripheral;
   const size_t base;
-  registro CR1, CR2, DIER, SR, EGR, CNT, PSC, ARR, CCMR1, CCER, CCR1, BDTR;
+  registro CR1, CR2, DIER, SR, EGR, CNT, PSC, ARR, CCMR1, CCMR2, CCER, CCR1, CCR2, CCR3, CCR4, BDTR;
 };
 
 }

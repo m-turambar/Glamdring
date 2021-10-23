@@ -5,9 +5,10 @@
 #include "general_timer.h"
 #include "NVIC.h"
 
-general_timer* tim15_ptr = nullptr;
-general_timer* tim16_ptr = nullptr;
-general_timer* tim17_ptr = nullptr;
+static general_timer* tim2_ptr = nullptr;
+static general_timer* tim15_ptr = nullptr;
+static general_timer* tim16_ptr = nullptr;
+static general_timer* tim17_ptr = nullptr;
 
 /** Las flags para habilitar cada interrupción en DIER tienen el mismo offset que para leer su estado en SR.
  * Excepto por la OverCapture interrupt (CC1OF), que no he usado aún. */
@@ -41,12 +42,19 @@ void general_timer::callback_selector() {
   }
 }
 
+void TIM2_IRQHandler(void)
+{
+  tim2_ptr->callback_selector();
+  NVIC_ClearPendingIRQ(TIM2_IRQn);
+}
+
 void TIM15_IRQHandler(void)
 {
   tim15_ptr->callback_selector();
   NVIC_ClearPendingIRQ(TIM15_IRQn);
-  
-}void TIM16_IRQHandler(void)
+}
+
+void TIM16_IRQHandler(void)
 {
   tim16_ptr->callback_selector();
   NVIC_ClearPendingIRQ(TIM16_IRQn);
@@ -72,8 +80,12 @@ general_timer::general_timer(const GeneralTimer tim, const Mode mode)
     ARR(base+0x2C),
     /*** general timer ***/
     CCMR1(base+0x18),
+    CCMR2(base+0x1C),
     CCER(base+0x20),
     CCR1(base+0x34),
+    CCR2(base+0x38),
+    CCR3(base+0x3C),
+    CCR4(base+0x40),
     BDTR(base+0x44)
 {
   /* Habilitamos los relojes de los periféricos y configuramos los ptrs para las interrupciones */
@@ -90,6 +102,10 @@ general_timer::general_timer(const GeneralTimer tim, const Mode mode)
     tim17_ptr = this;
     RCC::enable_TIM17_clock();
   }
+  else if (peripheral==GeneralTimer::TIM2) {
+    tim2_ptr = this;
+    RCC::enable_TIM2_clock();
+  }
 
   configure(mode);
 }
@@ -105,9 +121,14 @@ void general_timer::set_autoreload(const uint16_t autoreload) const
   memoria(ARR) = autoreload;
 }
 
-void general_timer::set_ccr1(const uint16_t ccr1) const
+void general_timer::set_ccr1(const uint16_t val) const
 {
-  memoria(CCR1) = ccr1;
+  memoria(CCR1) = val;
+}
+
+void general_timer::set_ccr2(const uint16_t val) const
+{
+  memoria(CCR2) = val;
 }
 
 
@@ -142,9 +163,10 @@ void general_timer::enable_interrupt(void (*callback_fn)(void), InterruptType it
   }
 
   const IRQn_Type mIRQn =
-        (peripheral==GeneralTimer::TIM15 ? TIM15_IRQn :
-        (peripheral==GeneralTimer::TIM16 ? TIM16_IRQn :
-        (peripheral==GeneralTimer::TIM17 ? TIM17_IRQn : HardFault_IRQn)));
+      (peripheral == GeneralTimer::TIM2 ? TIM2_IRQn :
+      (peripheral==GeneralTimer::TIM15 ? TIM15_IRQn :
+      (peripheral==GeneralTimer::TIM16 ? TIM16_IRQn :
+      (peripheral==GeneralTimer::TIM17 ? TIM17_IRQn : HardFault_IRQn))));
 
   const flag tipo_interr(static_cast<uint8_t>(it)); // Así no duplicamos código. Puede que necesites más callbacks.
   DIER.set(tipo_interr);
@@ -159,30 +181,36 @@ void general_timer::start(void) const
   memoria(CR1) |= (0x1);
 }
 
-/** Esto lo revistaste comparandolo con la HAL de ST.
- * Al final todo era un problema de GPIOs */
-void general_timer::enable_output_compare(uint16_t cmp) const
+void general_timer::enable_output_compare(uint16_t cmp, const uint8_t canal) const
 {
-  /** Configuramos el registro CCMR1. Vamos a indicar que es una salida, y que es modo PWM. Hay 7 modos. */
-  const bitfield CC1S(2,0, 0); /** Nos aseguramos de que valga 0, para ser salida */
-  const bitfield OC1M(3,4, 6); /** Valor 6 para este bitfield es PWM modo 1. */
-  CCMR1.write(CC1S);
-  CCMR1.write(OC1M);
+  const registro& CCMRx = (canal <= 2 ? CCMR1 : CCMR2);
+
+  const uint8_t offset_canal = ((canal % 2) == 0) ? 8 : 0; // los canales nones no llevan offset
+  /** Configuramos el registro CCMRx. Vamos a indicar que es una salida, y que es modo PWM. Hay 7 modos. */
+  const bitfield CCxS(2,0 + offset_canal, 0); /** Nos aseguramos de que valga 0, para ser salida */
+  const bitfield OCxM(3,4 + offset_canal, 6); /** Valor 6 para este bitfield es PWM modo 1. */
+  CCMRx.write(CCxS);
+  CCMRx.write(OCxM);
 
   /** Habilitamos lectura/escritura al Preload Register. Sin esto, el timer no sacaba ninguna señal.
    * Seguramente es porque la escritura a CCR1 no estaba teniendo ningún efecto. */
-  const flag OC1PE(3);
-  CCMR1.set(OC1PE);
+  const flag OCxPE(3 + offset_canal);
+  CCMRx.set(OCxPE);
 
+  const registro& CCRx =
+      (canal == 1 ? CCR1 :
+      (canal == 2 ? CCR2 :
+      (canal == 3 ? CCR3 :
+      (canal == 4 ? CCR4 : CCR1)))); // default to CCR1 if we get invalid channel
   /** Configuramos el umbral de conteo para PWM. Osea a los cuantos ticks el pulso se va a bajar (en modo 1). */
-  memoria(CCR1) = cmp;
+  memoria(CCRx) = cmp;
 
   /** Experimentalmente, vimos que sí necesitas setear este par de bits. Ahora, si el registro no existe en TIM14,
-   * cómo le haces en ese? */
+   * cómo le haces en ese?
    const flag MOE(15);
    const flag BKP(13);
    BDTR.set(MOE);
-   BDTR.set(BKP);
+   BDTR.set(BKP);*/
 
    /** Experimentalmente vimos que estos bits están igual diferentes: */
    const flag URS(2);
@@ -192,9 +220,54 @@ void general_timer::enable_output_compare(uint16_t cmp) const
 
   /** Finalmente, encendemos el modo OC. Otras opciones en este registro modifican la polaridad,
    * o nos permiten encender el canal negado. */
-  const flag CC1E(0);
-  CCER.set(CC1E);
+  const flag CCxE((canal - 1)*4); // esa pequeña formula es para generalizar a varios canales
+  CCER.set(CCxE);
 }
+
+/**
+ *    Para configurar un timer como Input Capture:
+ *    CCER->CCxE = 1    Habilitar captura
+ *    CCER->CCxP = 0 o 1    Captura en Rising/Falling edge
+ *    Para ver el comportamiento del filtro, consulta el datasheet.
+ */
+void general_timer::enable_input_capture(bool rising_edge, uint16_t microsegundos_por_conteo, uint8_t filtro, const uint8_t canal) const {
+  /** Configuramos el registro CCMR1. Vamos a indicar que es una entrada.
+   * Parece que esto debe ocurrir antes de escribir al CCER.
+   * De otro modo, CCMR1 no se estaba actualizando. */
+  const registro& CCMRx = (canal <= 2 ? CCMR1 : CCMR2);
+
+  const uint8_t offset_canal = ((canal % 2) == 0) ? 8 : 0; // los canales nones no llevan offset
+  const bitfield CCxS(2,0 + offset_canal, 1); /** Puede valer 1, 2 o 3. Qué son TI1, TI2 y TRC? */
+  CCMRx.write(CCxS);
+
+  const bitfield ICxF(4, 4 + offset_canal, filtro & 0x0F); // el BW AND es para solo tomar los 4 bits menores.
+  CCMRx.write(ICxF);
+
+  const flag CCxE((canal - 1)*4);
+  CCMRx.set(CCxE);
+
+  const flag CCxP((canal - 1)*4 + 1);
+  if(!rising_edge)
+    CCER.set(CCxP);
+  else
+    CCER.reset(CCxP);
+
+  /** Ya sea que queremos medir ancho de pulso o frecuencia, el contador va a hacer overflow.
+   * La aritmética en C y C++ hace que al haber overflows o underflows se tome el modulo del tipo de la variable que
+   * hizo overflow.
+   * Así que restar e.g. 6 - 4999 nos da (-4993) % 2^16 - 1. Esto no es igual al 7 que nos gustaría tener.
+   * Por ende hacer el ARR 2^16 - 1 hace que esa resta nos dé el resultado correcto.
+   *
+   * Evita usar las funciones configurar_periodo_x, pues restan 1 al valor del ARR. Eso puede llevar a unos bugs muy
+   * sutiles.*/
+  set_autoreload(0xFFFF);
+
+  /** Para obtener un conteo de 1us (actualización de CNT), prescaler debe valer 15. (16 MHz entre 16 es 1 MHz).
+   * Para que cada conteo valga 1ms, debe valer 15999.
+   * Para que cada conteo valga 1 segundo? no alcanza. */
+  set_prescaler(microsegundos_por_conteo*16 - 1);
+}
+
 
 /** Notas 06/Jul/2021
  * Para configurar una señal PWM, se usan tres registros:
@@ -234,48 +307,6 @@ void general_timer::generate_update() const {
 void general_timer::clear_update() const {
   const flag UIF(0);
   SR.reset(UIF);
-}
-
-/**
- *    Para configurar un timer como Input Capture:
- *    CCER->CC1E = 1    Habilitar captura
- *    CCER->CC1P = 0 o 1    Captura en Rising/Falling edge
- *    Para ver el comportamiento del filtro, consulta el datasheet.
- */
-void general_timer::enable_input_capture(bool rising_edge, uint16_t microsegundos_por_conteo, uint8_t filtro) const {
-  /** Configuramos el registro CCMR1. Vamos a indicar que es una entrada.
-   * Parece que esto debe ocurrir antes de escribir al CCER.
-   * De otro modo, CCMR1 no se estaba actualizando. */
-  const bitfield CC1S(2,0, 1); /** Puede valer 1, 2 o 3. Qué son TI1, TI2 y TRC? */
-  CCMR1.write(CC1S);
-
-  const bitfield IC1F(4, 4, filtro & 0x0F); // el BW AND es para solo tomar los 4 bits menores.
-  CCMR1.write(IC1F);
-
-  const flag CC1E(0);
-  const flag CC1P(1);
-  CCER.set(CC1E);
-
-  if(!rising_edge)
-    CCER.set(CC1P);
-
-  else
-    CCER.reset(CC1P);
-
-  /** Ya sea que queremos medir ancho de pulso o frecuencia, el contador va a hacer overflow.
-   * La aritmética en C y C++ hace que al haber overflows o underflows se tome el modulo del tipo de la variable que
-   * hizo overflow.
-   * Así que restar e.g. 6 - 4999 nos da (-4993) % 2^16 - 1. Esto no es igual al 7 que nos gustaría tener.
-   * Por ende hacer el ARR 2^16 - 1 hace que esa resta nos dé el resultado correcto.
-   *
-   * Evita usar las funciones configurar_periodo_x, pues restan 1 al valor del ARR. Eso puede llevar a unos bugs muy
-   * sutiles.*/
-  set_autoreload(0xFFFF);
-
-  /** Para obtener un conteo de 1us (actualización de CNT), prescaler debe valer 15. (16 MHz entre 16 es 1 MHz).
-   * Para que cada conteo valga 1ms, debe valer 15999.
-   * Para que cada conteo valga 1 segundo? no alcanza. */
-  set_prescaler(microsegundos_por_conteo*16 - 1);
 }
 
 void general_timer::set_capture_compare_polarity_rising() const {
