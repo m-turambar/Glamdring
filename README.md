@@ -1,12 +1,18 @@
 # Glamdring
-Experiments with STM32 microcontrollers.
-The idea is to not use any of the HAL that ST provides. Only use ARM-specific core code.
-Focusing on the NUCLEO-G070RB Cortex-M0+ development unit.
-Now also 
+Infraestructura para microcontroladores STM32.
+Desarrollo de hardware: STM32G031
 
-Developing code to practice device driver writing, and some libraries to interact with sensors.
+El proyecto contiene una mezcla del inglés y el español, dado que lo desarrollé en varias etapas donde prefería uno u otro lenguaje.
 
-Libraries developed so far:
+El proyecto cumple en usar una capa de abstracción del hardware (HAL) completamente deslindada de la que ST provee. No es así con el caso de ARM.
+Contiene una HAL compartida por todos los micros, y un folder de aplicación para cada uno.
+
+El desarrollo de hardware para el STM32G031 fue todo un éxito. El acceso al MPU6050 y el NRF24 es bastante sólido.
+En general, el proyecto Glamdring ha sido un éxito.
+
+**************************************************
+
+Las librerias desarrolladas incluyen pero no están limitadas a:
 Basic timers (One shot, output compare, input capture)
 General purpose timers (incomplete for more complex functions)
 I2C
@@ -18,9 +24,7 @@ NRF2401 spi library
 
 Logs:
 May/2020:
-We (I) now develop using Clion.
-
-This is far superior to NP++, since debugging is possible with register viewing. It is the best embedded environment I have developed in so far.
+Desarrollo en Clion, en lugar de Notepad++.
 
 Feb/2021:
 Porting G070 code to L475 took about a day.
@@ -34,15 +38,12 @@ Example, that conditionally changes the definition of the interrupt handler for 
 #define TIM6_IRQHandler(void) TIM6_DAC_IRQHandler(void)
 #endif
 
-Porting to other MCUs will be easy, but we need to split application code from driver code, and share drivers that can be shared.
 
 ****************************************
 
-OK Porting to other MCUs is *not* easy.
+Port a STM32F767.
 
-I just ported to STM32F767 and there were nuances.
-
-Ok español: El M7 tiene cosas en común con el M0+. La enumeración de
+El M7 tiene cosas en común con el M0+. La enumeración de
 selección de relojes para SYSCLK es más parecida al M0+ que al M4.
 Supongo que esto es por arquitectura de ST y no de ARM.
 

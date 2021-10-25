@@ -4,26 +4,9 @@
 
 #include <NRF24.h>
 #include <NVIC.h>
-#include <EXTI.h>
 #include <cstring>
 
 NRF24* NRF24_ptr{nullptr};
-
-/** interrumpir esta funcion con un breakpoint hace que no vuelva a entrar. Por qué?
- * Osea si el pin se baja y no "atrapamos" ese flanco de bajada, a menos que modifiquemos el diseño
- * nunca vamos a salir de ese estado. Digo, podrías poner un watchdog o un timer a que resetee las interrupciones del
- * nrf, pero me sorprende que después de resumir la interrrupción no agarre la onda.*/
-extern "C" {
-  void EXTI4_15_IRQHandler(void) {
-    if(NRF24_ptr != nullptr)
-      NRF24_ptr->irq_handler();
-
-    //todo hay que probablemente clerear una flag del EXTI. Creo que estamos entrando reiteradamente aquí.
-    EXTI::clear_pending_interrupt(4);
-    NVIC_ClearPendingIRQ(EXTI4_15_IRQn);
-    NRF24_ptr->clear_all_interrupts();
-  }
-}
 
 /** Las tres banderas de interrupción que se pueden leer/clearear desde el registro STATUS */
 constexpr uint8_t RX_DR = (1 << 6);
@@ -46,11 +29,10 @@ enum class Commands : uint8_t {
 
 
 
-NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin, const GPIO::pin& IRQ_pin) :
-  spi(spi_arg),
-  CEN_pin(CEN_pin),
-  SS_pin(SS_pin),
-  IRQ_pin(IRQ_pin)
+NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin)
+  :spi(spi_arg)
+  ,CEN_pin(CEN_pin)
+  ,SS_pin(SS_pin)
 {
   CEN_pin.salida(); //considerar hacer por hardware
   SS_pin.salida();
@@ -60,11 +42,6 @@ NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_p
   clear_all_interrupts();
   config_payload_widths(1); //todo dinamico
   NRF24_ptr = this;
-
-  IRQ_pin.pin_for_interrupt();
-  const IRQn_Type mIRQn = EXTI4_15_IRQn; //TODO: esto tiene que depender de la aplicación, no del driver!
-  NVIC_SetPriority(mIRQn, 3);
-  NVIC_EnableIRQ(mIRQn);
 }
 
 

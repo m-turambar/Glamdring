@@ -2,6 +2,7 @@
 // Created by migue on 13/06/2020.
 //
 
+#include <NVIC_G031.h>
 #include "GPIO_Port.h"
 #include "RCC.h"
 #include "EXTI.h"
@@ -170,12 +171,15 @@ namespace GPIO
     cfg_speed(pin, Speed::VeryLow); //ayuda a reducir el ruido
   }
 
-  void GPIO_Port::pin_for_interrupt(const uint8_t pin) const
+  void GPIO_Port::pin_for_interrupt(const uint8_t pin, IRQn_Type IRQn) const
   {
     cfg_mode(pin, Mode::Input);
     cfg_pull(pin, PullResistor::NoPull);
     cfg_speed(pin, Speed::VeryLow);
     EXTI::enable_falling_interrupt(pin);
+
+    NVIC_SetPriority(IRQn, 3);
+    NVIC_EnableIRQ(IRQn);
   }
 
   /*************************************************************************************************************/
@@ -245,8 +249,8 @@ namespace GPIO
     return *this;
   }
 
-  const pin& pin::pin_for_interrupt() const {
-    port.pin_for_interrupt(num);
+  const pin& pin::pin_for_interrupt(IRQn_Type IRQn) const {
+    port.pin_for_interrupt(num, IRQn);
     return *this;
   }
 

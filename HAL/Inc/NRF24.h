@@ -27,15 +27,15 @@ public:
     RX = 1
   };
 
-  NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin, const GPIO::pin& IRQ_pin);
+  NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin);
 
   void config_default() const;
   void encender(Modo modo) const;
 
   uint8_t leer_rx() const;
-
   uint8_t leer_registro(Registro reg) const;
   void escribir_registro(Registro reg, uint8_t val) const;
+
   uint8_t flush_tx_fifo() const;
   uint8_t flush_rx_fifo() const;
   void clear_all_interrupts() const;
@@ -68,7 +68,7 @@ public:
 private:
 
   const SPI& spi;
-  const GPIO::pin& CEN_pin, SS_pin, IRQ_pin;
+  const GPIO::pin& CEN_pin, SS_pin;
 
   void transmitir_byte(const uint8_t b) const;
   bool transmitiendo{false};

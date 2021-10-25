@@ -36,7 +36,6 @@ SET(CMAKE_EXE_LINKER_FLAGS_INIT "-Wl,-gc-sections,--print-memory-usage -T ${LINK
 PROJECT(G031 C CXX ASM)
 set(CMAKE_CXX_STANDARD 14)
 
-#add_definitions(-DARM_MATH_CM4 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -D__FPU_PRESENT=1)
 add_definitions(-D__weak=__attribute__\(\(weak\)\) -D__packed=__attribute__\(\(__packed__\)\) -DUSE_HAL_DRIVER -DSTM32G031xx)
 
 file(GLOB_RECURSE SOURCES "startup/*.*" "Src/*.cpp")

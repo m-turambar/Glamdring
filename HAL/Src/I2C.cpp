@@ -25,7 +25,7 @@
   const bitfield TC(1, 6);
   const bitfield BUSY(1, 15);
   /*OAR1*/
-  const bitfield OA1EN(1, 15);
+  const flag OA1EN(15);
 
   /* Habilita los relojes de los gpios que se usarán para la comunicación. Claramente la
    * API de C es más concisa, pero la mía es más type safe, y podría extenderse para configurar
@@ -84,7 +84,7 @@
     /* must be done before enabling */
     configure_timings(timing);
     /* enable own address 1 */
-    memoria(OAR1) |= OA1EN(1);
+    OAR1.set(OA1EN);
     /* enable */
     memoria(CR1) |= 0x1;
   }
@@ -114,7 +114,7 @@
     size_t cr2 = 0;
     /* 1. Addressing mode ADD10 value 0 means 7-bit addressing. */
     /* 2. Set the slave address to be sent */
-    cr2 |= SADDR(slave_addr); //boy this feels better
+    cr2 |= SADDR(slave_addr);
     /* 3. set transfer direction */
     cr2 |= RD_WRN(write);
     /* 4. the number of bytes to be transferred. */
@@ -137,7 +137,6 @@
     if(nackf==1)
       return Status::NACKF;
 
-    //uint32_t tickstart = HAL_GetTick();
     const uint32_t wait_max = 25;
     if(write==0)
     {
