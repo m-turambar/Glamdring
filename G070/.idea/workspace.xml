@@ -5,29 +5,22 @@
   </component>
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
-      <config projectName="G070" targetName="G070.elf" />
       <config projectName="G070" targetName="HAL" />
+      <config projectName="G070" targetName="G070.elf" />
     </generated>
   </component>
-  <component name="CMakeSettings">
+  <component name="CMakeSettings" AUTO_RELOAD="true">
     <configurations>
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1e1fd41-d4e8-4bd2-81b1-7b49beaf9dcc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../F767/Src/f767_gpio_af.h" beforeDir="false" afterPath="$PROJECT_DIR$/../F767/Src/f767_gpio_af.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../F767/Src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../F767/Src/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Src/g070_gpio_af.h" beforeDir="false" afterPath="$PROJECT_DIR$/Src/g070_gpio_af.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/NVIC_G070.h" beforeDir="false" afterPath="$PROJECT_DIR$/Src/NVIC_G070.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Src/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../HAL/Inc/GPIO_Port.h" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Inc/GPIO_Port.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../HAL/Inc/NRF24.h" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Inc/NRF24.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../HAL/Src/GPIO_Port.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Src/GPIO_Port.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../HAL/Src/I2C.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Src/I2C.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../HAL/Src/NRF24.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Src/NRF24.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../HAL/Src/SPI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Src/SPI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../HAL/Src/UART.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Src/UART.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../HAL/Src/general_timer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Src/general_timer.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,9 +114,12 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="cmake.loaded.for.project" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -142,14 +138,24 @@
     </key>
   </component>
   <component name="RunManager" selected="OpenOCD Download &amp; Run.OCD G070">
-    <configuration name="G070.elf" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="G070" TARGET_NAME="G070.elf" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="G070" RUN_TARGET_NAME="G070.elf">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="G070.elf" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="G070" TARGET_NAME="G070.elf" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="G070" RUN_TARGET_NAME="G070.elf">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="HAL" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="G070" TARGET_NAME="HAL" CONFIG_NAME="Debug">
+    <configuration name="HAL" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="G070" TARGET_NAME="HAL" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <list>
@@ -278,6 +284,7 @@
       <workItem from="1612652564813" duration="4465000" />
       <workItem from="1612678450889" duration="6462000" />
       <workItem from="1612718166427" duration="2706000" />
+      <workItem from="1636859565337" duration="1900000" />
     </task>
     <servers />
   </component>
@@ -286,13 +293,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Src/main.cpp</url>
-          <line>157</line>
-          <option name="timeStamp" value="134" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">

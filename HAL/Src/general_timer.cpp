@@ -42,11 +42,13 @@ void general_timer::callback_selector() {
   }
 }
 
+#ifdef STM32G031xx
 void TIM2_IRQHandler(void)
 {
   tim2_ptr->callback_selector();
   NVIC_ClearPendingIRQ(TIM2_IRQn);
 }
+#endif
 
 void TIM15_IRQHandler(void)
 {
@@ -102,10 +104,12 @@ general_timer::general_timer(const GeneralTimer tim, const Mode mode)
     tim17_ptr = this;
     RCC::enable_TIM17_clock();
   }
+#ifdef STM32G031xx
   else if (peripheral==GeneralTimer::TIM2) {
     tim2_ptr = this;
     RCC::enable_TIM2_clock();
   }
+#endif
 
   configure(mode);
 }
@@ -162,11 +166,23 @@ void general_timer::enable_interrupt(void (*callback_fn)(void), InterruptType it
       callback_break = callback_fn;
   }
 
-  const IRQn_Type mIRQn =
-      (peripheral == GeneralTimer::TIM2 ? TIM2_IRQn :
-      (peripheral==GeneralTimer::TIM15 ? TIM15_IRQn :
-      (peripheral==GeneralTimer::TIM16 ? TIM16_IRQn :
-      (peripheral==GeneralTimer::TIM17 ? TIM17_IRQn : HardFault_IRQn))));
+  IRQn_Type mIRQn = HardFault_IRQn;
+  switch (peripheral) {
+#ifdef STM32G031xx
+    case GeneralTimer::TIM2:
+      mIRQn = TIM2_IRQn;
+      break;//TODO hay que arreglar esto
+#endif
+    case GeneralTimer::TIM15:
+      mIRQn = TIM15_IRQn;
+      break;
+    case GeneralTimer::TIM16:
+      mIRQn = TIM16_IRQn;
+      break;
+    case GeneralTimer::TIM17:
+      mIRQn = TIM17_IRQn;
+      break;
+  }
 
   const flag tipo_interr(static_cast<uint8_t>(it)); // Así no duplicamos código. Puede que necesites más callbacks.
   DIER.set(tipo_interr);

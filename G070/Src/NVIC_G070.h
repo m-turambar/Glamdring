@@ -58,4 +58,6 @@ typedef enum
  * podemos omitir incluir toda su HAL, y hacer uso del código de ARM. */
 #include "core_cm0plus.h"
 
+
+
 #endif //G070_NVIC_H
