@@ -83,34 +83,15 @@ void SPI::init_gpios() const
   /**
    * No son las únicas posibles configuraciones. Hay más GPIOS que pueden usarse para cada función.
    * También no necesariamente tienes que usar todos en AF0 o todos en AF1
-   *
-   * SPI1 GPIO Configuration AF0
-   * PA12     ------> SPI1_MOSI
-   * PA11     ------> SPI1_MISO
-   * PA1      ------> SPI1_SCK
-   * PA4      ------> SPI1_NSS (opcional, modo Motorola SPI master)
-   *
-   * SPI2 GPIO Configuration AF0
-   * PB11/15  ------> SPI2_MOSI
-   * PB14     ------> SPI2_MISO
-   * PB13     ------> SPI2_SCK
-   * PB12     ------> SPI2_NSS (opcional, modo Motorola SPI master)
-   *
-   * ó
-   *
-   * SPI2 GPIO Configuration AF1
-   * PB7/PC3  ------> SPI2_MOSI
-   * PB2/PC2  ------> SPI2_MISO
-   * PA0/PB8  ------> SPI2_SCK
-   * PD0     ------> SPI2_NSS (opcional, modo Motorola SPI master)
-
+   * Resulta ser el caso que terminas modificando estos valores según la aplicación.
+   * Es probable que esto debas delegarlo a código de aplicación en lugar de modificar el driver cada vez.
   */
 
   if(peripheral==Peripheral::SPI1_I2S1) {
     RCC::enable_port_clock(RCC::GPIO_Port::A);
-    GPIO::PORTA.pin_for_SPI(12, GPIO::AlternFunct::AF0);
-    GPIO::PORTA.pin_for_SPI(11, GPIO::AlternFunct::AF0);
-    GPIO::PORTA.pin_for_SPI(1, GPIO::AlternFunct::AF0);
+    GPIO::PORTA.pin_for_SPI(5, GPIO::AlternFunct::AF0);
+    GPIO::PORTA.pin_for_SPI(6, GPIO::AlternFunct::AF0);
+    GPIO::PORTA.pin_for_SPI(7, GPIO::AlternFunct::AF0);
     //GPIO::PORTA.pin_for_UART_or_SPI(4, GPIO::AlternFunct::AF0_SPI1); //Cómo usarlo con dos esclavos en bus?
   }
   else if(peripheral==Peripheral::SPI2) {

@@ -1,7 +1,6 @@
 #include <cstring>
 #include <cstdio>
 //#include <array>
-//#include "I2C.h"
 #include "basic_timer.h"
 #include "GPIO_Port.h"
 #include "RCC.h"
@@ -10,7 +9,7 @@
 #include "general_timer.h"
 #include "UART.h"
 #include "NVIC.h"
-#include "NRF24.h"
+#include "Powerstep.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,12 +63,14 @@ int main(void)
   configurar_relojes();
 
   RCC::enable_port_clock(RCC::GPIO_Port::A);
+  RCC::enable_port_clock(RCC::GPIO_Port::B);
   RCC::enable_port_clock(RCC::GPIO_Port::C);
 
-  GPIO::PORTA.salida(9); //LED
-  GPIO::PORTA.salida(5); //LED
+  GPIO::pin reset_pin_powerstep(GPIO::PORTA, 9);
+  reset_pin_powerstep.salida();
+  reset_pin_powerstep.set();
 
-
+  /*
   basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic);
   t7.configurar_periodo_ms(1000);
   t7.generate_update();
@@ -77,13 +78,30 @@ int main(void)
   t7.enable_interrupt(toggle_led);
   basic_tim_ptr = &t7;
   t7.start();
+  */
 
   UART uart2(UART::Peripheral::USART2, 115200);
   g_uart2 = &uart2;
   uart2.enable_interrupt_rx(callback_uart2);
   uart2.enable_fifo().enable();
 
+  SPI spi1(SPI::Peripheral::SPI1_I2S1);
+  spi1.inicializar();
 
+  const GPIO::pin motor_nss(GPIO::PORTB, 0);
+  motor_nss.salida();
+  motor_nss.set(); // deshabilitar
+
+  Powerstep motor(spi1, motor_nss);
+
+  uint16_t cfg = motor.GetParam(Powerstep::Registro::CONFIG);
+  uint16_t status = motor.GetStatus();
+  motor.SoftStop();
+  status = motor.GetStatus();
+
+  motor.Run(1, 10);
+
+  status = motor.GetStatus();
   while(true)
   {
 
