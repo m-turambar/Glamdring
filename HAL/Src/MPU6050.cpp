@@ -1,13 +1,8 @@
 #include "MPU6050.h"
 
-MPU6050::MPU6050(const I2C& i2c_arg):
-mi2c(i2c_arg)
-{
-  uint8_t buf[2];
-  buf[0] = 0x6B;
-  buf[1] = 0;
-  mi2c.write(MPUADDR, buf, 2);
-}
+MPU6050::MPU6050(const I2C& i2c_arg)
+  : mi2c(i2c_arg)
+{}
 
 /* configurar frecuencia de muestreo a 1KHz */
 I2C::Status MPU6050::set_sampling_rate() const
@@ -39,4 +34,18 @@ void MPU6050::convert_to_float(float *dest, uint8_t *raw_vals, uint8_t n_variabl
     const float aceleracion = (float)accel_int/(float)MPU6050::accel_divisor;
     dest[i] = aceleracion;
   }
+}
+
+I2C::Status MPU6050::inicializar() const {
+  uint8_t buf[2];
+  buf[0] = 0x6B;
+  buf[1] = 0;
+  I2C::Status status = I2C::Status::NACKF;
+  status = mi2c.write(MPUADDR, buf, 2);
+  for(int i=0; status != I2C::Status::OK && (i<50); ++i)
+  {
+    mi2c.enable(I2C::Timing::Standard);
+    status = mi2c.write(MPUADDR, buf, 2);
+  }
+  return status;
 }

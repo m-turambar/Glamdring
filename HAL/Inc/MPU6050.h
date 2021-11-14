@@ -9,7 +9,8 @@
 
 class MPU6050 {
 public:
-  MPU6050(const I2C& i2c_arg);
+  explicit MPU6050(const I2C& i2c_arg);
+  I2C::Status inicializar() const;
   I2C::Status set_sampling_rate() const;
   I2C::Status posicionar_en_registro_ax() const;
   I2C::Status leer(uint8_t * buffer, size_t nbytes) const ;

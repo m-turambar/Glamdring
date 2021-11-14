@@ -19,18 +19,18 @@
   const bitfield NBYTES(8, 16);
   const bitfield AUTOEND(1, 25);
   /*        ISR               */
-  const bitfield TXIS(1,1);
-  const bitfield RXNE(1,2);
-  const bitfield NACKF(1, 4);
-  const bitfield TC(1, 6);
-  const bitfield BUSY(1, 15);
+  const flag TXIS(1);
+  const flag RXNE(2);
+  const flag NACKF(4);
+  const flag TC(6);
+  const flag BUSY(15);
   /*OAR1*/
   const flag OA1EN(15);
 
   /* Habilita los relojes de los gpios que se usarán para la comunicación. Claramente la
    * API de C es más concisa, pero la mía es más type safe, y podría extenderse para configurar
    * más de 1 pin a la vez. */
-  void I2C::init_gpios()
+  void I2C::init_gpios() const
   {
 
 #ifdef STM32G070xx
@@ -75,7 +75,7 @@
     }
   }
 
-  void I2C::enable(Timing timing)
+  void I2C::enable(Timing timing) const
   {
     enable_clock();
     disable();
@@ -88,11 +88,12 @@
     /* enable */
     memoria(CR1) |= 0x1;
   }
-  void I2C::disable()
+  void I2C::disable() const
   {
     memoria(CR1) = 0x0;
   }
-  void I2C::configure_timings(const Timing timing) {
+  void I2C::configure_timings(const Timing timing) const
+  {
     memoria(TIMINGR) = static_cast<size_t>(timing);
   }
 
@@ -109,23 +110,21 @@
   /* set write to 0 to perform a write */
   I2C::Status I2C::comm_init(const size_t slave_addr, const uint8_t write, uint8_t* buffer, const size_t nbytes, const uint8_t autoend) const
   {
-    while(memoria(ISR) & BUSY(1)); //wait if bus is initially busy
+    while(ISR.is_set(BUSY)); //wait if bus is initially busy
     /* CR2 register is 0 by default after reset, meaning some things we need not configure */
-    size_t cr2 = 0;
     /* 1. Addressing mode ADD10 value 0 means 7-bit addressing. */
     /* 2. Set the slave address to be sent */
-    cr2 |= SADDR(slave_addr);
     /* 3. set transfer direction */
-    cr2 |= RD_WRN(write);
     /* 4. the number of bytes to be transferred. */
-    cr2 |= NBYTES(nbytes);
     /* addendum: AUTOEND to determine what happens after NBYTES have been transferred. */
-    cr2 |= AUTOEND(autoend);
+    /* 5. set the start bit. */
 
-    /* 5. set the start bit. The above mustn't ocurr if this bit is set. */
-    cr2 |= START(1);
+    size_t cr2 = SADDR(slave_addr)
+        + RD_WRN(write)
+        + NBYTES(nbytes)
+        + AUTOEND(autoend)
+        + START(1);
 
-    /* write cr2 */
     memoria(CR2) = cr2;
 
     /* now the master automatically sends the START condition followed by the slave address as
@@ -133,28 +132,18 @@
      * This would be interesting to see on the scope.
      * The START bit is cleared by hardware as soon as the slave addr has been sent on the bus. */
 
-    int nackf = memoria(ISR) & NACKF(1);
-    if(nackf==1)
+    if(ISR.is_set(NACKF))
       return Status::NACKF;
 
-    const uint32_t wait_max = 25;
     if(write==0)
     {
       for(unsigned int i=0; i<nbytes; ++i)
       {
-        int txis;
-        do{
-          nackf = memoria(ISR) & NACKF(1);
-          txis = memoria(ISR) & TXIS(1);
-          //size_t current_tick = HAL_GetTick();
-          //if(current_tick - tickstart > wait_max) {
-          //  return Status::Timeout;
-          //}
-        } while(txis==0 && nackf==0);
+        while(ISR.is_reset(TXIS)) { if(ISR.is_set(NACKF)) break; }
 
-        if(nackf==1)
+        if(ISR.is_set(NACKF))
           return Status::NACKF;
-        /* write TXDR */
+
         memoria(TXDR) = buffer[i];
       }
     }
@@ -163,7 +152,7 @@
       while(bytes_read < nbytes)
       {
         /* why does this loop forever */
-        if((memoria(ISR) & RXNE(1)) != 0)
+        if(ISR.is_set(RXNE))
         {
           buffer[bytes_read] = (uint8_t)(memoria(RXDR));
           bytes_read++;
@@ -173,3 +162,7 @@
 
   return Status::OK;
   }
+
+void I2C::clear_nackf() {
+  ISR.reset(NACKF);
+}

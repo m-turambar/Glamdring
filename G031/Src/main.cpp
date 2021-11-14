@@ -45,49 +45,61 @@ void EXTI4_15_IRQHandler(void) {
 }
 }
 
+int mpu_init_fails = 0;
+
 void imprimir_acelerometro()
 {
   char buf[16] = {0};
   uint8_t raw_buf[6] = {0};
   float acc[3] = {0};
-  mpu_ptr->posicionar_en_registro_ax();
-  mpu_ptr->leer(raw_buf, 6);
+  I2C::Status status = mpu_ptr->posicionar_en_registro_ax();
+  status = mpu_ptr->leer(raw_buf, 6);
   mpu_ptr->convert_to_float(acc, raw_buf, 3);
 
   std::sprintf(buf, "ax=%.2f\t ay=%.2f\t az=%.2f\n\r", acc[0], acc[1], acc[2]);
 
+  if(raw_buf[0] == 0 && raw_buf[2] == 0 && raw_buf[4] == 0) {
+    mpu_ptr->inicializar();
+    mpu_ptr->set_sampling_rate();
+    *g_uart2 << "Listo.\n";
+  }
+
   *g_uart2 << buf;
 }
-
-char itoa_buf[8] = {0};
 
 bool parsing = false;
 void parse_uart(uint8_t b)
 {
-  static uint8_t freq = 0;
   if(b == '/') {
-    parsing = true;
-    return;
+    if(!parsing) {
+      parsing = true;
+      return;
+    } else
+    {
+      *g_uart2 << b;
+      if(nrf_ptr != nullptr && nrf_ptr->modo_cached == NRF24::Modo::TX) *nrf_ptr << b;
+    }
   }
   if(b == 'r') {
+    char buf[8] = {0};
     uint8_t freq = nrf_ptr->leer_registro(NRF24::Registro::RF_CH);
-    itoa(freq, itoa_buf, 2);
-    *g_uart2 << "\r\nfreq == " << itoa_buf << "\r\n";
-    memset(itoa_buf, 0, 8);
+    itoa(freq, buf, 2);
+    *g_uart2 << "\r\nfreq == " << buf << "\r\n";
+    memset(buf, 0, 8);
     parsing = false;
     return;
   }
   if(b == '.') {
-    //nrf_ptr->escribir_registro(NRF24::Registro::RF_CH, freq);
-    //itoa(freq, itoa_buf, 2);
-    //*g_uart2 << "\r\nescribiendo freq = " << itoa_buf << "\r\n";
-    //memset(itoa_buf, 0, 8);
-    //parsing = false;
-    //return;
+    parsing = false;
+    return;
   }
-  //freq = freq * 10 + b;
   if(b == 'a') {
     imprimir_acelerometro();
+  }
+  if(b == 'e') {
+    char buf[4] {};
+    itoa(mpu_init_fails, buf, 10);
+    *g_uart2 << buf;
   }
   if(b == '0') {
     apagar_rele();
@@ -214,14 +226,25 @@ int main(void)
 
   // Agregar un tiempo de espera de algunos milisegundos para asegurar que todo ya se inicializó
 
+  /////////////////
+
   I2C i2c1(I2C::Peripheral::I2C1);
   i2c1.enable(I2C::Timing::Standard);
 
   MPU6050 mpu(i2c1); //instancia que representa a nuestro acelerómetro
-  mpu.set_sampling_rate();
+  mpu.inicializar();
+  while(mpu.set_sampling_rate() != I2C::Status::OK) { i2c1.enable(I2C::Timing::Standard); } //TODO: Review why this helps.
   mpu_ptr = &mpu;
 
   ///////////////
+
+  UART uart2(UART::Peripheral::USART2, 115200);
+  g_uart2 = &uart2;
+  uart2.enable();
+  uart2.enable_interrupt_rx(callback_uart2);
+  uart2 << "Hola\n";
+
+  //////////////
 
   const GPIO::pin radio_en(GPIO::PORTA, 11);
   const GPIO::pin radio_irq(GPIO::PORTA, 4);
@@ -233,7 +256,7 @@ int main(void)
   NRF24 radio(spi1, radio_nss, radio_en);
   nrf_ptr = &radio;
   radio.config_default();
-  radio.encender(NRF24::Modo::RX);
+  radio.encender(NRF24::Modo::TX);
   radio.escribir_registro(NRF24::Registro::RF_CH, 0b100000);
 
   radio.rx_dr_callback = callback_nrf24_rx;
@@ -248,15 +271,6 @@ int main(void)
   t17.clear_update();
   t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
   t17.start();
-
-
-  UART uart2(UART::Peripheral::USART2, 115200);
-  g_uart2 = &uart2;
-  uart2.enable();
-  uart2.enable_interrupt_rx(callback_uart2);
-  uart2 << "Hola\n";
-
-
 
   while(true)
   {

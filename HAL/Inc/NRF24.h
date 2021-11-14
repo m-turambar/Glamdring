@@ -30,7 +30,8 @@ public:
   NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin);
 
   void config_default() const;
-  void encender(Modo modo) const;
+  void encender(Modo modo);
+  Modo obtener_modo() const;
 
   uint8_t leer_rx() const;
   uint8_t leer_registro(Registro reg) const;
@@ -55,6 +56,8 @@ public:
   uint8_t tx_buf[256] = {0};
   uint8_t idx_enviar = {0}; /// solo debe actualizarse en la interrupción de un dato exitoso enviado
   uint8_t idx_llenar = {0}; /// solo debe actualizarse cuando el usuario agregue datos al buffer.
+
+  Modo modo_cached;
 
   /** Qué pasa si agregas datos al buffer durante una transmisión?
    * Debemos definir algunos estados.

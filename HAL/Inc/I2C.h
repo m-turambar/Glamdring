@@ -57,11 +57,12 @@ struct I2C {
 
   }
 
-  void init_gpios();
+  void init_gpios() const;
   void enable_clock() const;
-  void configure_timings(const Timing timing);
-  void disable();
-  void enable(Timing timing);
+  void configure_timings(const Timing timing) const;
+  void disable() const;
+  void enable(Timing timing) const;
+  void clear_nackf();
 
   I2C::Status comm_init(const size_t slave_addr, const uint8_t write, uint8_t* buffer, const size_t nbytes,
       const uint8_t autoend = 1) const;

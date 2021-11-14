@@ -67,13 +67,19 @@ uint8_t NRF24::leer_rx() const
   return rcvd;
 }
 
-void NRF24::encender(NRF24::Modo modo) const
+void NRF24::encender(NRF24::Modo modo)
 {
   auto config = leer_registro(Registro::Config);
   config = config | 2u | static_cast<uint8_t>(modo); //PWR_UP y modo.
   escribir_registro(Registro::Config, config);
+  modo_cached = modo;
 
   CEN_pin.set(); //turn on
+}
+
+NRF24::Modo NRF24::obtener_modo() const {
+  auto config = leer_registro(Registro::Config);
+  return (config % 2 == 0) ? NRF24::Modo::RX : NRF24::Modo::TX;
 }
 
 void NRF24::escribir_registro(NRF24::Registro reg, uint8_t val) const
@@ -236,5 +242,3 @@ NRF24 &NRF24::operator<<(const char *buffer) {
 
   return *this;
 }
-
-
