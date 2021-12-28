@@ -20,7 +20,6 @@ void SPI::enable_clock() const
 
 void SPI::inicializar() const
 {
-  enable_clock();
   config_baudrate(PCLK_div::d8);
   init_gpios();
   config_role(Role::Master);

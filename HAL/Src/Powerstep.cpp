@@ -39,7 +39,14 @@ uint32_t Powerstep::GetParam(Powerstep::Registro r) {
 }
 
 void Powerstep::SetParam(Powerstep::Registro r, uint32_t valor) {
-
+  SS_pin.reset();
+  spi.escribir(static_cast<uint8_t>(r));
+  volatile uint8_t vacio = spi.leer();
+  for(int i=sz_registros[static_cast<uint8_t>(r)]-1; i>=0; --i) {
+    uint8_t m = (valor >> i*8) & 0xFF;
+    vacio = recurrent_operation(m);
+  }
+  SS_pin.set();
 }
 
 void Powerstep::Run(bool DIR, uint32_t speed) {
@@ -62,7 +69,18 @@ void Powerstep::StepClock(bool DIR) {
 }
 
 void Powerstep::Move(bool DIR, uint32_t steps) {
+  SS_pin.reset();
 
+  spi.escribir(0b01000000 + DIR);
+  volatile uint8_t valor = spi.leer();
+
+  for(int i=2; i>=0; --i)
+  {
+    uint8_t m = (steps >> i*8) & 0xFF;
+    valor = recurrent_operation(m);
+  }
+
+  SS_pin.set();
 }
 
 void Powerstep::GoTo(uint32_t abs_pos) {
@@ -113,7 +131,10 @@ void Powerstep::SoftHiZ() {
 }
 
 void Powerstep::HardHiZ() {
-
+  SS_pin.reset();
+  spi.escribir(0b10101000);
+  spi.leer();
+  SS_pin.set();
 }
 
 uint16_t Powerstep::GetStatus() {
@@ -136,7 +157,7 @@ uint16_t Powerstep::GetStatus() {
  * pueda procesar el comando que le mandamos anteriormente por SPI. */
 uint8_t Powerstep::recurrent_operation(const uint8_t m) {
   SS_pin.set();
-  for(volatile int i=0; i<100; ++i) { asm("nop"); }
+  for(volatile int i=0; i<5; ++i) { asm("nop"); }
   SS_pin.reset();
 
   spi.escribir(m);

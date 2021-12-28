@@ -16,11 +16,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1e1fd41-d4e8-4bd2-81b1-7b49beaf9dcc" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/OCD_G070.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/OCD_G070.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Src/NVIC_G070.h" beforeDir="false" afterPath="$PROJECT_DIR$/Src/NVIC_G070.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Src/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../HAL/Src/GPIO_Port.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Src/GPIO_Port.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../HAL/Src/general_timer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Src/general_timer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../HAL/Inc/SPI.h" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Inc/SPI.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../HAL/Src/Powerstep.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Src/Powerstep.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../HAL/Src/SPI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../HAL/Src/SPI.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +37,7 @@
       <list>
         <option value="187" />
         <option value="254" />
-        <option value="441" />
+        <option value="0" />
       </list>
     </option>
     <option name="columnOrder">
@@ -48,41 +49,17 @@
     </option>
     <option name="loadedFiles">
       <list>
-        <option value="A:\STMicroelectronics\STM32G07x.svd" />
+        <option value="d:/STMicroelectronics/STM32G07x.svd" />
       </list>
     </option>
     <option name="nodes">
       <map>
         <entry key="STM32G07x.svd" value="-E" />
-        <entry key="STM32G07x.svd|g:SPI" value="-E" />
-        <entry key="STM32G07x.svd|p:SPI1" value="-E" />
+        <entry key="STM32G07x.svd|g:SPI" value="-C" />
+        <entry key="STM32G07x.svd|p:SPI1" value="-C" />
         <entry key="STM32G07x.svd|p:SPI1|CR1" value="HC" />
         <entry key="STM32G07x.svd|p:SPI1|CR2" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI1|CRCPR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI1|DR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI1|HWCFGR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI1|I2SCFGR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI1|I2SPR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI1|IPIDR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI1|RXCRCR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI1|SIDR" value="HC" />
         <entry key="STM32G07x.svd|p:SPI1|SR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI1|TXCRCR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI1|VERR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2" value="-E" />
-        <entry key="STM32G07x.svd|p:SPI2|CR1" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|CR2" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|CRCPR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|DR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|HWCFGR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|I2SCFGR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|I2SPR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|IPIDR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|RXCRCR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|SIDR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|SR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|TXCRCR" value="HC" />
-        <entry key="STM32G07x.svd|p:SPI2|VERR" value="HC" />
       </map>
     </option>
   </component>
@@ -120,7 +97,7 @@
     <property name="cf.first.check.clang-format" value="false" />
     <property name="cidr.known.project.marker" value="true" />
     <property name="cmake.loaded.for.project" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="d:/STMicroelectronics/STM32G07x.svd" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -129,20 +106,16 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.cidr.embedded.config" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\migue\proyectos\Glamdring\HAL\Src" />
       <recent name="C:\Users\migue\proyectos\Glamdring\G070\Src" />
       <recent name="C:\Users\migue\proyectos\Glamdring\G070\Inc" />
     </key>
   </component>
   <component name="RunManager" selected="OpenOCD Download &amp; Run.OCD G070">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="G070.elf" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="G070" TARGET_NAME="G070.elf" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="G070" RUN_TARGET_NAME="G070.elf">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -151,11 +124,6 @@
     <configuration name="HAL" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="G070" TARGET_NAME="HAL" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <list>
@@ -284,12 +252,31 @@
       <workItem from="1612652564813" duration="4465000" />
       <workItem from="1612678450889" duration="6462000" />
       <workItem from="1612718166427" duration="2706000" />
-      <workItem from="1636859565337" duration="1900000" />
+      <workItem from="1636859565337" duration="10180000" />
+      <workItem from="1636911849419" duration="9021000" />
+      <workItem from="1636999233978" duration="17908000" />
+      <workItem from="1637369997265" duration="14082000" />
+      <workItem from="1640291565572" duration="2304000" />
+      <workItem from="1640476731913" duration="429000" />
+      <workItem from="1640712031753" duration="37000" />
+      <workItem from="1640712107072" duration="175000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

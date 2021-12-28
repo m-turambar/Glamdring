@@ -79,7 +79,7 @@ public:
       I2SPR(static_cast<size_t>(p) + 0x20),
       peripheral(p)
   {
-
+    enable_clock();
   }
 
   void inicializar() const;
