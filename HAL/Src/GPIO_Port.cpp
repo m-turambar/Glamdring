@@ -227,25 +227,25 @@ namespace GPIO
     return port.read_output(num);
   }
 
-  void pin::set() const
+  void pin::set_output() const
   {
     port.set_output(num);
   }
 
-  void pin::reset() const
+  void pin::reset_output() const
   {
     port.reset_output(num);
   }
 
-  const pin& pin::entrada() const
+  const pin& pin::entrada(const PullResistor pupd) const
   {
-    port.entrada(num);
+    port.entrada(num, pupd);
     return *this;
   }
 
-  const pin& pin::salida() const
+  const pin& pin::salida(const OutputType out_t) const
   {
-    port.salida(num);
+    port.salida(num, out_t);
     return *this;
   }
 

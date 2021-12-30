@@ -24,7 +24,7 @@ Powerstep::Powerstep(const SPI &spi_arg, const GPIO::pin &SS_pin_arg)
 
 uint32_t Powerstep::GetParam(Powerstep::Registro r) {
   uint32_t ret = 0;
-  SS_pin.reset();
+  SS_pin.reset_output();
 
   spi.escribir(0b100000 + static_cast<uint8_t>(r));
   volatile uint8_t valor = spi.leer();
@@ -34,23 +34,23 @@ uint32_t Powerstep::GetParam(Powerstep::Registro r) {
     ret += (valor << 8*i);
   }
 
-  SS_pin.set();
+  SS_pin.set_output();
   return ret;
 }
 
 void Powerstep::SetParam(Powerstep::Registro r, uint32_t valor) {
-  SS_pin.reset();
+  SS_pin.reset_output();
   spi.escribir(static_cast<uint8_t>(r));
   volatile uint8_t vacio = spi.leer();
   for(int i=sz_registros[static_cast<uint8_t>(r)]-1; i>=0; --i) {
     uint8_t m = (valor >> i*8) & 0xFF;
     vacio = recurrent_operation(m);
   }
-  SS_pin.set();
+  SS_pin.set_output();
 }
 
 void Powerstep::Run(bool DIR, uint32_t speed) {
-  SS_pin.reset();
+  SS_pin.reset_output();
 
   spi.escribir(0b01010000 + DIR);
   volatile uint8_t valor = spi.leer();
@@ -61,7 +61,7 @@ void Powerstep::Run(bool DIR, uint32_t speed) {
     valor = recurrent_operation(m);
   }
 
-  SS_pin.set();
+  SS_pin.set_output();
 }
 
 void Powerstep::StepClock(bool DIR) {
@@ -69,7 +69,7 @@ void Powerstep::StepClock(bool DIR) {
 }
 
 void Powerstep::Move(bool DIR, uint32_t steps) {
-  SS_pin.reset();
+  SS_pin.reset_output();
 
   spi.escribir(0b01000000 + DIR);
   volatile uint8_t valor = spi.leer();
@@ -80,7 +80,7 @@ void Powerstep::Move(bool DIR, uint32_t steps) {
     valor = recurrent_operation(m);
   }
 
-  SS_pin.set();
+  SS_pin.set_output();
 }
 
 void Powerstep::GoTo(uint32_t abs_pos) {
@@ -116,10 +116,10 @@ void Powerstep::ResetDevice() {
 }
 
 void Powerstep::SoftStop() {
-  SS_pin.reset();
+  SS_pin.reset_output();
   spi.escribir(0b10110000);
   spi.leer();
-  SS_pin.set();
+  SS_pin.set_output();
 }
 
 void Powerstep::HardStop() {
@@ -131,15 +131,15 @@ void Powerstep::SoftHiZ() {
 }
 
 void Powerstep::HardHiZ() {
-  SS_pin.reset();
+  SS_pin.reset_output();
   spi.escribir(0b10101000);
   spi.leer();
-  SS_pin.set();
+  SS_pin.set_output();
 }
 
 uint16_t Powerstep::GetStatus() {
   uint16_t ret = 0;
-  SS_pin.reset();
+  SS_pin.reset_output();
 
   spi.escribir(0b11010000);
   volatile uint8_t valor = spi.leer();
@@ -149,16 +149,16 @@ uint16_t Powerstep::GetStatus() {
     ret += (valor << 8*i);
   }
 
-  SS_pin.set();
+  SS_pin.set_output();
   return ret;
 }
 
 /** Esta operación se usa en casi todos los comandos. Es un ciclo de espera para que el *endejo* Powerstep
  * pueda procesar el comando que le mandamos anteriormente por SPI. */
 uint8_t Powerstep::recurrent_operation(const uint8_t m) {
-  SS_pin.set();
+  SS_pin.set_output();
   for(volatile int i=0; i<5; ++i) { asm("nop"); }
-  SS_pin.reset();
+  SS_pin.reset_output();
 
   spi.escribir(m);
   return spi.leer();

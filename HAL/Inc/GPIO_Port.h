@@ -163,14 +163,14 @@ namespace GPIO {
     const pin& cfg_speed(Speed speed) const;
     const pin& cfg_pull(PullResistor pupd) const;
     const pin& cfg_alternate(AlternFunct afsel) const;
-    const pin& entrada() const;
-    const pin& salida() const;
+    const pin& entrada(const PullResistor pupd=PullResistor::PullUp) const;
+    const pin& salida(const OutputType out_t=OutputType::PushPull) const;
     const pin& pin_for_interrupt(IRQn_Type IRQn) const;
 
     uint8_t read_input() const;
     uint8_t read_output() const;
-    void set() const;
-    void reset() const;
+    void set_output() const;
+    void reset_output() const;
     void toggle() const;
 
   private:

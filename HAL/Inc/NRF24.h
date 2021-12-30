@@ -5,8 +5,6 @@
 #ifndef G070_NRF24_H
 #define G070_NRF24_H
 
-#endif //G070_NRF24_H
-
 #include "SPI.h"
 #include "GPIO_Port.h"
 
@@ -76,3 +74,5 @@ private:
   void transmitir_byte(const uint8_t b) const;
   bool transmitiendo{false};
 };
+
+#endif //G070_NRF24_H

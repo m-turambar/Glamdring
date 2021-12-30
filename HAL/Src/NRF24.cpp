@@ -36,7 +36,7 @@ NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_p
 {
   CEN_pin.salida(); //considerar hacer por hardware
   SS_pin.salida();
-  SS_pin.set(); //disable SS
+  SS_pin.set_output(); //disable SS
   flush_rx_fifo();
   flush_tx_fifo();
   clear_all_interrupts();
@@ -48,22 +48,22 @@ NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_p
 
 void NRF24::transmitir_byte(const uint8_t b) const
 {
-  SS_pin.reset();
+  SS_pin.reset_output();
   spi.escribir(static_cast<uint8_t>(Commands::W_TX_PAYLOAD));
   spi.leer();
   spi.escribir(b);
   spi.leer(); //necesario?
-  SS_pin.set();
+  SS_pin.set_output();
 }
 
 uint8_t NRF24::leer_rx() const
 {
-  SS_pin.reset();
+  SS_pin.reset_output();
   spi.escribir(static_cast<uint8_t>(Commands::R_RX_PAYLOAD));
   spi.leer();
   spi.escribir(0u);
   uint8_t rcvd = spi.leer();
-  SS_pin.set();
+  SS_pin.set_output();
   return rcvd;
 }
 
@@ -74,7 +74,7 @@ void NRF24::encender(NRF24::Modo modo)
   escribir_registro(Registro::Config, config);
   modo_cached = modo;
 
-  CEN_pin.set(); //turn on
+  CEN_pin.set_output(); //turn on
 }
 
 NRF24::Modo NRF24::obtener_modo() const {
@@ -84,12 +84,12 @@ NRF24::Modo NRF24::obtener_modo() const {
 
 void NRF24::escribir_registro(NRF24::Registro reg, uint8_t val) const
 {
-  SS_pin.reset();
+  SS_pin.reset_output();
   spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(reg));
   spi.leer();
   spi.escribir(val);
   spi.leer();
-  SS_pin.set();
+  SS_pin.set_output();
 }
 
 /** El problema es el siguiente. Como el NRF24 *siempre* manda su status register al escribirle lo que sea,
@@ -108,7 +108,7 @@ void NRF24::escribir_registro(NRF24::Registro reg, uint8_t val) const
  * Si usas uno de 8 bits trabajamos con unidades de 8 pulsos de reloj*/
 uint8_t NRF24::leer_registro(NRF24::Registro reg) const
 {
-  SS_pin.reset();
+  SS_pin.reset_output();
   spi.escribir(static_cast<uint8_t>(reg));
   /** Automáticamente se envía el status register del NRF24, por eso vamos a descartar esta lectura */
   volatile uint8_t valor = spi.leer();
@@ -116,7 +116,7 @@ uint8_t NRF24::leer_registro(NRF24::Registro reg) const
   spi.escribir(0u);
   valor = spi.leer();
 
-  SS_pin.set();
+  SS_pin.set_output();
   return valor;
 }
 
@@ -131,19 +131,19 @@ void NRF24::config_default() const
 
 uint8_t NRF24::flush_tx_fifo() const
 {
-  SS_pin.reset();
+  SS_pin.reset_output();
   spi.escribir(static_cast<uint8_t>(Commands::FLUSH_TX));
   uint8_t status = spi.leer();
-  SS_pin.set();
+  SS_pin.set_output();
   return status;
 }
 
 uint8_t NRF24::flush_rx_fifo() const
 {
-  SS_pin.reset();
+  SS_pin.reset_output();
   spi.escribir(static_cast<uint8_t>(Commands::FLUSH_RX));
   uint8_t status = spi.leer();
-  SS_pin.set();
+  SS_pin.set_output();
   return status;
 }
 
@@ -156,14 +156,14 @@ void NRF24::config_payload_widths(uint8_t width) const
 
 void NRF24::clear_all_interrupts() const
 {
-  SS_pin.reset();
+  SS_pin.reset_output();
   uint8_t status = leer_registro(Registro::Status);
   /** Clear by writing 1 to MAX_RT, TX_DS and TX_DS */
   status |= (1 << 4);
   status |= (1 << 5);
   status |= (1 << 6);
   escribir_registro(Registro::Status, status);
-  SS_pin.set();
+  SS_pin.set_output();
 }
 
 /** Este callback lo pondremos dentro de la interrupción del pin.

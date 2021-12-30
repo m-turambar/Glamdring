@@ -1,9 +1,4 @@
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>
-//#include <array>
 #include "MPU6050.h"
-#include "basic_timer.h"
 #include "GPIO_Port.h"
 #include "RCC.h"
 #include "PWR.h"
@@ -12,204 +7,22 @@
 #include "UART.h"
 #include "NVIC.h"
 #include "NRF24.h"
-#include <EXTI.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "app_nrf24.h"
+#include "app_uart.h"
+#include "app_acelerometro.h"
+#include "app_timers.h"
 
 void inicializacion();
 void configurar_relojes();
 void error(void);
 
-void encender_rele();
-void apagar_rele();
+GPIO::pin LED(GPIO::PORTA, 12);
+GPIO::pin Boton(GPIO::PORTC,15); // con pull-up interno. Apretamos y se pone a GND.
+GPIO::pin Rele(GPIO::PORTA,1); // con pull-up interno. Apretamos y se pone a GND.
 
-general_timer* tim17_ptr{nullptr};
-UART* g_uart2{nullptr};
-NRF24* nrf_ptr{nullptr};
-MPU6050* mpu_ptr{nullptr};
 
-/** interrumpir esta funcion con un breakpoint hace que no vuelva a entrar. Por qué?
- * Osea si el pin se baja y no "atrapamos" ese flanco de bajada, a menos que modifiquemos el diseño
- * nunca vamos a salir de ese estado. Digo, podrías poner un watchdog o un timer a que resetee las interrupciones del
- * nrf, pero me sorprende que después de resumir la interrrupción no agarre la onda.*/
-extern "C" {
-void EXTI4_15_IRQHandler(void) {
-  if(nrf_ptr != nullptr)
-    nrf_ptr->irq_handler();
-
-  EXTI::clear_pending_interrupt(4);
-  NVIC_ClearPendingIRQ(EXTI4_15_IRQn);
-  nrf_ptr->clear_all_interrupts();
-}
-}
-
-int mpu_init_fails = 0;
-
-void imprimir_acelerometro()
-{
-  char buf[16] = {0};
-  uint8_t raw_buf[6] = {0};
-  float acc[3] = {0};
-  I2C::Status status = mpu_ptr->posicionar_en_registro_ax();
-  status = mpu_ptr->leer(raw_buf, 6);
-  mpu_ptr->convert_to_float(acc, raw_buf, 3);
-
-  std::sprintf(buf, "ax=%.2f\t ay=%.2f\t az=%.2f\n\r", acc[0], acc[1], acc[2]);
-
-  if(raw_buf[0] == 0 && raw_buf[2] == 0 && raw_buf[4] == 0) {
-    mpu_ptr->inicializar();
-    mpu_ptr->set_sampling_rate();
-    *g_uart2 << "Listo.\n";
-  }
-
-  *g_uart2 << buf;
-}
-
-bool parsing = false;
-void parse_uart(uint8_t b)
-{
-  if(b == '/') {
-    if(!parsing) {
-      parsing = true;
-      return;
-    } else
-    {
-      *g_uart2 << b;
-      if(nrf_ptr != nullptr && nrf_ptr->modo_cached == NRF24::Modo::TX) *nrf_ptr << b;
-    }
-  }
-  if(b == 'r') {
-    char buf[8] = {0};
-    uint8_t freq = nrf_ptr->leer_registro(NRF24::Registro::RF_CH);
-    itoa(freq, buf, 2);
-    *g_uart2 << "\r\nfreq == " << buf << "\r\n";
-    memset(buf, 0, 8);
-    parsing = false;
-    return;
-  }
-  if(b == '.') {
-    parsing = false;
-    return;
-  }
-  if(b == 'a') {
-    imprimir_acelerometro();
-  }
-  if(b == 'e') {
-    char buf[4] {};
-    itoa(mpu_init_fails, buf, 10);
-    *g_uart2 << buf;
-  }
-  if(b == '0') {
-    apagar_rele();
-  }
-  if(b == '1') {
-    encender_rele();
-  }
-}
-
-static const char* pwd = "bishi\n";
-uint8_t estado_pwd=0;
-
-void parse_pwd(uint8_t b) {
-  const char c = static_cast<char>(b);
-  if(c == pwd[estado_pwd]) {
-    ++estado_pwd;
-    if(estado_pwd > 5)
-    {
-      //activar relé con un OnePulseTimer y apagarlo después.
-      if(tim17_ptr != nullptr)
-      {
-        GPIO::PORTA.salida(1, GPIO::OutputType::OpenDrain);
-        GPIO::PORTA.reset_output(1);
-        tim17_ptr->start();
-      }
-
-    }
-  }
-  else {
-    estado_pwd = 0;
-  }
-
-}
-
-void callback_uart2()
-{
-  auto& UART2 = *g_uart2;
-  if(UART2.available())
-  {
-    const uint8_t b = UART2.read_byte();
-    if(b == '/' or parsing) parse_uart(b);
-    else {
-      UART2 << b;
-      if(nrf_ptr != nullptr) *nrf_ptr << b;
-    }
-  }
-}
-
-void callback_nrf24_rx() {
-  GPIO::PORTA.toggle(12);
-  NRF24& nrf24 = *nrf_ptr;
-
-  //uint8_t status = nrf24.leer_registro(NRF24::Registro::Status);
-  //todo lee status para saber de qué canal vino el paquete
-
-  uint8_t fifo_status = nrf24.leer_registro(NRF24::Registro::FIFO_STATUS);
-  while (fifo_status % 2 == 0) /// el bit menos significativo de FIFO_STATUS es RX_EMPTY
-  {
-    uint8_t b = nrf24.leer_rx();
-
-    if(b == '/' or parsing) {
-      parse_uart(b);
-    }
-    else {
-      *g_uart2 << b;
-    }
-
-    fifo_status = nrf24.leer_registro(NRF24::Registro::FIFO_STATUS);
-  }
-
-};
-
-void callback_tim17()
-{
-  uint8_t v_boton = GPIO::PORTC.read_input(15);
-  if(v_boton == 0) {
-    if(nrf_ptr != nullptr) {
-      GPIO::PORTA.toggle(12);
-      *nrf_ptr << pwd;
-    }
-  }
-  else {
-    GPIO::PORTA.reset_output(12);
-  }
-};
-
-void toggle_rele()
-{
-  static bool bb;
-  bb = !bb;
-  if(bb) {
-    GPIO::PORTA.entrada(1, GPIO::PullResistor::NoPull);
-  }
-  else {
-    GPIO::PORTA.salida(1, GPIO::OutputType::OpenDrain);
-    GPIO::PORTA.reset_output(1);
-  }
-};
-
-void encender_rele()
-{
-  GPIO::PORTA.salida(1, GPIO::OutputType::OpenDrain);
-  GPIO::PORTA.reset_output(1);
-}
-
-void apagar_rele()
-{
-  GPIO::PORTA.reset_output(1);
-  GPIO::PORTA.entrada(1, GPIO::PullResistor::NoPull);
-};
+bool esperar_inicializar = true;
 
 int main(void)
 {
@@ -220,20 +33,21 @@ int main(void)
   RCC::enable_port_clock(RCC::GPIO_Port::B);
   RCC::enable_port_clock(RCC::GPIO_Port::C);
 
-  GPIO::PORTA.salida(12); //LED
-  GPIO::PORTC.entrada(15); //pushbutton, con pull-up interno. Apretamos y se pone a GND.
-  GPIO::PORTA.entrada(1, GPIO::PullResistor::NoPull);
+  LED.salida();
+  Boton.entrada(); // con pull-up interno. Apretamos y se pone a GND.
+  GPIO::PORTA.entrada(1, GPIO::PullResistor::NoPull); // relé
 
-  // Agregar un tiempo de espera de algunos milisegundos para asegurar que todo ya se inicializó
+  /** Agregar un tiempo de espera de algunos milisegundos para asegurar que los otros integrados ya se inicializaron */
+  for (volatile int i=0; i<10,000; ++i) {}
 
   /////////////////
 
   I2C i2c1(I2C::Peripheral::I2C1);
   i2c1.enable(I2C::Timing::Standard);
 
-  MPU6050 mpu(i2c1); //instancia que representa a nuestro acelerómetro
+  MPU6050 mpu(i2c1);
   mpu.inicializar();
-  while(mpu.set_sampling_rate() != I2C::Status::OK) { i2c1.enable(I2C::Timing::Standard); } //TODO: Review why this helps.
+  while(mpu.set_sampling_rate() != I2C::Status::OK) { i2c1.enable(I2C::Timing::Standard); } //TODO: Entender por qué esto ayuda?.
   mpu_ptr = &mpu;
 
   ///////////////
@@ -272,6 +86,14 @@ int main(void)
   t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
   t17.start();
 
+  general_timer t16(GeneralTimer::TIM16, general_timer::Mode::OnePulseMode);
+  t16.configurar_periodo_ms(100);
+  t16.start();
+  t16.generate_update();
+  t16.clear_update();
+  tim16_ptr = &t16;
+  t16.enable_interrupt(callback_tim16, general_timer::InterruptType::UIE);
+
   while(true)
   {
 
@@ -284,7 +106,6 @@ void inicializacion()
   FLASH::prefetch_buffer_enable();
   RCC::enable_SYSCFG_clock();
   RCC::enable_power_clock();
-  //NVIC_SetPriority(PendSV_IRQn, 3, 0);
   PWR::configurar_regulador(PWR::Voltaje::Range_1);
 }
 
@@ -315,8 +136,3 @@ void error(void)
   /* User can add his own implementation to report the HAL error return state */
   while (1);
 }
-
-
-#ifdef __cplusplus
-}
-#endif

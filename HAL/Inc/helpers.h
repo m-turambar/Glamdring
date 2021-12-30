@@ -12,9 +12,9 @@
  * Al parecer no causa ninguna diferencia. Sin embargo, usar flag sobre bitfield sí reduce un poco la flash que usas.
  * */
 
-/** Es un bitfield de un solo bit */
 struct bitfield;
 
+/** Es un bitfield de un solo bit */
 struct flag
 {
   constexpr flag(const uint8_t offset) :
@@ -23,6 +23,7 @@ struct flag
   const size_t mask;
 };
 
+/** Abstracción para operar registros de 32 bits. */
 struct registro
 {
   constexpr registro(const size_t addr_) :
@@ -45,6 +46,7 @@ struct registro
   const size_t addr;
 };
 
+/** Abstracción para operar registros de 16 bits. */
 struct reg16
 {
   constexpr reg16(const size_t addr_) :
@@ -68,10 +70,10 @@ struct reg16
 };
 
 /* el namespace anónimo le da storage estático */
-volatile size_t& memoria(const size_t loc);
-volatile uint16_t& memoria16(const size_t loc);
 volatile size_t& memoria(const registro reg);
+volatile size_t& memoria(const size_t loc);
 volatile uint16_t& memoria16(const reg16 reg);
+volatile uint16_t& memoria16(const size_t loc);
 
 /** Abstracción para interactuar con los campos de bits de un registro.
  * Es preferible que el usuario use las funciones miembro de registro,

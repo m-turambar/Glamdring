@@ -5,7 +5,7 @@
 #include "helpers.h"
 
 /** Nota
- * Estas funciones son nuestra principal herramienta para leer y escribir de memoria */
+ * Estas funciones son nuestra principal herramienta para leer y escribir memoria */
 
 constexpr size_t operator&(const size_t addr, const flag f)
 {
