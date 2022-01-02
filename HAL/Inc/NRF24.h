@@ -29,16 +29,16 @@ public:
 
   void config_default() const;
   void encender(Modo modo);
+  void apagar();
   Modo obtener_modo() const;
 
   uint8_t leer_rx() const;
   uint8_t leer_registro(Registro reg) const;
   void escribir_registro(Registro reg, uint8_t val) const;
 
-  uint8_t flush_tx_fifo() const;
-  uint8_t flush_rx_fifo() const;
   void clear_all_interrupts() const;
   void config_payload_widths(uint8_t width) const;
+  void descartar_fifo();
 
   /** agregar setters me parecía un desperdicio */
   void (*rx_dr_callback)() {nullptr};
@@ -64,15 +64,17 @@ public:
   NRF24& operator<<(uint8_t byte);
   NRF24& operator<<(char c);
   NRF24& operator<<(char* buffer);
-  NRF24& operator<<(const char* buffer);
 
 private:
 
   const SPI& spi;
   const GPIO::pin& CEN_pin, SS_pin;
 
-  void transmitir_byte(const uint8_t b) const;
   bool transmitiendo{false};
+  void transmitir_byte(const uint8_t b) const;
+
+  uint8_t flush_tx_fifo() const;
+  uint8_t flush_rx_fifo() const;
 };
 
 #endif //G070_NRF24_H

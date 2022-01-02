@@ -48,3 +48,10 @@ void callback_nrf24_rx() {
   }
 
 };
+
+void callback_nrf24_max_rt() {
+  /** Descartamos voluntariamente los paquetes que podrían haberse quedado en el buffer circular, para evitar que
+   * cuando la señal del radio vuelva a enlazar, se envíen paquetes a destiempo. Sería peligroso para un garage
+   * el que la señal de abrir/cerrar la puerta llegara 5 segundos después de que el usuario apretara el botón. */
+  nrf_ptr->descartar_fifo();
+}

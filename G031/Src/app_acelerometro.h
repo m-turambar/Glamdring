@@ -10,6 +10,7 @@
 extern MPU6050* mpu_ptr;
 extern int mpu_init_fails;
 
+void reinicializar_acelerometro();
 void imprimir_acelerometro();
 
 #endif //G031_APP_ACELEROMETRO_H

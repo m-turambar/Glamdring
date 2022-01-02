@@ -15,6 +15,16 @@ char buf[16] = {0};
 uint8_t raw_buf[6] = {0};
 float acc[3] = {0};
 
+void rellenar_buffers();
+
+void reinicializar_acelerometro()
+{
+  mpu_ptr->inicializar();
+  mpu_ptr->set_sampling_rate();
+  //*g_uart2 << "Acelerometro reinicializado.\n";
+  rellenar_buffers();
+}
+
 void rellenar_buffers()
 {
   I2C::Status status = mpu_ptr->posicionar_en_registro_ax();
@@ -34,13 +44,6 @@ void limpiar_buffers()
 void imprimir_acelerometro()
 {
   rellenar_buffers();
-
-  if(raw_buf[0] == 0 && raw_buf[2] == 0 && raw_buf[4] == 0) {
-    mpu_ptr->inicializar();
-    mpu_ptr->set_sampling_rate();
-    *g_uart2 << "Acelerometro reinicializado.\n";
-    rellenar_buffers();
-  }
 
   *g_uart2 << buf;
 

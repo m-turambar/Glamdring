@@ -39,6 +39,26 @@ void parse_uart(uint8_t b)
       if(nrf_ptr != nullptr && nrf_ptr->modo_cached == NRF24::Modo::TX) *nrf_ptr << b;
     }
   }
+  if( b == 'm')
+  {
+    NRF24::Modo m = nrf_ptr->obtener_modo();
+    if(m == NRF24::Modo::TX)
+      *g_uart2 << "Transmisor\n";
+    else
+      *g_uart2 << "Receptor\n";
+  }
+  if( b == 'n')
+  {
+    NRF24::Modo m = nrf_ptr->obtener_modo();
+    nrf_ptr->apagar();
+
+    if(m == NRF24::Modo::TX)
+      nrf_ptr->encender(NRF24::Modo::RX);
+    else
+      nrf_ptr->encender(NRF24::Modo::TX);
+
+    nrf_ptr->escribir_registro(NRF24::Registro::RF_CH, 0b100000);
+  }
   if(b == 'r') {
     char buf[8] = {0};
     uint8_t freq = nrf_ptr->leer_registro(NRF24::Registro::RF_CH);
@@ -61,7 +81,7 @@ void parse_uart(uint8_t b)
     *g_uart2 << buf;
   }
   if(b == 't') {
-    encender_rele_durante(500);
+    encender_rele_durante(2000);
   }
   if(b == '0') {
     apagar_rele();

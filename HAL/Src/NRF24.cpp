@@ -70,16 +70,23 @@ uint8_t NRF24::leer_rx() const
 void NRF24::encender(NRF24::Modo modo)
 {
   auto config = leer_registro(Registro::Config);
-  config = config | 2u | static_cast<uint8_t>(modo); //PWR_UP y modo.
+  config = (config & 0xFE) | 2u | static_cast<uint8_t>(modo); //PWR_UP y modo. El bit menos significativo es el modo.
   escribir_registro(Registro::Config, config);
   modo_cached = modo;
 
   CEN_pin.set_output(); //turn on
 }
 
+void NRF24::apagar()
+{
+  auto config = leer_registro(Registro::Config);
+  config = (config & 0xFD);
+  escribir_registro(Registro::Config, config);
+}
+
 NRF24::Modo NRF24::obtener_modo() const {
   auto config = leer_registro(Registro::Config);
-  return (config % 2 == 0) ? NRF24::Modo::RX : NRF24::Modo::TX;
+  return (config % 2 == 0) ? NRF24::Modo::TX : NRF24::Modo::RX;
 }
 
 void NRF24::escribir_registro(NRF24::Registro reg, uint8_t val) const
@@ -127,6 +134,13 @@ void NRF24::config_default() const
 
   const uint8_t setup_retr = 8 + (1 << 4); /// 8 intentos de transmitir, 500uS entre cada intento
   escribir_registro(Registro::SETUP_RETR, setup_retr);
+}
+
+void NRF24::descartar_fifo()
+{
+  flush_tx_fifo();
+  idx_enviar = idx_llenar;
+  transmitiendo = false;
 }
 
 uint8_t NRF24::flush_tx_fifo() const
@@ -216,20 +230,6 @@ NRF24& NRF24::operator<<(char c) {
 }
 
 NRF24& NRF24::operator<<(char *buffer) {
-  const auto sz = std::strlen(buffer);
-  for(int i = 0; i < sz; ++i) {
-    tx_buf[idx_llenar] = buffer[i];
-    ++idx_llenar;
-  }
-  if(transmitiendo == false) {
-    transmitiendo = true;
-    transmitir_byte(tx_buf[idx_enviar]);
-  }
-
-  return *this;
-}
-
-NRF24 &NRF24::operator<<(const char *buffer) {
   const auto sz = std::strlen(buffer);
   for(int i = 0; i < sz; ++i) {
     tx_buf[idx_llenar] = buffer[i];

@@ -37,17 +37,17 @@ int main(void)
   Boton.entrada(); // con pull-up interno. Apretamos y se pone a GND.
   GPIO::PORTA.entrada(1, GPIO::PullResistor::NoPull); // relé
 
-  /** Agregar un tiempo de espera de algunos milisegundos para asegurar que los otros integrados ya se inicializaron */
-  for (volatile int i=0; i<10,000; ++i) {}
-
   /////////////////
 
   I2C i2c1(I2C::Peripheral::I2C1);
   i2c1.enable(I2C::Timing::Standard);
 
+  /** Este chato tarda un ratito en inicializarse. Cuando no estás debuggeando, se necesita una reinicialización posterior
+   * Estoy haciendo eso con un OPM timer que después se usará para otras cosas
+   * */
   MPU6050 mpu(i2c1);
   mpu.inicializar();
-  while(mpu.set_sampling_rate() != I2C::Status::OK) { i2c1.enable(I2C::Timing::Standard); } //TODO: Entender por qué esto ayuda?.
+  mpu.set_sampling_rate();
   mpu_ptr = &mpu;
 
   ///////////////
@@ -74,6 +74,7 @@ int main(void)
   radio.escribir_registro(NRF24::Registro::RF_CH, 0b100000);
 
   radio.rx_dr_callback = callback_nrf24_rx;
+  radio.max_rt_callback = callback_nrf24_max_rt; //
   radio_irq.pin_for_interrupt(EXTI4_15_IRQn);
 
   ///////////////
@@ -86,13 +87,16 @@ int main(void)
   t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
   t17.start();
 
+  /** Este timer se está usando dos veces. Una para inicializar el acelerómetro x ms después de arrancar.
+   * La segunda para el retraso automático para apagar el relevador. */
   general_timer t16(GeneralTimer::TIM16, general_timer::Mode::OnePulseMode);
   t16.configurar_periodo_ms(100);
   t16.start();
   t16.generate_update();
   t16.clear_update();
   tim16_ptr = &t16;
-  t16.enable_interrupt(callback_tim16, general_timer::InterruptType::UIE);
+  t16.enable_interrupt(reinicializar_acelerometro, general_timer::InterruptType::UIE);
+  t16.start();
 
   while(true)
   {
