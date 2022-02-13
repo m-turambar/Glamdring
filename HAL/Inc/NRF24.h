@@ -15,9 +15,18 @@ public:
     Config = 0,
     SETUP_RETR = 4,
     RF_CH = 5,
+    RF_SETUP = 6,
     Status = 7,
+    RX_ADDR_P0 = 0x0A,
+    TX_ADDR = 0x10,
     RX_PW_P0 = 0x11,
+    RX_PW_P1 = 0x12,
     FIFO_STATUS = 0x17
+  };
+
+  enum class DefaultAddress :uint64_t {
+    P0 = 0xE7E7E7E7E7,
+    P1 = 0xC2C2C2C2C2,
   };
 
   enum class Modo : uint8_t {
@@ -28,6 +37,10 @@ public:
   NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin);
 
   void config_default() const;
+  void config_payload_widths(uint8_t width) const;
+  void config_tx_addr(uint64_t addr) const;
+  void config_tx_addr(DefaultAddress addr) const;
+  uint64_t leer_addr_reg(Registro addr_reg) const;
   void encender(Modo modo);
   void apagar();
   Modo obtener_modo() const;
@@ -37,7 +50,6 @@ public:
   void escribir_registro(Registro reg, uint8_t val) const;
 
   void clear_all_interrupts() const;
-  void config_payload_widths(uint8_t width) const;
   void descartar_fifo();
 
   /** agregar setters me parecía un desperdicio */
