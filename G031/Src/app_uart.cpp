@@ -6,11 +6,15 @@
 #include <cstring>
 #include <cstdio>
 
+#include "general_timer.h"
+
 #include "app_uart.h"
 #include "app_nrf24.h"
 #include "app_rele.h"
 
 UART* g_uart2{nullptr};
+extern general_timer* tim2_ptr;
+
 bool parsing = true;
 
 void callback_uart2()
@@ -27,8 +31,93 @@ void callback_uart2()
   }
 }
 
+/** Estados posibles:
+ * 1. procesando = false
+ * 2. procesando = true
+ * 3. Exito
+ * 4. Error
+ *
+ * Exito y error ejecutan su operación y nos llevan al estado 1.
+ * el estado 2 (procesando) nos puede llevar al Exito o al Error. */
+struct Procesador
+{
+  enum class Proceso {
+    None,
+    PWM
+  };
+
+  void procesar_mensaje(uint8_t b)
+  {
+    *g_uart2 << b;
+    if (b == '}') {
+      *g_uart2 << "\r\n";
+      procesando = false;
+      ejecutar_mensaje();
+      clear_status();
+      return;
+    }
+
+    if (proceso != Proceso::None) {
+      if(!procesar_interno(b)) {
+        procesando = false;
+        clear_status();
+      }
+      return;
+    }
+
+    if (b == 'p') {
+      proceso = Proceso::PWM;
+    }
+
+  }
+
+  bool procesando{false};
+
+private:
+
+  bool procesar_interno(const uint8_t b) {
+    if(proceso == Proceso::PWM) {
+      if (pwm_canal == 0) {
+        pwm_canal = b - 'a' + 1; // 'a' para canal 1, 'b' para canal 2, 'c' para 3, 'd' para 4.
+        return (pwm_canal >= 1 && pwm_canal <= 4);
+      }
+      if (b < '0' || b > '9') {
+        return false;
+      }
+      pwm_pulse_width = pwm_pulse_width * 10 + b - '0';
+      return true;
+    }
+    return true;
+  }
+
+  void ejecutar_mensaje() {
+    if (proceso == Proceso::PWM) {
+      tim2_ptr->set_microseconds_pulse_high(pwm_pulse_width, pwm_canal);
+    }
+  }
+
+  void clear_status() {
+    proceso = Proceso::None;
+    procesando = false;
+    pwm_pulse_width = 0;
+    pwm_canal = 0;
+  }
+
+  Proceso proceso {Proceso::None};
+  uint16_t pwm_pulse_width{0};
+  uint8_t pwm_canal{0};
+};
+
+
+
 void parse_uart(uint8_t b)
 {
+  static Procesador procesador;
+  if (procesador.procesando) {
+    procesador.procesar_mensaje(b);
+    return;
+  }
+
   if(b == '/') {
     if(!parsing) {
       parsing = true;
@@ -39,15 +128,15 @@ void parse_uart(uint8_t b)
       if(nrf_ptr != nullptr && nrf_ptr->modo_cached == NRF24::Modo::TX) *nrf_ptr << b;
     }
   }
-  if( b == 'm')
+  else if( b == 'm')
   {
     NRF24::Modo m = nrf_ptr->obtener_modo();
     if(m == NRF24::Modo::TX)
-      *g_uart2 << "Transmisor\n";
+      *g_uart2 << "\r\nTransmisor\r\n";
     else
-      *g_uart2 << "Receptor\n";
+      *g_uart2 << "\r\nReceptor\r\n";
   }
-  if( b == 'n')
+  else if( b == 'n')
   {
     NRF24::Modo m = nrf_ptr->obtener_modo();
     nrf_ptr->apagar();
@@ -57,7 +146,13 @@ void parse_uart(uint8_t b)
     else
       nrf_ptr->encender(NRF24::Modo::TX);
   }
-  if(b == 'r') {
+
+  else if (b == '{') {
+    *g_uart2 << "\n\r" << b;
+    procesador.procesando = true;
+  }
+
+  else if(b == 'r') {
     char freq_buf[8] = {0};
     char rf_setup_buf[8] = {0};
     char tx_addr_buf[16] = {0};
@@ -82,11 +177,11 @@ void parse_uart(uint8_t b)
     *g_uart2 << "\r\nRF_CH: " << freq_buf;
     *g_uart2 << "\r\nRX_ADDR_P0:" << rx0_addr_buf;
     *g_uart2 << "\r\nTX_ADDR:" << tx_addr_buf;
-    *g_uart2 << "\r\nRF_SETUP:" << rf_setup_buf;
+    *g_uart2 << "\r\nRF_SETUP:" << rf_setup_buf << "\r\n";
     return;
   }
 
-  if (b == 's') {
+  else if (b == 's') {
     char n_bytes_buf[8] = {0};
     uint8_t inicio = nrf_ptr->idx_enviar;
     uint8_t fin = nrf_ptr->idx_llenar;
@@ -97,7 +192,7 @@ void parse_uart(uint8_t b)
       *g_uart2 << nrf_ptr->tx_buf[i];
   }
 
-  if (b == 'u') {
+  else if (b == 'u') {
     uint64_t tx_addr = nrf_ptr->leer_addr_reg(NRF24::Registro::TX_ADDR);
     if (tx_addr == static_cast<uint64_t>(NRF24::DefaultAddress::P0))
       nrf_ptr->config_tx_addr(NRF24::DefaultAddress::P1);
@@ -105,24 +200,23 @@ void parse_uart(uint8_t b)
       nrf_ptr->config_tx_addr(NRF24::DefaultAddress::P0);
   }
 
-  if(b == 't') {
+  else if(b == 't') {
     encender_rele_durante(2000);
   }
-  if(b == '0') {
+  else if(b == '0') {
     apagar_rele_a();
   }
-  if(b == '1') {
+  else if(b == '1') {
     encender_rele_a();
   }
-  if(b == '2') {
+  else if(b == '2') {
     apagar_rele_b();
   }
-  if(b == '3') {
+  else if(b == '3') {
     encender_rele_b();
   }
 
-  if(b == '.') {
+  else if(b == '.') {
     parsing = false;
-    return;
   }
 }

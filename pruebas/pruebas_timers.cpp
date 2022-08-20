@@ -1,3 +1,5 @@
+/** Esta documentación no está bien escrita. Hay fragmentos de diferentes épocas. */
+
 /** Para conseguir ondas cuadradas, se debe seguir el siguiene patrón:
  * PSC, 2x - 1, x,
  * el PSC solo determina cuánto valdrá cada unidad del segundo argumento. El tercer argumento solo
@@ -22,16 +24,18 @@
 
 void pedazos()
 {
-    general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic, 0x8, 0x100); //cada tick es de 1ms, con HSI de 16 MHz
-    t16.enable_output_compare(0x1);
-    t16.start();
-    
-    basic_timer t6(BasicTimer::TIM6, basic_timer::Mode::Periodic, 0x1800, 0x800);
-    t6.enable_interrupt(led_callback);
-    t6.start();
+  // este fragmento habilita dos canales del mismo timer, T2. Tiene hasta 4 canales.
 
-    general_timer t17(GeneralTimer::TIM17, general_timer::Mode::OnePulseMode, 0x2000, 0x800);
-    t17.enable_interrupt(callback1);
+  general_timer t2(GeneralTimer::TIM2, general_timer::Mode::Periodic);
+  t2.set_output_compare_microsecond_resolution(10);
+  t2.set_microsecond_period(20000);
+  t2.set_microseconds_pulse_high(700, 1);
+  t2.set_microseconds_pulse_high(700, 2);
+  t2.enable_output_compare(1);
+  t2.enable_output_compare(2);
+  t2.start();
+  GPIO::PORTA.pin_for_timer(0, GPIO::AlternFunct::AF2); // canal 1
+  GPIO::PORTA.pin_for_timer(1, GPIO::AlternFunct::AF2); // canal 2
 }
 
 /*

@@ -57,8 +57,6 @@ int main(void)
   radio.config_default();
   radio.encender(NRF24::Modo::RX);
   radio.escribir_registro(NRF24::Registro::RF_CH, 0b100000);
-  //radio.config_tx_addr(static_cast<uint64_t>(NRF24::DefaultAddress::P1));
-  uint64_t addr = radio.leer_addr_reg(NRF24::Registro::TX_ADDR);
 
   radio.rx_dr_callback = callback_nrf24_rx;
   radio.tx_ds_callback = callback_nrf24_tx_ds;
@@ -79,13 +77,24 @@ int main(void)
    * La segunda para el retraso automático para apagar el relevador. */
   //general_timer t16(GeneralTimer::TIM16, general_timer::Mode::OnePulseMode);
   general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
-  t16.configurar_periodo_ms(2000);
+  t16.configurar_periodo_ms(5000);
   t16.start();
   t16.generate_update();
   t16.clear_update();
   tim16_ptr = &t16;
   t16.enable_interrupt(callback_tim16, general_timer::InterruptType::UIE);
   t16.start();
+
+  general_timer t2(GeneralTimer::TIM2, general_timer::Mode::Periodic);
+  t2.set_output_compare_microsecond_resolution(10);
+  t2.set_microsecond_period(20000);
+  t2.set_microseconds_pulse_high(700, 1);
+  t2.set_microseconds_pulse_high(700, 2);
+  t2.enable_output_compare(1);
+  t2.enable_output_compare(2);
+  t2.start();
+  GPIO::PORTA.pin_for_timer(0, GPIO::AlternFunct::AF2); // canal 1
+  GPIO::PORTA.pin_for_timer(1, GPIO::AlternFunct::AF2); // canal 2
 
   while(true)
   {

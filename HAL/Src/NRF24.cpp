@@ -43,6 +43,7 @@ NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_p
   config_payload_widths(1); //todo dinamico
   escribir_registro(Registro::RF_SETUP, 0x26);
   NRF24_ptr = this;
+  apagar();
 }
 
 
@@ -260,7 +261,7 @@ void NRF24::irq_handler() {
 NRF24& NRF24::operator<<(uint8_t byte) {
   tx_buf[idx_llenar] = byte;
   ++idx_llenar;
-  if(transmitiendo == false) {
+  if(!transmitiendo) {
     transmitiendo = true;
     transmitir_byte(tx_buf[idx_enviar]);
   }

@@ -30,7 +30,6 @@ public:
   enum class Mode{
     Periodic=0,
     OnePulseMode=1,
-    PWM,
     InputCapture
   };
 
@@ -55,14 +54,13 @@ public:
 
   void set_prescaler(const uint16_t prescaler) const;
   void set_autoreload(const uint16_t autoreload) const;
-  void set_ccr1(const uint16_t val) const;
-  void set_ccr2(const uint16_t val) const;
 
-  void enable_output_compare(uint16_t cmp, const uint8_t canal=1) const; //algunos timers tienen más de un canal
+  void enable_output_compare(const uint8_t canal) const; //algunos timers tienen más de un canal
+  void set_output_compare_microsecond_resolution(uint16_t resolution);
+  void set_microseconds_pulse_high(const uint16_t microseconds, const uint8_t canal);
 
-  void configurar_periodo_us(uint16_t periodo);
-  void configurar_periodo_ms(uint16_t periodo);
-  void enable_output();
+  void set_microsecond_period(uint16_t periodo);
+  void configurar_periodo_ms(uint16_t milisegundos);
 
   void generate_update() const;
   void clear_update() const;
@@ -80,6 +78,7 @@ public:
   const GeneralTimer peripheral;
   const size_t base;
   registro CR1, CR2, DIER, SR, EGR, CNT, PSC, ARR, CCMR1, CCMR2, CCER, CCR1, CCR2, CCR3, CCR4, BDTR;
+  unsigned int output_compare_microsecond_resolution{1};
 };
 
 }
