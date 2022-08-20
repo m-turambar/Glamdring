@@ -8,12 +8,12 @@
 #include "helpers.h"
 #include "RCC.h"
 
-/** recuerda que las interrupciones deben tener C linkage. Por eso agregar esto aquí en lugar del
- * cpp funciona. */
 #if defined(STM32L475xx) || defined(STM32F767xx)
 #define TIM6_IRQHandler(void) TIM6_DAC_IRQHandler(void)
 #endif
 
+/** recuerda que las interrupciones deben tener C linkage. Por eso agregar esto aquí en lugar del
+ * cpp funciona. */
 extern "C"
 {
 void TIM6_IRQHandler(void);
@@ -33,19 +33,11 @@ public:
     OnePulseMode=1
   };
 
-
-  /**
-  \brief   Basic Timer constructor
-  \details Creates a timer with basic periodic interrupt, or One_Pulse_Mode capabilities.
-  \param [in]   tim         BasicTimer peripheral selector
-  \param [in]   prescaler   Prescaler value
-  \param [in]   autoreload  Reload value for the timer counter
- */
   basic_timer(const BasicTimer tim, const Mode mode);
 
 
   //void configure(const Mode mode, const uint8_t auto_reload_preload = 1, const uint8_t update_request_source = 1,
-    //  const uint8_t update_disable = 0, const uint8_t status_bit_remap = 0) const;
+  //  const uint8_t update_disable = 0, const uint8_t status_bit_remap = 0) const;
 
   void configure_mode(const Mode mode);
   void configurar_periodo_us(uint16_t periodo);
