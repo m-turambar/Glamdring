@@ -29,8 +29,11 @@ void callback_nrf24_rx() {
   LED.toggle();
   NRF24& nrf24 = *nrf_ptr;
 
-  //uint8_t status = nrf24.leer_registro(NRF24::Registro::Status);
   //todo lee status para saber de qué canal vino el paquete
+  uint8_t status = nrf24.leer_registro(NRF24::Registro::Status);
+  uint8_t data_pipe_number = (status >> 1) & 0x7;
+
+  *g_uart2 << "\r\nchannel: " << static_cast<char>(data_pipe_number + 48) << '\n';
 
   uint8_t fifo_status = nrf24.leer_registro(NRF24::Registro::FIFO_STATUS);
   while (fifo_status % 2 == 0) /// el bit menos significativo de FIFO_STATUS es RX_EMPTY
@@ -49,9 +52,14 @@ void callback_nrf24_rx() {
 
 };
 
+void callback_nrf24_tx_ds()
+{
+  LED.toggle();
+}
+
 void callback_nrf24_max_rt() {
   /** Descartamos voluntariamente los paquetes que podrían haberse quedado en el buffer circular, para evitar que
    * cuando la señal del radio vuelva a enlazar, se envíen paquetes a destiempo. Sería peligroso para un garage
    * el que la señal de abrir/cerrar la puerta llegara 5 segundos después de que el usuario apretara el botón. */
-  nrf_ptr->descartar_fifo();
+  //nrf_ptr->descartar_fifo();
 }

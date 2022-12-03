@@ -41,7 +41,9 @@ NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_p
   flush_tx_fifo();
   clear_all_interrupts();
   config_payload_widths(1); //todo dinamico
+  escribir_registro(Registro::RF_SETUP, 0x26);
   NRF24_ptr = this;
+  apagar();
 }
 
 
@@ -52,7 +54,7 @@ void NRF24::transmitir_byte(const uint8_t b) const
   spi.escribir(static_cast<uint8_t>(Commands::W_TX_PAYLOAD));
   spi.leer();
   spi.escribir(b);
-  spi.leer(); //necesario?
+  spi.leer();
   SS_pin.set_output();
 }
 
@@ -166,6 +168,47 @@ void NRF24::config_payload_widths(uint8_t width) const
 {
   width = width & 0b11111;
   escribir_registro(Registro::RX_PW_P0, width);
+  escribir_registro(Registro::RX_PW_P1, width);
+}
+
+/** La direccion RX_ADDR_P0 debe ser igual a la TX_ADDR para tener ACKs. */
+void NRF24::config_tx_addr(uint64_t addr) const {
+  SS_pin.reset_output();
+  spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(Registro::TX_ADDR));
+  spi.leer();
+  for (int i = 0; i < 5; ++i) {
+    spi.escribir((addr >> 8*i) & 0xFF);
+    spi.leer();
+  }
+  SS_pin.set_output();
+  SS_pin.reset_output();
+
+  spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(Registro::RX_ADDR_P0));
+  spi.leer();
+  for (int i = 0; i < 5; ++i) {
+    spi.escribir((addr >> 8*i) & 0xFF);
+    spi.leer();
+  }
+  SS_pin.set_output();
+}
+
+void NRF24::config_tx_addr(DefaultAddress addr) const {
+  config_tx_addr(static_cast<uint64_t>(addr));
+}
+
+uint64_t NRF24::leer_addr_reg(Registro addr_reg) const {
+  uint64_t res = 0;
+  SS_pin.reset_output();
+  spi.escribir(static_cast<uint8_t>(Commands::R_REGISTER) | static_cast<uint8_t>(addr_reg));
+  spi.leer();
+  for (int i = 0; i < 5; ++i) {
+    spi.escribir(0);
+    uint8_t byte = spi.leer();
+    res = res << 8;
+    res += byte;
+  }
+  SS_pin.set_output();
+  return res;
 }
 
 void NRF24::clear_all_interrupts() const
@@ -218,7 +261,7 @@ void NRF24::irq_handler() {
 NRF24& NRF24::operator<<(uint8_t byte) {
   tx_buf[idx_llenar] = byte;
   ++idx_llenar;
-  if(transmitiendo == false) {
+  if(!transmitiendo) {
     transmitiendo = true;
     transmitir_byte(tx_buf[idx_enviar]);
   }

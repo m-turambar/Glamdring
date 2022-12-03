@@ -11,6 +11,12 @@ El desarrollo de hardware para el STM32G031 fue todo un éxito. El acceso al MPU
 En general, el proyecto Glamdring ha sido un éxito.
 
 **************************************************
+El compilador ARM-none-eabi se puede descargar desde https://developer.arm.com/downloads/-/gnu-rm
+El flasher OpenOCD desde: https://openocd.org/pages/getting-openocd.html
+También necesitas los drivers de ST. Link difícil de obtener.
+Cuando configures OpenOCD en Clion, usa board\st_nucleo_g0.cfg
+
+**************************************************
 
 Las librerias desarrolladas incluyen pero no están limitadas a:
 Basic timers (One shot, output compare, input capture)

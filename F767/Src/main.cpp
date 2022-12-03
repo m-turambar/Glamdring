@@ -1,7 +1,7 @@
 #include <cstring>
 #include <cstdio>
-#include <NRF24.h>
 #include "basic_timer.h"
+#include "general_timer.h"
 #include "GPIO_Port.h"
 #include "RCC.h"
 #include "FLASH.h"
@@ -17,35 +17,11 @@ void inicializacion();
 void configurar_relojes();
 void error(void);
 
+GPIO::pin LED_Azul(GPIO::PORTB, 7);
+
 uint32_t cnter{0};
 
-void WWDG_IRQHandler(void)
-{
-  ++cnter;
-}
-
 UART* uart_ref{nullptr};
-NRF24* nrf_ptr{nullptr};
-
-void checar_rx(void)
-{
-  GPIO::PORTB.toggle(7);
-
-  if(nrf_ptr ==nullptr)
-    return;
-
-  const uint8_t status_RX = nrf_ptr->leer_registro(NRF24::Registro::Status);
-  if((status_RX & (1 << 6)) > 0) // si la interrupción de RX se activó...
-  {
-    uint8_t recvd = nrf_ptr->leer_rx();
-    nrf_ptr->clear_interrupts();
-    nrf_ptr->flush_rx_fifo();
-    if(uart_ref!=nullptr)
-    {
-      *uart_ref << recvd;
-    }
-  }
-}
 
 int main(void)
 {
@@ -55,31 +31,20 @@ int main(void)
   RCC::enable_port_clock(RCC::GPIO_Port::A);
   RCC::enable_port_clock(RCC::GPIO_Port::B);
 
-  GPIO::PORTB.salida(7); // LED Azul. Vaya que estuvo cerca.
-
-  const GPIO::pin pin_enable_radio(GPIO::PORTB, 8); //TODO
-  pin_enable_radio.salida();
-  const GPIO::pin ss_radio(GPIO::PORTB, 9);
-  ss_radio.salida(); //considerar hacer por hardware
-
-  SPI spi1(SPI::Peripheral::SPI1_I2S1);
-  spi1.inicializar();
-
-  NRF24 radio(spi1, ss_radio, pin_enable_radio);
-  nrf_ptr = &radio;
-  radio.config_default();
-  auto config = radio.leer_registro(NRF24::Registro::Config);
-  radio.encender(NRF24::Modo::RX);
-  config = radio.leer_registro(NRF24::Registro::Config);
+  GPIO::PORTB.salida(7); // LED Azul.
 
   UART uart3(UART::Peripheral::USART3, 115200);
   uart3.enable();
   uart_ref = &uart3;
   uart3 << "hola";
 
-  basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic, 0x1800, 0x40);
-  t7.enable_interrupt(checar_rx);
-  t7.start();
+  general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
+  tim17_ptr = &t17;
+  t17.configurar_periodo_ms(50);
+  t17.generate_update();
+  t17.clear_update();
+  t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
+  t17.start();
 
   while (1) {
 

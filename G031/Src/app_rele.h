@@ -10,4 +10,10 @@ void apagar_rele();
 void encender_rele_en_ms(uint16_t milisegundos);
 void encender_rele_durante(uint16_t milisegundos);
 
+/*************************************************/
+void encender_rele_a();
+void encender_rele_b();
+void apagar_rele_a();
+void apagar_rele_b();
+
 #endif

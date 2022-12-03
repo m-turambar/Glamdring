@@ -1,19 +1,4 @@
 
-void set_pwm_value(uint16_t val)
-{
-  TIM_OC_InitTypeDef sConfigOC = {0};
-
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = val;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-
-  HAL_TIM_PWM_ConfigChannel(&htim14, &sConfigOC, TIM_CHANNEL_1);
-  HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
-}
-
-set_pwm_value(pwm_val);
-
 general_timer* tim_ptr{nullptr};
 std::array<uint8_t, 16> timer_cfg_buf{0xFF};
 uint8_t idx=0;

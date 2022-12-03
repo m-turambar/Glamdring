@@ -1,4 +1,3 @@
-#include "MPU6050.h"
 #include "GPIO_Port.h"
 #include "RCC.h"
 #include "PWR.h"
@@ -10,7 +9,6 @@
 
 #include "app_nrf24.h"
 #include "app_uart.h"
-#include "app_acelerometro.h"
 #include "app_timers.h"
 
 void inicializacion();
@@ -19,10 +17,9 @@ void error(void);
 
 GPIO::pin LED(GPIO::PORTA, 12);
 GPIO::pin Boton(GPIO::PORTC,15); // con pull-up interno. Apretamos y se pone a GND.
-GPIO::pin Rele(GPIO::PORTA,1); // con pull-up interno. Apretamos y se pone a GND.
+GPIO::pin ReleA(GPIO::PORTA,1);
+GPIO::pin ReleB(GPIO::PORTA,0);
 
-
-bool esperar_inicializar = true;
 
 int main(void)
 {
@@ -34,21 +31,9 @@ int main(void)
   RCC::enable_port_clock(RCC::GPIO_Port::C);
 
   LED.salida();
+  ReleA.salida();
+  ReleB.salida();
   Boton.entrada(); // con pull-up interno. Apretamos y se pone a GND.
-  GPIO::PORTA.entrada(1, GPIO::PullResistor::NoPull); // relé
-
-  /////////////////
-
-  I2C i2c1(I2C::Peripheral::I2C1);
-  i2c1.enable(I2C::Timing::Standard);
-
-  /** Este chato tarda un ratito en inicializarse. Cuando no estás debuggeando, se necesita una reinicialización posterior
-   * Estoy haciendo eso con un OPM timer que después se usará para otras cosas
-   * */
-  MPU6050 mpu(i2c1);
-  mpu.inicializar();
-  mpu.set_sampling_rate();
-  mpu_ptr = &mpu;
 
   ///////////////
 
@@ -70,11 +55,12 @@ int main(void)
   NRF24 radio(spi1, radio_nss, radio_en);
   nrf_ptr = &radio;
   radio.config_default();
-  radio.encender(NRF24::Modo::TX);
+  radio.encender(NRF24::Modo::RX);
   radio.escribir_registro(NRF24::Registro::RF_CH, 0b100000);
 
   radio.rx_dr_callback = callback_nrf24_rx;
-  radio.max_rt_callback = callback_nrf24_max_rt; //
+  radio.tx_ds_callback = callback_nrf24_tx_ds;
+  radio.max_rt_callback = callback_nrf24_max_rt;
   radio_irq.pin_for_interrupt(EXTI4_15_IRQn);
 
   ///////////////
@@ -89,14 +75,26 @@ int main(void)
 
   /** Este timer se está usando dos veces. Una para inicializar el acelerómetro x ms después de arrancar.
    * La segunda para el retraso automático para apagar el relevador. */
-  general_timer t16(GeneralTimer::TIM16, general_timer::Mode::OnePulseMode);
-  t16.configurar_periodo_ms(100);
+  //general_timer t16(GeneralTimer::TIM16, general_timer::Mode::OnePulseMode);
+  general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
+  t16.configurar_periodo_ms(5000);
   t16.start();
   t16.generate_update();
   t16.clear_update();
   tim16_ptr = &t16;
-  t16.enable_interrupt(reinicializar_acelerometro, general_timer::InterruptType::UIE);
+  t16.enable_interrupt(callback_tim16, general_timer::InterruptType::UIE);
   t16.start();
+
+  general_timer t2(GeneralTimer::TIM2, general_timer::Mode::Periodic);
+  t2.set_output_compare_microsecond_resolution(10);
+  t2.set_microsecond_period(20000);
+  t2.set_microseconds_pulse_high(700, 1);
+  t2.set_microseconds_pulse_high(700, 2);
+  t2.enable_output_compare(1);
+  t2.enable_output_compare(2);
+  t2.start();
+  GPIO::PORTA.pin_for_timer(0, GPIO::AlternFunct::AF2); // canal 1
+  GPIO::PORTA.pin_for_timer(1, GPIO::AlternFunct::AF2); // canal 2
 
   while(true)
   {

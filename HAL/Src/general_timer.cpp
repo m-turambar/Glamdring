@@ -5,7 +5,7 @@
 #include "general_timer.h"
 #include "NVIC.h"
 
-static general_timer* tim2_ptr = nullptr;
+general_timer* tim2_ptr = nullptr;
 static general_timer* tim15_ptr = nullptr;
 static general_timer* tim16_ptr = nullptr;
 static general_timer* tim17_ptr = nullptr;
@@ -125,16 +125,6 @@ void general_timer::set_autoreload(const uint16_t autoreload) const
   memoria(ARR) = autoreload;
 }
 
-void general_timer::set_ccr1(const uint16_t val) const
-{
-  memoria(CCR1) = val;
-}
-
-void general_timer::set_ccr2(const uint16_t val) const
-{
-  memoria(CCR2) = val;
-}
-
 
 void general_timer::configure(const Mode mode, uint8_t auto_reload_preload, uint8_t update_request_source,
     const uint8_t update_disable, const uint8_t status_bit_remap) const
@@ -197,7 +187,7 @@ void general_timer::start(void) const
   memoria(CR1) |= (0x1);
 }
 
-void general_timer::enable_output_compare(uint16_t cmp, const uint8_t canal) const
+void general_timer::enable_output_compare(const uint8_t canal) const
 {
   const registro& CCMRx = (canal <= 2 ? CCMR1 : CCMR2);
 
@@ -212,14 +202,6 @@ void general_timer::enable_output_compare(uint16_t cmp, const uint8_t canal) con
    * Seguramente es porque la escritura a CCR1 no estaba teniendo ningún efecto. */
   const flag OCxPE(3 + offset_canal);
   CCMRx.set(OCxPE);
-
-  const registro& CCRx =
-      (canal == 1 ? CCR1 :
-      (canal == 2 ? CCR2 :
-      (canal == 3 ? CCR3 :
-      (canal == 4 ? CCR4 : CCR1)))); // default to CCR1 if we get invalid channel
-  /** Configuramos el umbral de conteo para PWM. Osea a los cuantos ticks el pulso se va a bajar (en modo 1). */
-  memoria(CCRx) = cmp;
 
   /** Experimentalmente, vimos que sí necesitas setear este par de bits. Ahora, si el registro no existe en TIM14,
    * cómo le haces en ese?
@@ -238,6 +220,20 @@ void general_timer::enable_output_compare(uint16_t cmp, const uint8_t canal) con
    * o nos permiten encender el canal negado. */
   const flag CCxE((canal - 1)*4); // esa pequeña formula es para generalizar a varios canales
   CCER.set(CCxE);
+}
+
+void general_timer::set_output_compare_microsecond_resolution(uint16_t resolution) {
+  output_compare_microsecond_resolution = resolution;
+}
+
+void general_timer::set_microseconds_pulse_high(const uint16_t microseconds, const uint8_t canal) {
+  const registro& CCRx =
+      (canal == 1 ? CCR1 :
+       (canal == 2 ? CCR2 :
+        (canal == 3 ? CCR3 :
+         (canal == 4 ? CCR4 : CCR1))));
+  /** Configuramos el umbral de conteo para PWM. Osea a los cuantos ticks el pulso se va a bajar (en modo 1). */
+  memoria(CCRx) = (microseconds / output_compare_microsecond_resolution);
 }
 
 /**
@@ -273,9 +269,7 @@ void general_timer::enable_input_capture(bool rising_edge, uint16_t microsegundo
    * hizo overflow.
    * Así que restar e.g. 6 - 4999 nos da (-4993) % 2^16 - 1. Esto no es igual al 7 que nos gustaría tener.
    * Por ende hacer el ARR 2^16 - 1 hace que esa resta nos dé el resultado correcto.
-   *
-   * Evita usar las funciones configurar_periodo_x, pues restan 1 al valor del ARR. Eso puede llevar a unos bugs muy
-   * sutiles.*/
+   */
   set_autoreload(0xFFFF);
 
   /** Para obtener un conteo de 1us (actualización de CNT), prescaler debe valer 15. (16 MHz entre 16 es 1 MHz).
@@ -285,34 +279,18 @@ void general_timer::enable_input_capture(bool rising_edge, uint16_t microsegundo
 }
 
 
-/** Notas 06/Jul/2021
+/** Notas 06/Jul/2021 - 27/Jul/2022
  * Para configurar una señal PWM, se usan tres registros:
  * PSC (prescaler)
  * ARR (umbral)
- * CCR1 (comparador)
- * El código de parser que se encuentra en pruebas_timers.cpp incluye un parser de UART para experimentar con
- * estos valores. Permite un control fino sobre la frecuencia, el tiempo arriba, y el tiempo abajo de cada timer.
- * Falta crear un algoritmo correcto para establecer periodos fijos*/
+ * CCRx (comparador)
+ * */
 
-/** válido de 1us* a 65ms */
-void general_timer::configurar_periodo_us(uint16_t periodo)
-{
-  set_prescaler(15); //para que cada "tick" sea de 1us
-  set_autoreload(periodo-1);
-}
 
-/** válido de 1ms a 65s */
-void general_timer::configurar_periodo_ms(uint16_t periodo)
+void general_timer::set_microsecond_period(uint16_t periodo)
 {
-  //memoria(PSC) = 7999; // para que cada "tick" sea de 1ms, divides 8MHz entre 8000
-  set_prescaler(15999); // O tal vez, sí es de 16MHz? divides 16MHz entre 16000. PWM y periodic son diferentes? no.
-  set_autoreload(periodo-1);
-}
-
-void general_timer::enable_output()
-{
-  constexpr flag CC1E(0);
-  CCER.set(CC1E);
+  set_prescaler((16 * output_compare_microsecond_resolution) - 1);
+  set_autoreload((periodo / output_compare_microsecond_resolution) - 1);
 }
 
 void general_timer::generate_update() const {
@@ -333,4 +311,9 @@ void general_timer::set_capture_compare_polarity_rising() const {
 void general_timer::set_capture_compare_polarity_falling() const {
   const flag CC1P(1);
   CCER.set(CC1P);
+}
+
+void general_timer::configurar_periodo_ms(uint16_t milisegundos) {
+  set_prescaler(15999);
+  set_autoreload(milisegundos-1);
 }
