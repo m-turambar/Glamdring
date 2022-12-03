@@ -43,7 +43,8 @@ struct Procesador
 {
   enum class Proceso {
     None,
-    PWM
+    PWM,
+    Freq
   };
 
   void procesar_mensaje(uint8_t b)
@@ -68,6 +69,9 @@ struct Procesador
     if (b == 'p') {
       proceso = Proceso::PWM;
     }
+    else if (b == 'f') {
+      proceso = Proceso::Freq;
+    }
 
   }
 
@@ -85,7 +89,12 @@ private:
         return false;
       }
       pwm_pulse_width = pwm_pulse_width * 10 + b - '0';
-      return true;
+    }
+    else if (proceso == Proceso::Freq) {
+      if (b < '0' || b > '9') {
+        return false;
+      }
+      microseconds_period = microseconds_period * 10 + b - '0';
     }
     return true;
   }
@@ -94,17 +103,22 @@ private:
     if (proceso == Proceso::PWM) {
       tim2_ptr->set_microseconds_pulse_high(pwm_pulse_width, pwm_canal);
     }
+    if (proceso == Proceso::Freq) {
+      tim2_ptr->set_microsecond_period(microseconds_period);
+    }
   }
 
   void clear_status() {
     proceso = Proceso::None;
     procesando = false;
     pwm_pulse_width = 0;
+    microseconds_period = 0;
     pwm_canal = 0;
   }
 
   Proceso proceso {Proceso::None};
   uint16_t pwm_pulse_width{0};
+  uint16_t microseconds_period{0};
   uint8_t pwm_canal{0};
 };
 

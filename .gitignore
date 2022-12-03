@@ -8,7 +8,8 @@
 *.d
 *.obj
 *.cmake
-G070/HAL
+G031/build
+G031/cmake-build-debug-arm
 G070/CMakeCache.txt
 G070/en.stm32g0_cad
 G070/cmake-build-debug
