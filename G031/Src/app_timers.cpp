@@ -13,8 +13,6 @@ general_timer* tim17_ptr{nullptr};
 extern GPIO::pin LED;
 extern GPIO::pin Boton;
 
-static const char* contrasenia = "bishi\n";
-
 void callback_tim17()
 {
   uint8_t voltaje_boton = Boton.read_input();
@@ -31,6 +29,24 @@ void callback_tim16()
 {
   LED.toggle();
 };
+
+void callback_tim6()
+{
+  LED.toggle();
+};
+
+void callback_tim7()
+{
+  uint8_t voltaje_boton = Boton.read_input();
+  if(voltaje_boton == 0) {
+    LED.toggle();
+    *nrf_ptr << 't';
+  }
+  else {
+    LED.reset_output();
+  }
+};
+
 
 
 

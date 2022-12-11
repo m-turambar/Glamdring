@@ -73,15 +73,11 @@ int main(void)
   t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
   t17.start();
 
-  /** Este timer se está usando dos veces. Una para inicializar el acelerómetro x ms después de arrancar.
-   * La segunda para el retraso automático para apagar el relevador. */
-  //general_timer t16(GeneralTimer::TIM16, general_timer::Mode::OnePulseMode);
   general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
-  t16.configurar_periodo_ms(5000);
-  t16.start();
+  tim16_ptr = &t16;
+  t16.configurar_periodo_ms(10000);
   t16.generate_update();
   t16.clear_update();
-  tim16_ptr = &t16;
   t16.enable_interrupt(callback_tim16, general_timer::InterruptType::UIE);
   t16.start();
 

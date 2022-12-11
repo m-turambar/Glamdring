@@ -44,6 +44,7 @@ void encender_rele_en_ms(uint16_t milisegundos)
 }
 */
 
+/*
 void encender_rele_durante(uint16_t milisegundos)
 {
   encender_rele_a();
@@ -52,6 +53,17 @@ void encender_rele_durante(uint16_t milisegundos)
   tim16_ptr->callback_update = apagar_rele_a;
   tim16_ptr->generate_update();
   tim16_ptr->start();
+}
+*/
+
+void encender_rele_durante(uint16_t milisegundos)
+{
+  encender_rele_a();
+  tim6_ptr->configure_mode(basic_timer::Mode::OnePulseMode);
+  tim6_ptr->configurar_periodo_ms(milisegundos);
+  tim6_ptr->callback = apagar_rele_a;
+  tim6_ptr->generate_update();
+  tim6_ptr->start();
 }
 
 /**************************************************/
