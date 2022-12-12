@@ -11,6 +11,7 @@
 #include "app_uart.h"
 #include "app_nrf24.h"
 #include "app_rele.h"
+#include "app_acelerometro.h"
 
 UART* g_uart2{nullptr};
 extern general_timer* tim2_ptr;
@@ -43,8 +44,9 @@ struct Procesador
 {
   enum class Proceso {
     None,
+    Accel,
+    Freq,
     PWM,
-    Freq
   };
 
   void procesar_mensaje(uint8_t b)
@@ -72,6 +74,9 @@ struct Procesador
     else if (b == 'f') {
       proceso = Proceso::Freq;
     }
+    else if (b == 'a') {
+      proceso = Proceso::Accel;
+    }
 
   }
 
@@ -96,6 +101,9 @@ private:
       }
       microseconds_period = microseconds_period * 10 + b - '0';
     }
+    else if (proceso == Proceso::Accel) {
+      ;
+    }
     return true;
   }
 
@@ -105,6 +113,9 @@ private:
     }
     if (proceso == Proceso::Freq) {
       tim2_ptr->set_microsecond_period(microseconds_period);
+    }
+    if (proceso == Proceso::Accel) {
+      g_acelerometro->imprimir(*g_uart2);
     }
   }
 
@@ -152,13 +163,11 @@ void parse_uart(uint8_t b)
   }
   else if( b == 'n')
   {
-    NRF24::Modo m = nrf_ptr->obtener_modo();
+    NRF24::Modo modo = nrf_ptr->obtener_modo();
     nrf_ptr->apagar();
 
-    if(m == NRF24::Modo::TX)
-      nrf_ptr->encender(NRF24::Modo::RX);
-    else
-      nrf_ptr->encender(NRF24::Modo::TX);
+    modo = (modo == NRF24::Modo::TX) ? NRF24::Modo::RX : NRF24::Modo::TX;
+    nrf_ptr->encender(modo);
   }
 
   else if (b == '{') {

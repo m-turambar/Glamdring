@@ -7,9 +7,10 @@
 #include "NVIC.h"
 #include "NRF24.h"
 
+#include "app_acelerometro.h"
 #include "app_nrf24.h"
-#include "app_uart.h"
 #include "app_timers.h"
+#include "app_uart.h"
 
 void inicializacion();
 void configurar_relojes();
@@ -31,9 +32,11 @@ int main(void)
   RCC::enable_port_clock(RCC::GPIO_Port::C);
 
   LED.salida();
-  ReleA.salida();
-  ReleB.salida();
+  //ReleA.salida();
+  //ReleB.salida();
   Boton.entrada(); // con pull-up interno. Apretamos y se pone a GND.
+
+
 
   ///////////////
 
@@ -91,6 +94,12 @@ int main(void)
   t2.start();
   GPIO::PORTA.pin_for_timer(0, GPIO::AlternFunct::AF2); // canal 1
   GPIO::PORTA.pin_for_timer(1, GPIO::AlternFunct::AF2); // canal 2
+
+  I2C i2c1(I2C::Peripheral::I2C1);
+  i2c1.enable(I2C::Timing::Standard);
+
+  Acelerometro mpu(i2c1);
+  g_acelerometro = &mpu;
 
   while(true)
   {

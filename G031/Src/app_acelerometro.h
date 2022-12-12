@@ -6,11 +6,21 @@
 #define G031_APP_ACELEROMETRO_H
 
 #include "MPU6050.h"
+#include "UART.h"
 
-extern MPU6050* mpu_ptr;
-extern int mpu_init_fails;
+class Acelerometro
+{
+  MPU6050 m_mpu;
+  uint8_t m_buf[16] = {0};
+  float m_acc[3] = {0};
 
-void reinicializar_acelerometro();
-void imprimir_acelerometro();
+public:
+  Acelerometro(const I2C& i2c);
+  void reinicializar();
+  void imprimir(UART& uart);
+};
+
+extern Acelerometro* g_acelerometro;
+
 
 #endif //G031_APP_ACELEROMETRO_H
