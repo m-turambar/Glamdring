@@ -13,10 +13,10 @@ I2C::Status MPU6050::set_sampling_rate() const
   return mi2c.write(MPUADDR, buf, 2);
 }
 
-I2C::Status MPU6050::posicionar_en_registro_ax() const
+I2C::Status MPU6050::posicionar_en_registro(const uint8_t reg) const
 {
   uint8_t buf[2];
-  buf[0] = 0x3B;
+  buf[0] = reg;
   buf[1] = 0x0;
   return mi2c.write(MPUADDR, buf, 1); //registro del acelerometro X.
 }

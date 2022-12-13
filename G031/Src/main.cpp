@@ -32,8 +32,8 @@ int main(void)
   RCC::enable_port_clock(RCC::GPIO_Port::C);
 
   LED.salida();
-  //ReleA.salida();
-  //ReleB.salida();
+  ReleA.salida();
+  ReleB.salida();
   Boton.entrada(); // con pull-up interno. Apretamos y se pone a GND.
 
 
@@ -66,16 +66,28 @@ int main(void)
   radio.max_rt_callback = callback_nrf24_max_rt;
   radio_irq.pin_for_interrupt(EXTI4_15_IRQn);
 
+  I2C i2c1(I2C::Peripheral::I2C1);
+  i2c1.enable(I2C::Timing::Standard);
+
+  Acelerometro mpu(i2c1);
+  g_acelerometro = &mpu;
+
   ///////////////
+  auto callback_MPU = []() {
+    g_acelerometro->imprimir(*g_uart2);
+  };
+
 
   general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
   tim17_ptr = &t17;
   t17.configurar_periodo_ms(50);
   t17.generate_update();
   t17.clear_update();
+  //t17.enable_interrupt(callback_MPU, general_timer::InterruptType::UIE);
   t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
   t17.start();
 
+  /**/
   general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
   tim16_ptr = &t16;
   t16.configurar_periodo_ms(10000);
@@ -95,11 +107,8 @@ int main(void)
   GPIO::PORTA.pin_for_timer(0, GPIO::AlternFunct::AF2); // canal 1
   GPIO::PORTA.pin_for_timer(1, GPIO::AlternFunct::AF2); // canal 2
 
-  I2C i2c1(I2C::Peripheral::I2C1);
-  i2c1.enable(I2C::Timing::Standard);
 
-  Acelerometro mpu(i2c1);
-  g_acelerometro = &mpu;
+
 
   while(true)
   {
