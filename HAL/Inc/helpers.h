@@ -2,8 +2,8 @@
 // Created by migue on 05/06/2020.
 //
 
-#ifndef G070_HELPERS_H
-#define G070_HELPERS_H
+#ifndef GLAMDRING_HELPERS_H
+#define GLAMDRING_HELPERS_H
 
 #include <cstddef>
 #include <cstdint>
@@ -121,4 +121,4 @@ struct bitfield
 };
 
 
-#endif //G070_HELPERS_H
+#endif //GLAMDRING_HELPERS_H

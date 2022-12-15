@@ -2,8 +2,10 @@
 // Created by migue on 13/11/2021.
 //
 
-#ifndef G070_POWERSTEP_H
-#define G070_POWERSTEP_H
+#ifndef GLAMDRING_POWERSTEP_H
+#define GLAMDRING_POWERSTEP_H
+
+// El Powerstep de ST nunca me funcionó. Considerar eliminar o mover este archivo.
 
 #include "SPI.h"
 #include "GPIO_Port.h"
@@ -69,4 +71,4 @@ private:
 };
 
 
-#endif //G070_POWERSTEP_H
+#endif //GLAMDRING_POWERSTEP_H

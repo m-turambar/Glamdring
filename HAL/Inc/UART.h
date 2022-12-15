@@ -2,8 +2,8 @@
 // Created by migue on 16/06/2020.
 //
 
-#ifndef G070_UART_H
-#define G070_UART_H
+#ifndef GLAMDRING_UART_H
+#define GLAMDRING_UART_H
 
 #include <cstddef>
 #include "helpers.h"
@@ -104,4 +104,4 @@ public:
 
 };
 
-#endif //G070_UART_H
+#endif //GLAMDRING_UART_H

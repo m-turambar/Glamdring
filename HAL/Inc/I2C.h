@@ -2,8 +2,8 @@
 // Created by migue on 17/05/2020.
 //
 
-#ifndef GLAMDRING_MI2C_H
-#define GLAMDRING_MI2C_H
+#ifndef GLAMDRING_I2C_H
+#define GLAMDRING_I2C_H
 
 #include <cstddef>
 #include "helpers.h"
@@ -81,4 +81,4 @@ struct I2C {
 
 
 
-#endif //GLAMDRING_MI2C_H
+#endif //GLAMDRING_I2C_H

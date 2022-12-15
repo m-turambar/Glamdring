@@ -2,8 +2,8 @@
 // Created by migue on 13/12/2020.
 //
 
-#ifndef G070_NRF24_H
-#define G070_NRF24_H
+#ifndef GLAMDRING_NRF24_H
+#define GLAMDRING_NRF24_H
 
 #include "SPI.h"
 #include "GPIO_Port.h"
@@ -89,4 +89,4 @@ private:
   uint8_t flush_rx_fifo() const;
 };
 
-#endif //G070_NRF24_H
+#endif //GLAMDRING_NRF24_H

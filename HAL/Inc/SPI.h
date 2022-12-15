@@ -2,8 +2,8 @@
 // Created by migue on 11/12/2020.
 //
 
-#ifndef G070_SPI_H
-#define G070_SPI_H
+#ifndef GLAMDRING_SPI_H
+#define GLAMDRING_SPI_H
 
 #include "helpers.h"
 #include "GPIO_Port.h"
@@ -115,4 +115,4 @@ private:
   const Peripheral peripheral;
 };
 
-#endif //G070_SPI_H
+#endif //GLAMDRING_SPI_H

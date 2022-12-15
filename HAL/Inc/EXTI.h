@@ -2,8 +2,8 @@
 // Created by migue on 11/08/2021.
 //
 
-#ifndef G031_EXTI_H
-#define G031_EXTI_H
+#ifndef GLAMDRING_EXTI_H
+#define GLAMDRING_EXTI_H
 
 #include "helpers.h"
 
@@ -37,4 +37,4 @@ namespace EXTI
   void clear_pending_interrupt(const uint8_t pin);
 }
 
-#endif //G031_EXTI_H
+#endif //GLAMDRING_EXTI_H

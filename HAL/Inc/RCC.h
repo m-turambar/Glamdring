@@ -1,5 +1,5 @@
-#ifndef MIKE_RCC_H
-#define MIKE_RCC_H
+#ifndef GLAMDRING_RCC_H
+#define GLAMDRING_RCC_H
 
 #ifdef STM32L475xx
 #include "RCC_L475.h"
@@ -11,4 +11,4 @@
 #include "RCC_F767.h"
 #endif
 
-#endif
+#endif //GLAMDRING_RCC_H

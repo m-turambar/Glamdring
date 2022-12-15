@@ -2,8 +2,8 @@
 // Created by migue on 10/06/2020.
 //
 
-#ifndef G070_GENERAL_TIMER_H
-#define G070_GENERAL_TIMER_H
+#ifndef GLAMDRING_GENERAL_TIMER_H
+#define GLAMDRING_GENERAL_TIMER_H
 
 #include "helpers.h"
 #include "RCC.h"
@@ -82,4 +82,4 @@ public:
 };
 
 }
-#endif //G070_GENERAL_TIMER_H
+#endif //GLAMDRING_GENERAL_TIMER_H

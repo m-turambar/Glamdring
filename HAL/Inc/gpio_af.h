@@ -2,8 +2,8 @@
 // Created by migue on 15/06/2020.
 //
 
-#ifndef G070_G070_GPIO_AF_H
-#define G070_G070_GPIO_AF_H
+#ifndef GLAMDRING_GPIO_AF_H
+#define GLAMDRING_GPIO_AF_H
 
 #include <cstdint>
 
@@ -25,4 +25,4 @@ namespace GPIO {
 
 }
 
-#endif //G070_G070_GPIO_AF_H
+#endif //GLAMDRING_GPIO_AF_H
