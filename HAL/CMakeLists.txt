@@ -17,4 +17,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 file(GLOB_RECURSE SOURCES "CMSIS/*.*" "Src/*.*" "Inc/*.*")
 include_directories(Inc CMSIS/Include)
-add_library(HAL OBJECT ${SOURCES} Src/Powerstep.cpp Inc/Powerstep.h)
+add_library(HAL OBJECT ${SOURCES})

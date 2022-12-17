@@ -26,8 +26,8 @@ struct flag
 /** Abstracción para operar registros de 32 bits. */
 struct registro
 {
-  constexpr registro(const size_t addr_) :
-  addr(addr_) {}
+  constexpr explicit registro(const size_t addr) :
+  addr(addr) {}
 
   void set(const flag f) const;
   void reset(const flag f) const;
