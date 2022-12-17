@@ -17,7 +17,7 @@ struct bitfield;
 /** Es un bitfield de un solo bit */
 struct flag
 {
-  constexpr flag(const uint8_t offset) :
+  constexpr explicit flag(const uint8_t offset) :
     mask(1 << offset) {}
   constexpr size_t operator !() const { return ~(mask); }
   const size_t mask;
@@ -29,19 +29,19 @@ struct registro
   constexpr explicit registro(const size_t addr) :
   addr(addr) {}
 
-  void set(const flag f) const;
-  void reset(const flag f) const;
-  bool is_set(const flag f) const;
-  bool is_reset(const flag f) const;
+  void set(flag f) const;
+  void reset(flag f) const;
+  bool is_set(flag f) const;
+  bool is_reset(flag f) const;
   /** Escribe ese bitfield dejando el resto del registro intacto. No olvides poner un valor en el bitfield. */
-  void write(const bitfield bf) const;
+  void write(const bitfield& bf) const;
 
   /** Clearea en memoria los bits del registro que corresponden a este bitfield. */
-  void reset(const bitfield bf) const;
+  void reset(const bitfield& bf) const;
   /** Regresa el valor del bitfield con todo y offset. */
-  size_t read(const bitfield bf) const;
+  size_t read(const bitfield& bf) const;
   /** Regresa el valor del bitfield sin su offset. */
-  size_t read_grounded(const bitfield bf) const;
+  size_t read_grounded(const bitfield& bf) const;
 
   const size_t addr;
 };
@@ -49,31 +49,31 @@ struct registro
 /** Abstracción para operar registros de 16 bits. */
 struct reg16
 {
-  constexpr reg16(const size_t addr_) :
+  constexpr explicit reg16(const size_t addr_) :
       addr(addr_) {}
 
-  void set(const flag f) const;
-  void reset(const flag f) const;
-  bool is_set(const flag f) const;
-  bool is_reset(const flag f) const;
+  void set(flag f) const;
+  void reset(flag f) const;
+  bool is_set(flag f) const;
+  bool is_reset(flag f) const;
   /** Escribe ese bitfield dejando el resto del registro intacto. No olvides poner un valor en el bitfield. */
-  void write(const bitfield bf) const;
+  void write(const bitfield& bf) const;
 
   /** Clearea en memoria los bits del registro que corresponden a este bitfield. */
-  void reset(const bitfield bf) const;
+  void reset(const bitfield& bf) const;
   /** Regresa el valor del bitfield con todo y offset. */
-  uint16_t read(const bitfield bf) const;
+  uint16_t read(const bitfield& bf) const;
   /** Regresa el valor del bitfield sin su offset. */
-  uint16_t read_grounded(const bitfield bf) const;
+  uint16_t read_grounded(const bitfield& bf) const;
 
   const size_t addr; //esto sí sigue siendo size_t porque necesitamos 32 bits para el espacio de direcciones
 };
 
 /* el namespace anónimo le da storage estático */
-volatile size_t& memoria(const registro reg);
-volatile size_t& memoria(const size_t loc);
-volatile uint16_t& memoria16(const reg16 reg);
-volatile uint16_t& memoria16(const size_t loc);
+volatile size_t& memoria(registro reg);
+volatile size_t& memoria(size_t loc);
+volatile uint16_t& memoria16(reg16 reg);
+volatile uint16_t& memoria16(size_t loc);
 
 /** Abstracción para interactuar con los campos de bits de un registro.
  * Es preferible que el usuario use las funciones miembro de registro,
@@ -109,11 +109,11 @@ struct bitfield
    * reg: 11001010 10110000 11100010 00001111
    * bf:  00000000 11100000 00000000 00000000
    * ret: 00000000 10100000 00000000 00000000 */
-  const size_t operator ()(const registro reg) const { return mask & memoria(reg); }
+  size_t operator ()(const registro reg) const { return mask & memoria(reg); }
 
-  const void clear(size_t& clearee) const { clearee = clearee & (~mask); }
-  const void write(size_t& writee) const { writee = writee | value; }
-  const void overwrite(size_t& word) const { clear(word); write(word); }
+  void clear(size_t& clearee) const { clearee = clearee & (~mask); }
+  void write(size_t& writee) const { writee = writee | value; }
+  void overwrite(size_t& word) const { clear(word); write(word); }
 
   const size_t mask;
   const uint8_t offset;

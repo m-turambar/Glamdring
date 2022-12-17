@@ -3,7 +3,6 @@
 //
 
 #include <cstdlib>
-#include <cstring>
 #include <cstdio>
 
 #include "general_timer.h"

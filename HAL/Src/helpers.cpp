@@ -52,26 +52,26 @@ bool registro::is_reset(flag f) const
   return (memoria(addr) & f) == 0;
 }
 
-void registro::write(const bitfield bf) const
+void registro::write(const bitfield& bf) const
 {
   size_t tmp = memoria(addr);
   bf.overwrite(tmp);
   memoria(addr) = tmp;
 }
 
-void registro::reset(const bitfield bf) const
+void registro::reset(const bitfield& bf) const
 {
   size_t tmp = memoria(addr);
   bf.clear(tmp);
   memoria(addr) = tmp;
 }
 
-size_t registro::read(const bitfield bf) const
+size_t registro::read(const bitfield& bf) const
 {
   return bf.mask & memoria(addr);
 }
 
-size_t registro::read_grounded(const bitfield bf) const
+size_t registro::read_grounded(const bitfield& bf) const
 {
   return (bf.mask & memoria(addr)) >> bf.offset;
 }
@@ -100,26 +100,26 @@ bool reg16::is_reset(const flag f) const
   return (memoria16(addr) & static_cast<uint16_t>(f.mask)) == 0;
 }
 
-void reg16::write(const bitfield bf) const
+void reg16::write(const bitfield& bf) const
 {
   size_t tmp = memoria16(addr);
   bf.overwrite(tmp);
   memoria16(addr) = static_cast<uint16_t>(tmp);
 }
 
-void reg16::reset(const bitfield bf) const
+void reg16::reset(const bitfield& bf) const
 {
   size_t tmp = memoria16(addr);
   bf.clear(tmp);
   memoria16(addr) = static_cast<uint16_t>(tmp);
 }
 
-uint16_t reg16::read(const bitfield bf) const
+uint16_t reg16::read(const bitfield& bf) const
 {
   return bf.mask & memoria16(addr);
 }
 
-uint16_t reg16::read_grounded(const bitfield bf) const
+uint16_t reg16::read_grounded(const bitfield& bf) const
 {
   return (bf.mask & memoria16(addr)) >> bf.offset;
 }

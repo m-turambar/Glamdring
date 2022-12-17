@@ -5,7 +5,6 @@
 #include "GPIO_Port.h"
 #include "app_timers.h"
 #include "app_nrf24.h"
-#include "app_rele.h"
 
 general_timer* tim16_ptr{nullptr};
 general_timer* tim17_ptr{nullptr};

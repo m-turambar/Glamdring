@@ -4,7 +4,6 @@
 #include "EXTI.h"
 
 #include "app_nrf24.h"
-#include "GPIO_Port.h"
 #include "app_uart.h"
 
 NRF24* nrf_ptr{nullptr};

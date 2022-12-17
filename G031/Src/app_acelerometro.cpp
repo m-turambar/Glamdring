@@ -21,7 +21,7 @@ void Acelerometro::reinicializar()
 
 void Acelerometro::imprimir(UART& uart)
 {
-  char tx_buf[32] {};
+  char tx_buf[48] {};
   m_mpu.posicionar_en_registro(MPU6050::Reg::ACCEL_XOUT);
   m_mpu.leer(m_buf, 6);
   m_mpu.convert_to_float(m_acc, m_buf, 3);

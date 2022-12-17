@@ -4,7 +4,6 @@
 
 #include "NVIC.h"
 #include "GPIO_Port.h"
-#include "RCC.h"
 #include "EXTI.h"
 
 

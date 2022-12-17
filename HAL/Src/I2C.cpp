@@ -5,7 +5,6 @@
 #undef I2C
 
 #include "I2C.h"
-#include "helpers.h"
 #include "RCC.h"
 #include <GPIO_Port.h>
 
