@@ -49,6 +49,9 @@ namespace GPIO {
     K = 0x40022800
   };
 
+#else
+#error "No MCU declared"
+
 #endif
 
   enum class Mode {

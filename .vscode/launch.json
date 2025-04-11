@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "projectName": "Glamdring",
+    "configurations": [
+        {
+            "cwd": "${workspaceRoot}",
+            "executable": "./G070/build/G070.elf",
+            "name": "Debug G070",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "serverpath": "C:\\Users\\migue\\OneDrive\\bin\\xpack-openocd-0.12.0-6\\bin\\openocd.exe",
+            "configFiles": ["board/st_nucleo_g0.cfg"],
+            "searchDir": ["C:\\Users\\migue\\OneDrive\\bin\\xpack-openocd-0.12.0-6\\scripts"],
+            // "runToEntryPoint": "main",
+            "showDevDebugOutput": "none"
+        },
+        {
+            "cwd": "${workspaceRoot}",
+            "executable": "./F767/build/F767.elf",
+            "name": "Debug F767",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "serverpath": "C:\\Users\\migue\\OneDrive\\bin\\xpack-openocd-0.12.0-6\\bin\\openocd.exe",
+            "configFiles": ["board/stm32f7discovery.cfg"],
+            "searchDir": ["C:\\Users\\migue\\OneDrive\\bin\\xpack-openocd-0.12.0-6\\scripts"],
+            // "runToEntryPoint": "main",
+            "showDevDebugOutput": "none"
+        },
+    ]
+}

@@ -2,9 +2,7 @@
 Infraestructura para microcontroladores STM32.
 Desarrollo de hardware: STM32G031
 
-El proyecto contiene una mezcla del inglés y el español, dado que lo desarrollé en varias etapas donde prefería uno u otro lenguaje.
-
-El proyecto cumple en usar una capa de abstracción del hardware (HAL) completamente deslindada de la que ST provee. No es así con el caso de ARM.
+El proyecto cumple en usar una capa de abstracción del hardware (HAL) completamente deslindada de la que ST provee.
 Contiene una HAL compartida por todos los micros, y un folder de aplicación para cada uno.
 
 El desarrollo de hardware para el STM32G031 fue todo un éxito. El acceso al MPU6050 y el NRF24 es bastante sólido.
@@ -13,8 +11,9 @@ En general, el proyecto Glamdring ha sido un éxito.
 **************************************************
 El compilador ARM-none-eabi se puede descargar desde https://developer.arm.com/downloads/-/gnu-rm
 El flasher OpenOCD desde: https://openocd.org/pages/getting-openocd.html
-También necesitas los drivers de ST. Link difícil de obtener.
-Cuando configures OpenOCD en Clion, usa board\st_nucleo_g0.cfg
+También necesitas los drivers de ST. https://www.st.com/en/development-tools/stsw-link009.html
+Cuando configures OpenOCD, usa board\st_nucleo_g0.cfg. Si lees su contenido internamente llama a target/stm32g0x.cfg así como configurar otras dependencias.
+Para depurar que tus drivers estén en orden, ejecuta OpenOCD: openocd.exe -f ..\openocd\scripts\board\st_nucleo_g0.cfg
 
 **************************************************
 
@@ -72,3 +71,14 @@ Problemas con el USART vs UART - no son lo mismo
 *****************************************
 
 Lee esto después: Todo el documento pues https://www.mouser.mx/news/stmicroelectronics-stspin-ebook/mobile/index.html#p=18
+
+*****************************************
+
+https://www.youtube.com/watch?v=ew0XWd-blwE&t=2509s
+
+
+**********************************************
+
+Para configurar con CMake cualquiera de los proyectos, usa:
+
+`cmake -S . -B build -G "MinGW Makefiles"`

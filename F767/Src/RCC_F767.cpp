@@ -112,6 +112,12 @@ namespace RCC
 
   /*******************************************/
 
+  void enable_TIM2_clock()
+  {
+    const flag TIM2EN(0);
+    APB1ENR.set(TIM2EN);
+  }
+
   void enable_TIM6_clock()
   {
     const flag TIM6EN(4);
@@ -123,20 +129,26 @@ namespace RCC
     const flag TIM7EN(5);
     APB1ENR.set(TIM7EN);
   }
-
+  
   void enable_TIM15_clock()
   {
     //static_assert(false, "TIM15 no existe en F767");
   }
-
+  
   void enable_TIM16_clock()
   {
     //static_assert(false, "TIM16 no existe en F767");
   }
-
+  
   void enable_TIM17_clock()
   {
     //static_assert(false, "TIM17 no existe en F767");
+  }
+  
+  void enable_DAC_clock()
+  {
+    const flag DACEN(29);
+    APB1ENR.set(DACEN);
   }
 
   /*********************************************************/

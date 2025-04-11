@@ -5,8 +5,8 @@
 #include "basic_timer.h"
 #include "NVIC.h"
 
-const basic_timer* tim6_ptr = nullptr;
-const basic_timer* tim7_ptr = nullptr;
+basic_timer* tim6_ptr {};
+basic_timer* tim7_ptr {};
 
 void TIM6_IRQHandler(void)
 {

@@ -8,6 +8,9 @@
 #include "helpers.h"
 #include "RCC.h"
 
+class general_timer;
+extern general_timer* tim2_ptr;
+
 extern "C"
 {
 

@@ -33,6 +33,7 @@ typedef enum
   EXTI1_IRQn                  = 14,      /*!< EXTI 1                                                           */
   EXTI2_IRQn                  = 15,      /*!< EXTI 2                                                           */
   EXTI3_IRQn                  = 16,      /*!< EXTI 3                                                           */
+  TIM2_IRQn                   = 28,     /*!< TIM2                                                              */
   TIM3_IRQn                   = 29,     /*!< TIM3 global Interrupt                                             */
   TIM6_IRQn                   = 54,     /*!< TIM6 global Interrupts                                            */
   TIM7_IRQn                   = 55,     /*!< TIM7 global Interrupt                                             */
@@ -45,7 +46,8 @@ typedef enum
   SPI2_IRQn                   = 36,     /*!< SPI2 Interrupt                                                    */
   USART1_IRQn                 = 37,     /*!< USART1 Interrupt                                                  */
   USART2_IRQn                 = 38,     /*!< USART2 Interrupt                                                  */
-  USART3_4_IRQn               = 39,     /*!< USART3, USART4 globlal Interrupts                                 */
+  USART3_IRQn                 = 39,     /*!< USART3                                                            */
+  UART4_IRQn                  = 52,     /*!< UART4                                                             */
 } IRQn_Type;
 
 /* Este header escrito por ARM es más pequeño pero requiere que los macros y enum anteriormente

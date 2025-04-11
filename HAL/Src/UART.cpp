@@ -25,6 +25,29 @@ UART* UART2_ptr{nullptr};
 UART* UART3_ptr{nullptr};
 UART* UART4_ptr{nullptr};
 
+IRQn_Type get_IRQn(UART::Peripheral peripheral)
+{
+  switch(peripheral) {
+    case UART::Peripheral::USART1:
+      return USART1_IRQn;
+    case UART::Peripheral::USART2:
+      return USART2_IRQn;
+    case UART::Peripheral::USART3:
+      #ifdef STM32F767xx
+      return USART3_IRQn;
+      #else
+      return USART3_4_IRQn;
+      #endif
+    case UART::Peripheral::USART4:
+      #ifdef STM32F767xx
+      return UART4_IRQn;
+      #else
+      return USART3_4_IRQn;
+      #endif
+    default:
+      return HardFault_IRQn;
+  }
+}
 
 void USART1_IRQHandler(void)
 {
@@ -34,11 +57,11 @@ void USART1_IRQHandler(void)
 }
 
 /** TODO: buffer circular para evitar (hacer más difícil) interrupciones ORE
- * ORE ocurre cuando hay una sobreescritura al shift register. Si escribes un chingo de caracteres al mismo tiempo eso pasa*/
+ * ORE ocurre cuando hay una sobreescritura al shift register. Si escribes un chingo de caracteres al mismo tiempo eso pasa.
+ * Probablemente ocurre porque en la interrupción de lectura siempre escribes de vuelta un eco. */
 void USART2_IRQHandler(void)
 {
   if(UART2_ptr->ISR.is_set(ORE)) {
-    //UART2_ptr->ISR.reset(ORE); Esto no funciona. Así no se clearea ORE, o cualquier otra interrupción. Hay que usar ICR.
     UART2_ptr->ICR.set(ORECF);
     UART2_ptr->ore_cnt++;
   }
@@ -48,6 +71,7 @@ void USART2_IRQHandler(void)
   NVIC_ClearPendingIRQ(USART2_IRQn);
 }
 
+#ifndef STM32F767xx
 void USART3_4_IRQHandler(void)
 {
   // no supe cómo seleccionar la UART correcta en función de la interrupción. Si puedes hacerlo, házlo.
@@ -59,6 +83,22 @@ void USART3_4_IRQHandler(void)
 
   NVIC_ClearPendingIRQ(USART3_4_IRQn);
 }
+#endif
+
+#ifdef STM32F767xx
+void USART3_IRQHandler(void)
+{
+  if (UART3_ptr != nullptr) {
+    if(UART3_ptr->ISR.is_set(ORE)) {
+      UART3_ptr->ICR.set(ORECF);
+      UART3_ptr->ore_cnt++;
+    } else {
+      UART3_ptr->callback();
+    }
+  }
+  NVIC_ClearPendingIRQ(USART3_IRQn);
+}
+#endif
 
 UART::UART(const UART::Peripheral peripheral, size_t baud_arg, WordLength wlen):
     peripheral(peripheral),
@@ -101,10 +141,6 @@ UART::UART(const UART::Peripheral peripheral, size_t baud_arg, WordLength wlen):
   /** stop bits by default are 1 */
   init_gpios();
 }
-
-/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
-/** ** ** ** ** ** ** ** ** ** ** ENABLERS ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
-/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
 
 /** Nota
  * Es preferible delegarle los detalles de la implementación al RCC porque éste último puede cambiar de micro a micro
@@ -154,19 +190,12 @@ const UART& UART::enable_interrupt_rx(void (*callback_arg)(), uint8_t priority)
   callback = callback_arg;
   flag RXNEIE(5);
   CR1.set(RXNEIE);
-  const IRQn_Type mIRQn = (peripheral==Peripheral::USART1 ? USART1_IRQn :
-                          (peripheral==Peripheral::USART2 ? USART2_IRQn:
-                          (peripheral==Peripheral::USART3 ? USART3_4_IRQn:
-                          (peripheral==Peripheral::USART4 ? USART3_4_IRQn: HardFault_IRQn))));
-
-  NVIC_SetPriority(mIRQn, priority);
-  NVIC_EnableIRQ(mIRQn);
+  const IRQn_Type IRQn = get_IRQn(peripheral);
+  NVIC_SetPriority(IRQn, priority);
+  NVIC_EnableIRQ(IRQn);
   return *this;
 }
 
-/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
-/** ** ** ** ** ** ** ** ** ** ** CONFIGURATORS  ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
-/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
 
 void UART::cfg_word_length(const UART::WordLength len) const
 {
@@ -219,17 +248,18 @@ void UART::init_gpios()
   }
 
 #elif defined(STM32F767xx)
-  if(peripheral == Peripheral::USART3) {
+  if(peripheral == Peripheral::USART2) {
+    RCC::enable_port_clock(RCC::GPIO_Port::D);
+    GPIO::PORTD.pin_for_UART(5, GPIO::AlternFunct::AF7); // TX
+    GPIO::PORTD.pin_for_UART(6, GPIO::AlternFunct::AF7); // RX
+  } else if(peripheral == Peripheral::USART3) {
     RCC::enable_port_clock(RCC::GPIO_Port::D);
     GPIO::PORTD.pin_for_UART(8, GPIO::AlternFunct::AF7); // TX
     GPIO::PORTD.pin_for_UART(9, GPIO::AlternFunct::AF7); // RX
   }
 #endif
-
 }
-/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
-/** ** ** ** ** ** ** ** ** ** ** COMMS RX TX ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
-/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** */
+
 
 void UART::receiveq(uint8_t* buffer, size_t sz) const
 {
@@ -243,7 +273,7 @@ void UART::receiveq(uint8_t* buffer, size_t sz) const
 }
 
 bool UART::available() const
-{
+                                        {
   return ISR.is_set(RXNE);
 }
 

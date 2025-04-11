@@ -7,7 +7,3 @@ NPP_SAVE
 cd $(CURRENT_DIRECTORY)\..
 mingw32-make -j4
 A:\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe -c port=SWD -w build\STM32F767ZI.bin 0x08000000 -s
-
-Once you have saved this script, map it to a hotkey and voilà.
-
-Extremely useful since this will cut down development time and eliminate developer attention loss by not having to exit NP++.

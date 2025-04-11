@@ -42,7 +42,7 @@ void general_timer::callback_selector() {
   }
 }
 
-#ifdef STM32G031xx
+#if defined(STM32G031xx) || defined(STM32F767xx)
 void TIM2_IRQHandler(void)
 {
   tim2_ptr->callback_selector();
@@ -104,7 +104,7 @@ general_timer::general_timer(const GeneralTimer tim, const Mode mode)
     tim17_ptr = this;
     RCC::enable_TIM17_clock();
   }
-#ifdef STM32G031xx
+#if defined(STM32G031xx) || defined(STM32F767xx)
   else if (peripheral==GeneralTimer::TIM2) {
     tim2_ptr = this;
     RCC::enable_TIM2_clock();
@@ -158,7 +158,7 @@ void general_timer::enable_interrupt(void (*callback_fn)(void), InterruptType it
 
   IRQn_Type mIRQn = HardFault_IRQn;
   switch (peripheral) {
-#ifdef STM32G031xx
+#if defined(STM32G031xx) || defined(STM32F767xx)
     case GeneralTimer::TIM2:
       mIRQn = TIM2_IRQn;
       break;//TODO hay que arreglar esto
@@ -289,6 +289,7 @@ void general_timer::enable_input_capture(bool rising_edge, uint16_t microsegundo
 
 void general_timer::set_microsecond_period(uint16_t periodo)
 {
+  // 16 porque la frecuencia base es 16MHz. Si aumentas la frecuencia de reloj esto tiene que cambiar
   set_prescaler((16 * output_compare_microsecond_resolution) - 1);
   set_autoreload((periodo / output_compare_microsecond_resolution) - 1);
 }

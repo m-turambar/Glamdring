@@ -102,8 +102,11 @@ namespace RCC {
   void enable_TIM16_clock();
   void enable_TIM17_clock();
 
+  void enable_TIM2_clock();
   void enable_TIM6_clock();
   void enable_TIM7_clock();
+
+  void enable_DAC_clock();
 
   /** Funciones para relojes del sistema */
   void enable_SYSCFG_clock();

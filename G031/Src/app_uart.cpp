@@ -2,7 +2,7 @@
 // Created by migue on 29/12/2021.
 //
 
-#include <cstdlib>
+// #include <cstdlib>
 #include <cstdio>
 
 #include "general_timer.h"
@@ -13,7 +13,6 @@
 #include "app_acelerometro.h"
 
 UART* g_uart2{nullptr};
-extern general_timer* tim2_ptr;
 
 bool parsing = true;
 
@@ -175,43 +174,43 @@ void parse_uart(uint8_t b)
   }
 
   else if(b == 'r') {
-    char freq_buf[8] = {0};
-    char rf_setup_buf[8] = {0};
-    char tx_addr_buf[16] = {0};
-    char rx0_addr_buf[16] = {0};
+    // char freq_buf[8] = {0};
+    // char rf_setup_buf[8] = {0};
+    // char tx_addr_buf[16] = {0};
+    // char rx0_addr_buf[16] = {0};
 
-    uint8_t freq = nrf_ptr->leer_registro(NRF24::Registro::RF_CH);
-    uint8_t rf_setup = nrf_ptr->leer_registro(NRF24::Registro::RF_SETUP);
-    uint64_t tx_addr = nrf_ptr->leer_addr_reg(NRF24::Registro::TX_ADDR);
-    uint64_t rx0_addr = nrf_ptr->leer_addr_reg(NRF24::Registro::RX_ADDR_P0);
+    // uint8_t freq = nrf_ptr->leer_registro(NRF24::Registro::RF_CH);
+    // uint8_t rf_setup = nrf_ptr->leer_registro(NRF24::Registro::RF_SETUP);
+    // uint64_t tx_addr = nrf_ptr->leer_addr_reg(NRF24::Registro::TX_ADDR);
+    // uint64_t rx0_addr = nrf_ptr->leer_addr_reg(NRF24::Registro::RX_ADDR_P0);
 
-    sprintf(tx_addr_buf, "0x%X", tx_addr);
-    uint32_t ms_32bits = tx_addr >> 32;
-    sprintf(tx_addr_buf + 10, "%X", ms_32bits);
+    // sprintf(tx_addr_buf, "0x%X", tx_addr);
+    // uint32_t ms_32bits = tx_addr >> 32;
+    // sprintf(tx_addr_buf + 10, "%X", ms_32bits);
 
-    sprintf(rx0_addr_buf, "0x%X", rx0_addr);
-    ms_32bits = rx0_addr >> 32;
-    sprintf(rx0_addr_buf + 10, "%X", ms_32bits);
+    // sprintf(rx0_addr_buf, "0x%X", rx0_addr);
+    // ms_32bits = rx0_addr >> 32;
+    // sprintf(rx0_addr_buf + 10, "%X", ms_32bits);
 
-    itoa(freq, freq_buf, 2);
-    itoa(rf_setup, rf_setup_buf, 2);
+    // itoa(freq, freq_buf, 2);
+    // itoa(rf_setup, rf_setup_buf, 2);
 
-    *g_uart2 << "\r\nRF_CH: " << freq_buf;
-    *g_uart2 << "\r\nRX_ADDR_P0:" << rx0_addr_buf;
-    *g_uart2 << "\r\nTX_ADDR:" << tx_addr_buf;
-    *g_uart2 << "\r\nRF_SETUP:" << rf_setup_buf << "\r\n";
-    return;
+    // *g_uart2 << "\r\nRF_CH: " << freq_buf;
+    // *g_uart2 << "\r\nRX_ADDR_P0:" << rx0_addr_buf;
+    // *g_uart2 << "\r\nTX_ADDR:" << tx_addr_buf;
+    // *g_uart2 << "\r\nRF_SETUP:" << rf_setup_buf << "\r\n";
+    // return;
   }
 
   else if (b == 's') {
-    char n_bytes_buf[8] = {0};
-    uint8_t inicio = nrf_ptr->idx_enviar;
-    uint8_t fin = nrf_ptr->idx_llenar;
-    itoa(static_cast<uint8_t>(fin - inicio), n_bytes_buf, 10);
-    *g_uart2 << "\r\nBytes en TX buf: " << n_bytes_buf;
-    *g_uart2 << "\r\nContenido: ";
-    for (auto i = inicio; i != fin; ++i)
-      *g_uart2 << nrf_ptr->tx_buf[i];
+    // char n_bytes_buf[8] = {0};
+    // uint8_t inicio = nrf_ptr->idx_enviar;
+    // uint8_t fin = nrf_ptr->idx_llenar;
+    // itoa(static_cast<uint8_t>(fin - inicio), n_bytes_buf, 10);
+    // *g_uart2 << "\r\nBytes en TX buf: " << n_bytes_buf;
+    // *g_uart2 << "\r\nContenido: ";
+    // for (auto i = inicio; i != fin; ++i)
+    //   *g_uart2 << nrf_ptr->tx_buf[i];
   }
 
   else if (b == 'u') {

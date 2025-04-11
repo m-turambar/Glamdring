@@ -12,7 +12,11 @@ extern "C" {
 
 void USART1_IRQHandler(void);
 void USART2_IRQHandler(void);
+#ifdef STM32F767xx
+void USART3_IRQHandler(void);
+#else
 void USART3_4_IRQHandler(void);
+#endif
 
 /** UARTs 1 y 2 tienen FIFOs, 3 y 4 no (Para el STM32G070 - el STM32G031 no tiene FIFO en UART2!).
  * Pero todas tienen DMA.

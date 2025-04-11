@@ -8,6 +8,10 @@
 #include "helpers.h"
 #include "RCC.h"
 
+class basic_timer;
+extern basic_timer* tim6_ptr;
+extern basic_timer* tim7_ptr;
+
 #if defined(STM32L475xx) || defined(STM32F767xx)
 #define TIM6_IRQHandler(void) TIM6_DAC_IRQHandler(void)
 #endif
