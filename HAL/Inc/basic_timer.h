@@ -32,9 +32,16 @@ class basic_timer {
 
 public:
 
-  enum class Mode{
+  enum class Mode {
     Periodic=0,
     OnePulseMode=1
+  };
+
+  // Usado para el DAC. Usa MasterMode::Update para disparar una actualización del DAC. No necesitas habilitar interrupciones.
+  enum class MasterMode {
+    Reset,
+    Enable,
+    Update
   };
 
   basic_timer(const BasicTimer tim, const Mode mode);
@@ -44,6 +51,7 @@ public:
   //  const uint8_t update_disable = 0, const uint8_t status_bit_remap = 0) const;
 
   void configure_mode(const Mode mode);
+  void configure_master_mode(const MasterMode& mode);
   void configurar_periodo_us(uint16_t periodo);
   void configurar_periodo_ms(uint16_t periodo);
 

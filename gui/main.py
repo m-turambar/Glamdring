@@ -92,15 +92,32 @@ class SerialGUI:
         self.pw2_label = ttk.Label(self.slider2_frame, text="")
         self.pw2_label.grid(row=0, column=2, padx=5)
 
+        self.slider3_frame = ttk.Frame(root)
+        self.slider3_frame.pack(pady=10)
+
+        self.channel3_label = ttk.Label(self.slider3_frame, text="DAC CH1:")
+        self.channel3_label.grid(row=0, column=0, padx=3)
+
+        self.slider3 = ttk.Scale(self.slider3_frame, from_=0, to=4095, orient="horizontal", command=self.on_slider3_change)
+        self.slider3.grid(row=0, column=1, padx=5)
+
+        self.pw3_label = ttk.Label(self.slider3_frame, text="")
+        self.pw3_label.grid(row=0, column=2, padx=5)
+
     def on_slider1_change(self, event=None):
         value = int(self.slider1.get())
         self.pw1_label.config(text=f"Pulse Width: {value}")
-        self.send_serial_data(f"{{pa{value}}}")  # Send immediately
+        self.send_serial_data(f"{{pa{value}}}")
 
     def on_slider2_change(self, event=None):
         value = int(self.slider2.get())
         self.pw2_label.config(text=f"Pulse Width: {value}")
-        self.send_serial_data(f"{{pb{value}}}")  # Send immediately
+        self.send_serial_data(f"{{pb{value}}}")
+
+    def on_slider3_change(self, event=None):
+        value = int(self.slider3.get())
+        self.pw3_label.config(text=f"DAC CH1: {value}")
+        self.send_serial_data(f"{{d{value}}}")
 
     def map_slider_value(self, slider_val):
         return int(750 + (slider_val / 100) * (2200 - 750))

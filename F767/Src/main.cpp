@@ -8,6 +8,7 @@
 #include "UART.h"
 #include "NVIC.h"
 #include "SPI.h"
+#include "DAC.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,7 +18,7 @@ void inicializacion();
 void configurar_relojes();
 void error(void);
 
-GPIO::pin LED_Verd(GPIO::PORTA, 5);
+// GPIO::pin LED_Verd(GPIO::PORTA, 5);
 GPIO::pin LED_Azul(GPIO::PORTB, 7);
 GPIO::pin LED_Rojo(GPIO::PORTB, 14);
 
@@ -26,11 +27,13 @@ uint32_t cnter{0};
 UART* g_uart3{nullptr};
 UART* g_uart2{nullptr};
 
+DAC* dac_ptr;
+
 void toggle_led()
 {
   LED_Azul.toggle();
   LED_Rojo.toggle();
-  LED_Verd.toggle();
+  // LED_Verd.toggle();
 };
 
 void serial_hb()
@@ -58,6 +61,7 @@ struct Procesador
   enum class Proceso {
     None,
     Accel,
+    DAC,
     Freq,
     PWM,
   };
@@ -85,6 +89,9 @@ struct Procesador
     else if (b == 'f') {
       proceso = Proceso::Freq;
     }
+    else if (b == 'd') {
+      proceso = Proceso::DAC;
+    }
     else if (b == 'a') {
       proceso = Proceso::Accel;
     }
@@ -111,6 +118,12 @@ private:
       }
       microseconds_period = microseconds_period * 10 + b - '0';
     }
+    else if (proceso == Proceso::DAC) {
+      if (b < '0' || b > '9') {
+        return false;
+      }
+      dac_data = dac_data * 10 + b - '0';
+    }
     else if (proceso == Proceso::Accel) {
       ;
     }
@@ -123,7 +136,11 @@ private:
       tim2_ptr->set_microseconds_pulse_high(pwm_pulse_width, pwm_canal);
     }
     if (proceso == Proceso::Freq) {
-      tim2_ptr->set_microsecond_period(microseconds_period);
+      // tim2_ptr->set_microsecond_period(microseconds_period);
+      tim6_ptr->configurar_periodo_us(microseconds_period);
+    }
+    if (proceso == Proceso::DAC) {
+      dac_ptr->write_12R(dac_data);
     }
     // if (proceso == Proceso::Accel) {
     //   g_acelerometro->imprimir(*g_uart2);
@@ -135,13 +152,15 @@ private:
     procesando = false;
     pwm_pulse_width = 0;
     microseconds_period = 0;
+    dac_data = 0;
     pwm_canal = 0;
   }
 
   Proceso proceso {Proceso::None};
-  uint16_t pwm_pulse_width{0};
-  uint16_t microseconds_period{0};
-  uint8_t pwm_canal{0};
+  uint16_t pwm_pulse_width {0};
+  uint16_t microseconds_period {0};
+  uint16_t dac_data {0};
+  uint8_t pwm_canal {0};
   UART& uart;
 };
 
@@ -203,6 +222,11 @@ void callback_uart3()
   }
 }
 
+void dac_trigger()
+{
+  dac_ptr->trigger();
+}
+
 int main(void)
 {
   inicializacion();
@@ -214,7 +238,7 @@ int main(void)
   LED_Azul.salida();
   LED_Rojo.salida();
   LED_Rojo.set_output();
-  LED_Verd.salida();
+  // LED_Verd.salida();
 
   // St-link uart
   UART uart3(UART::Peripheral::USART3, 115200);
@@ -237,14 +261,6 @@ int main(void)
   // t17.clear_update();
   // t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
   // t17.start();
-  
-  basic_timer t6(BasicTimer::TIM6, basic_timer::Mode::Periodic);
-  t6.configurar_periodo_ms(2000);
-  t6.generate_update();
-  t6.clear_update();
-  t6.enable_interrupt(serial_hb);
-  tim6_ptr = &t6;
-  t6.start();
 
   basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic);
   t7.configurar_periodo_ms(500);
@@ -267,6 +283,29 @@ int main(void)
   GPIO::PORTA.pin_for_timer(0, GPIO::AlternFunct::AF1); // canal 1
   GPIO::PORTA.pin_for_timer(1, GPIO::AlternFunct::AF1); // canal 2
   GPIO::PORTA.pin_for_timer(2, GPIO::AlternFunct::AF1); // canal 3
+
+  DAC::Config dac_config
+  {
+    DAC::Canal::CH1,
+    0x0B, // Amplitud (MAMP)
+    DAC::Wave::None,
+    DAC::Trigger::Timer6,
+    true, // TEN
+    false, // BOFF disable
+  };
+
+  DAC dac(dac_config);
+  dac.enable();
+  dac_ptr = &dac;
+
+  basic_timer t6(BasicTimer::TIM6, basic_timer::Mode::Periodic);
+  // t6.configurar_periodo_ms(2);
+  t6.configurar_periodo_us(40);
+  t6.configure_master_mode(basic_timer::MasterMode::Update); // Para triggerear DAC
+  t6.generate_update();
+  t6.clear_update();
+  tim6_ptr = &t6;
+  t6.start();
 
   while (1) {
     if (uart3_buf.available())

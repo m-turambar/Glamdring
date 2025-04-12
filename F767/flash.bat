@@ -1,0 +1,2 @@
+@echo off
+C:\Users\migue\OneDrive\bin\xpack-openocd-0.12.0-6\bin\openocd.exe -f C:\Users\migue\OneDrive\bin\xpack-openocd-0.12.0-6\openocd\scripts\board\stm32f7discovery.cfg -c "program build/F767.elf verify reset exit"

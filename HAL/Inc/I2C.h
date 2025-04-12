@@ -21,7 +21,6 @@ struct I2C {
     I2C1 = 0x40005400,
     I2C2 = 0x40005800
   };
-
   enum class Mode {
     Standard,
     Fast,
@@ -32,29 +31,27 @@ struct I2C {
     Fast = 0x0010061A,
     FastPlus = 0x0000107
   };
-
   enum class Status {
     OK=0,
     NACKF,
     Timeout
   };
 
-  I2C(Peripheral peripheral_arg) :
-  peripheral(peripheral_arg),
-  base(static_cast<size_t>(peripheral)),
-  CR1(base),
-  CR2(base+0x4),
-  OAR1(base+0x8),
-  OAR2(base+0xC),
-  TIMINGR(base+0x10),
-  TIMEOUTR(base+0x14),
-  ISR(base+0x18),
-  ICR(base+0x1C),
-  PECR(base+0x20),
-  RXDR(base+0x24),
-  TXDR(base+0x28)
+  I2C(Peripheral peripheral_arg)
+    : peripheral(peripheral_arg)
+    , base(static_cast<size_t>(peripheral))
+    , CR1(base)
+    , CR2(base+0x4)
+    , OAR1(base+0x8)
+    , OAR2(base+0xC)
+    , TIMINGR(base+0x10)
+    , TIMEOUTR(base+0x14)
+    , ISR(base+0x18)
+    , ICR(base+0x1C)
+    , PECR(base+0x20)
+    , RXDR(base+0x24)
+    , TXDR(base+0x28)
   {
-
   }
 
   void init_gpios() const;

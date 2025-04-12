@@ -76,6 +76,12 @@ void basic_timer::configure_mode(const Mode mode)
     clear_cr1_flag(CR1_Flags::OPM);
 }
 
+void basic_timer::configure_master_mode(const MasterMode& mode)
+{
+  bitfield MMS(3, 4, static_cast<size_t>(mode));
+  CR2.write(MMS);
+}
+
 void basic_timer::enable_interrupt(void (*callback_fn)(void),const uint8_t isr_priority)
 {
   callback = callback_fn;
