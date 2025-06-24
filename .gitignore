@@ -8,6 +8,7 @@
 *.d
 *.obj
 *.cmake
+!toolchain.cmake
 F767/build
 F767/cmake-build-debug
 G031/build
