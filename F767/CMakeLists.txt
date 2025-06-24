@@ -1,39 +1,31 @@
-SET(CMAKE_SYSTEM_NAME Generic)
-SET(CMAKE_SYSTEM_VERSION 1)
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_VERSION 1)
 cmake_minimum_required(VERSION 3.21)
 
-SET(CMAKE_C_COMPILER_WORKS 1)
-SET(CMAKE_C_COMPILER arm-none-eabi-gcc)
-SET(CMAKE_CXX_COMPILER_WORKS 1)
-SET(CMAKE_CXX_COMPILER arm-none-eabi-g++)
-set(CMAKE_ASM_COMPILER  arm-none-eabi-gcc)
-set(CMAKE_AR arm-none-eabi-ar)
-set(CMAKE_OBJCOPY arm-none-eabi-objcopy)
-set(CMAKE_OBJDUMP arm-none-eabi-objdump)
-set(SIZE arm-none-eabi-size)
+include(${CMAKE_SOURCE_DIR}/../toolchain.cmake)
 
-SET(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F767ZITx_FLASH.ld)
+set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F767ZITx_FLASH.ld)
 
-SET(FPU_FLAGS "-mfloat-abi=soft") #-mfloat-abi=hard requiere verificación
-
-SET(COMMON_FLAGS
+set(FPU_FLAGS "-mfloat-abi=soft") #-mfloat-abi=hard requiere verificación
+set(COMMON_FLAGS
     "-mcpu=cortex-m7 ${FPU_FLAGS} -mthumb -mthumb-interwork -ffunction-sections -fdata-sections \
     -g -fno-common -fmessage-length=0 -specs=nosys.specs -specs=nano.specs")
-
-SET(CMAKE_CXX_FLAGS_INIT "${COMMON_FLAGS} -std=c++17")
-SET(CMAKE_C_FLAGS_INIT "${COMMON_FLAGS} -std=gnu99")
-SET(CMAKE_EXE_LINKER_FLAGS_INIT "-Wl,-gc-sections,--print-memory-usage -T ${LINKER_SCRIPT}")
+set(CMAKE_CXX_FLAGS_INIT "${COMMON_FLAGS} -std=c++17")
+set(CMAKE_C_FLAGS_INIT "${COMMON_FLAGS} -std=gnu99")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "-Wl,-gc-sections,--print-memory-usage -T ${LINKER_SCRIPT}")
 
 PROJECT(F767 C CXX ASM)
 set(CMAKE_CXX_STANDARD 17)
+set(TARGET_MCU STM32F767xx)
 
-add_definitions(-DARM_MATH_CM4 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -D__FPU_PRESENT=1
+add_definitions(
+    -DARM_MATH_CM4 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -D__FPU_PRESENT=1
     -D__weak=__attribute__\(\(weak\)\) -D__packed=__attribute__\(\(__packed__\)\)
     -DUSE_HAL_DRIVER -DSTM32F767xx)
 
 file(GLOB_RECURSE SOURCES "startup/*.*" "Src/*.cpp")
 
-include_directories(../HAL/Inc ../HAL/CMSIS/Include Src)
+include_directories(../HAL ../HAL/CMSIS/Include Src)
 
 add_subdirectory("../HAL" HAL)
 add_executable(${PROJECT_NAME}.elf $<TARGET_OBJECTS:HAL> ${SOURCES} ${LINKER_SCRIPT})
