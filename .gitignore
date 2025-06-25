@@ -8,14 +8,5 @@
 *.d
 *.obj
 *.cmake
-!toolchain.cmake
-F767/build
-F767/cmake-build-debug
-G031/build
-G031/cmake-build-debug-arm
-G070/build
-G070/CMakeCache.txt
-G070/en.stm32g0_cad
-G070/cmake-build-debug
-G070/cmake-build-debug-mingw
-L475/cmake-build-debug
+!cmake_scripts/*
+build/*
