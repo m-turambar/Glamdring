@@ -8,11 +8,6 @@
 #include "general_timer.h"
 #include "basic_timer.h"
 
-extern general_timer* tim17_ptr;
-extern general_timer* tim16_ptr;
-extern basic_timer* tim6_ptr;
-extern basic_timer* tim7_ptr;
-
 void callback_tim16();
 void callback_tim17();
 void callback_tim6();

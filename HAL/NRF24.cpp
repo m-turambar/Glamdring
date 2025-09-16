@@ -50,55 +50,54 @@ NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_p
 
 void NRF24::transmitir_byte(const uint8_t b) const
 {
-  SS_pin.reset_output();
-  spi.escribir(static_cast<uint8_t>(Commands::W_TX_PAYLOAD));
-  spi.leer();
-  spi.escribir(b);
-  spi.leer();
-  SS_pin.set_output();
+    SS_pin.reset_output();
+    spi.escribir(static_cast<uint8_t>(Commands::W_TX_PAYLOAD));
+    spi.leer();
+    spi.escribir(b);
+    spi.leer();
+    SS_pin.set_output();
 }
 
 uint8_t NRF24::leer_rx() const
 {
-  SS_pin.reset_output();
-  spi.escribir(static_cast<uint8_t>(Commands::R_RX_PAYLOAD));
-  spi.leer();
-  spi.escribir(0u);
-  uint8_t rcvd = spi.leer();
-  SS_pin.set_output();
-  return rcvd;
+    SS_pin.reset_output();
+    spi.escribir(static_cast<uint8_t>(Commands::R_RX_PAYLOAD));
+    spi.leer();
+    spi.escribir(0u);
+    uint8_t rcvd = spi.leer();
+    SS_pin.set_output();
+    return rcvd;
 }
 
 void NRF24::encender(NRF24::Modo modo)
 {
-  auto config = leer_registro(Registro::Config);
-  config = (config & 0xFE) | 2u | static_cast<uint8_t>(modo); //PWR_UP y modo. El bit menos significativo es el modo.
-  escribir_registro(Registro::Config, config);
-  modo_cached = modo;
-
-  CEN_pin.set_output(); //turn on
+    auto config = leer_registro(Registro::Config);
+    config = (config & 0xFE) | 2u | static_cast<uint8_t>(modo); //PWR_UP y modo. El bit menos significativo es el modo.
+    escribir_registro(Registro::Config, config);
+    modo_cached = modo;
+    CEN_pin.set_output(); //turn on
 }
 
 void NRF24::apagar()
 {
-  auto config = leer_registro(Registro::Config);
-  config = (config & 0xFD);
-  escribir_registro(Registro::Config, config);
+    auto config = leer_registro(Registro::Config);
+    config = (config & 0xFD);
+    escribir_registro(Registro::Config, config);
 }
 
 NRF24::Modo NRF24::obtener_modo() const {
-  auto config = leer_registro(Registro::Config);
-  return (config % 2 == 0) ? NRF24::Modo::TX : NRF24::Modo::RX;
+    auto config = leer_registro(Registro::Config);
+    return (config % 2 == 0) ? NRF24::Modo::TX : NRF24::Modo::RX;
 }
 
 void NRF24::escribir_registro(NRF24::Registro reg, uint8_t val) const
 {
-  SS_pin.reset_output();
-  spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(reg));
-  spi.leer();
-  spi.escribir(val);
-  spi.leer();
-  SS_pin.set_output();
+    SS_pin.reset_output();
+    spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(reg));
+    spi.leer();
+    spi.escribir(val);
+    spi.leer();
+    SS_pin.set_output();
 }
 
 /** El problema es el siguiente. Como el NRF24 *siempre* manda su status register al escribirle lo que sea,

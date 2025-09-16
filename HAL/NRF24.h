@@ -2,8 +2,7 @@
 // Created by migue on 13/12/2020.
 //
 
-#ifndef GLAMDRING_NRF24_H
-#define GLAMDRING_NRF24_H
+#pragma once
 
 #include "SPI.h"
 #include "GPIO_Port.h"
@@ -52,7 +51,6 @@ public:
   void clear_all_interrupts() const;
   void descartar_fifo();
 
-  /** agregar setters me parecía un desperdicio */
   void (*rx_dr_callback)() {nullptr};
   void (*tx_ds_callback)() {nullptr};
   void (*max_rt_callback)() {nullptr};
@@ -88,5 +86,3 @@ private:
   uint8_t flush_tx_fifo() const;
   uint8_t flush_rx_fifo() const;
 };
-
-#endif //GLAMDRING_NRF24_H
