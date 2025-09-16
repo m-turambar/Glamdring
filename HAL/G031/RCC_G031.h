@@ -7,13 +7,6 @@
 
 #include "helpers.h"
 
-#undef RCC
-
-/** Nota
- * Al activar el reloj de un periférico hay que esperarse 2 ciclos de reloj, pues existe un mecanismo de
- * sincronización. Hay que tener cuidado con eso.
- * */
-
 extern "C" {
 
 /* super incomplete - will be filled in as new functionality is needed */

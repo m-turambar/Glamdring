@@ -2,8 +2,7 @@
 // Created by migue on 15/06/2020.
 //
 
-#ifndef GLAMDRING_GPIO_AF_H
-#define GLAMDRING_GPIO_AF_H
+#pragma once
 
 #include <cstdint>
 
@@ -24,5 +23,3 @@ namespace GPIO {
 
 
 }
-
-#endif //GLAMDRING_GPIO_AF_H

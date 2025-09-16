@@ -1,5 +1,4 @@
-#ifndef GLAMDRING_RCC_H
-#define GLAMDRING_RCC_H
+#pragma once
 
 #ifdef STM32L475xx
 #include "RCC_L475.h"
@@ -10,5 +9,3 @@
 #elif defined(STM32F767xx)
 #include "F767/RCC_F767.h"
 #endif
-
-#endif //GLAMDRING_RCC_H

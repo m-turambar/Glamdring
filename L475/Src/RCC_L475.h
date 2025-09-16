@@ -2,17 +2,7 @@
 // Created by migue on 25/01/2021.
 //
 
-#ifndef L475_RCC_H
-#define L475_RCC_H
-
 #include "helpers.h"
-
-#undef RCC
-
-/** Nota
- * Al activar el reloj de un periférico hay que esperarse 2 ciclos de reloj, pues existe un mecanismo de
- * sincronización. Hay que tener cuidado con eso.
- * */
 
 extern "C" {
 
@@ -126,5 +116,3 @@ namespace RCC {
 } ;
 
 };
-
-#endif //L475_RCC_H

@@ -2,8 +2,7 @@
 // Created by migue on 05/06/2020.
 //
 
-#ifndef GLAMDRING_BASIC_TIMER_H
-#define GLAMDRING_BASIC_TIMER_H
+#pragma once
 
 #include "helpers.h"
 #include "RCC.h"
@@ -78,5 +77,3 @@ public:
 };
 
 }
-
-#endif //GLAMDRING_BASIC_TIMER_H

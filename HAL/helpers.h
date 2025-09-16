@@ -2,8 +2,7 @@
 // Created by migue on 05/06/2020.
 //
 
-#ifndef GLAMDRING_HELPERS_H
-#define GLAMDRING_HELPERS_H
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -121,4 +120,3 @@ struct bitfield
 };
 
 
-#endif //GLAMDRING_HELPERS_H

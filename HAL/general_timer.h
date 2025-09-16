@@ -2,13 +2,13 @@
 // Created by migue on 10/06/2020.
 //
 
-#ifndef GLAMDRING_GENERAL_TIMER_H
-#define GLAMDRING_GENERAL_TIMER_H
+#pragma once
 
 #include "helpers.h"
 #include "RCC.h"
 
 class general_timer;
+
 extern general_timer* tim2_ptr;
 
 extern "C"
@@ -85,4 +85,3 @@ public:
 };
 
 }
-#endif //GLAMDRING_GENERAL_TIMER_H

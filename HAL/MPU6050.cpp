@@ -28,9 +28,9 @@ I2C::Status MPU6050::leer(uint8_t *rx_buf, const size_t nbytes) const
 
 void MPU6050::convert_to_float(float *dest, uint8_t *raw_vals, uint8_t n_variables) const
 {
-  for(int i=0; i<n_variables; ++i)
+  for (int i=0; i < n_variables; ++i)
   {
-    const int16_t accel_int = (raw_vals[i*2] << 8) + raw_vals[i*2+1];
+    const int16_t accel_int = (raw_vals[i*2] << 8) + raw_vals[i*2 + 1];
     const float aceleracion = (float)accel_int/(float)MPU6050::accel_divisor;
     dest[i] = aceleracion;
   }

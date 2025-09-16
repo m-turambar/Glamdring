@@ -2,8 +2,7 @@
 // Created by migue on 13/06/2020.
 //
 
-#ifndef GLAMDRING_GPIO_PORT_H
-#define GLAMDRING_GPIO_PORT_H
+#pragma once
 
 #include <helpers.h>
 #include <gpio_af.h>
@@ -182,5 +181,3 @@ namespace GPIO {
   };
 
 }
-
-#endif //GLAMDRING_GPIO_PORT_H

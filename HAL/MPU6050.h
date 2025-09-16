@@ -2,8 +2,7 @@
 // Created by migue on 27/05/2020.
 //
 
-#ifndef GLAMDRING_MPU6050_H
-#define GLAMDRING_MPU6050_H
+#pragma once
 
 #include "I2C.h"
 
@@ -32,4 +31,3 @@ public:
 
 };
 
-#endif //GLAMDRING_MPU6050_H

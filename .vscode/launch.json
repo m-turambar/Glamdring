@@ -4,7 +4,7 @@
     "configurations": [
         {
             "cwd": "${workspaceRoot}",
-            "executable": "./G070/build/G070.elf",
+            "executable": "./build/G070/G070.elf",
             "name": "Debug G070",
             "request": "launch",
             "type": "cortex-debug",
@@ -17,7 +17,7 @@
         },
         {
             "cwd": "${workspaceRoot}",
-            "executable": "./F767/build/F767.elf",
+            "executable": "./build/F767/F767.elf",
             "name": "Debug F767",
             "request": "launch",
             "type": "cortex-debug",
