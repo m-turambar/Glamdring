@@ -173,30 +173,6 @@ void parse_uart(uint8_t b)
   }
 }
 
-#define UART_BUFSZ 32
-struct Buffer
-{
-  void escribir(uint8_t b) 
-  {
-    buf[i_w % UART_BUFSZ] = b;
-    ++i_w;
-  }
-  uint8_t leer() 
-  {
-    uint8_t b = buf[i_r % UART_BUFSZ];
-    ++i_r;
-    return b;
-  }
-  bool available()
-  {
-    return i_w > i_r;
-  }
-
-private:
-  uint8_t buf[UART_BUFSZ] {};
-  int i_r {};
-  int i_w {};
-};
 
 // Imprime a través de USB (UART3) lo que te llegó
 void callback_uart2()

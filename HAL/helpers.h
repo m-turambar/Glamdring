@@ -120,3 +120,27 @@ struct bitfield
 };
 
 
+#define BUFSZ 32
+struct Buffer
+{
+    void escribir(uint8_t b) 
+    {
+        buf[i_w % BUFSZ] = b;
+        ++i_w;
+    }
+    uint8_t leer() 
+    {
+        uint8_t b = buf[i_r % BUFSZ];
+        ++i_r;
+        return b;
+    }
+    bool available()
+    {
+        return i_w > i_r;
+    }
+
+private:
+    uint8_t buf[BUFSZ] {};
+    int i_r {};
+    int i_w {};
+};
