@@ -8,7 +8,17 @@ file(GLOB_RECURSE SOURCES "startup/*.*" "src/*.cpp")
 
 add_subdirectory("../HAL" HAL)
 add_executable(${PROJECT_NAME}.elf $<TARGET_OBJECTS:HAL> ${SOURCES} ${LINKER_SCRIPT})
-include_directories(../HAL ../HAL/CMSIS/Include src)
+include_directories(
+    ../HAL
+    ../HAL/CMSIS/Include
+    src
+    ../app
+)
+
+target_sources(${PROJECT_NAME}.elf PUBLIC
+    ../app/Procesador.h
+    ../app/Procesador.cpp
+)
 
 set(CMAKE_EXE_LINKER_FLAGS
     "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map")# -u _printf_float")

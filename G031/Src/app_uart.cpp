@@ -14,130 +14,29 @@
 
 bool parsing = true;
 
-void callback_uart2()
-{
-  auto& UART2 = *g_uart2;
-  if(UART2.available())
-  {
-    const uint8_t b = UART2.read_byte();
-    if(b == '/' or parsing) parse_uart(b);
-    else {
-      UART2 << b;
-      if(nrf_ptr != nullptr) *nrf_ptr << b;
-    }
-  }
-}
-
-/** Estados posibles:
- * 1. procesando = false
- * 2. procesando = true
- * 3. Exito
- * 4. Error
- *
- * Exito y error ejecutan su operación y nos llevan al estado 1.
- * el estado 2 (procesando) nos puede llevar al Exito o al Error. */
-struct Procesador
-{
-  enum class Proceso {
-    None,
-    Accel,
-    Freq,
-    PWM,
-  };
-
-  void procesar_mensaje(uint8_t b)
-  {
-    *g_uart2 << b;
-    if (b == '}') {
-      *g_uart2 << "\r\n";
-      procesando = false;
-      ejecutar_mensaje();
-      clear_status();
-      return;
-    }
-
-    if (proceso != Proceso::None) {
-      if(!procesar_interno(b)) {
-        procesando = false;
-        clear_status();
-      }
-      return;
-    }
-
-    if (b == 'p') {
-      proceso = Proceso::PWM;
-    }
-    else if (b == 'f') {
-      proceso = Proceso::Freq;
-    }
-    else if (b == 'a') {
-      proceso = Proceso::Accel;
-    }
-
-  }
-
-  bool procesando{false};
-
-private:
-
-  bool procesar_interno(const uint8_t b) {
-    if(proceso == Proceso::PWM) {
-      if (pwm_canal == 0) {
-        pwm_canal = b - 'a' + 1; // 'a' para canal 1, 'b' para canal 2, 'c' para 3, 'd' para 4.
-        return (pwm_canal >= 1 && pwm_canal <= 4);
-      }
-      if (b < '0' || b > '9') {
-        return false;
-      }
-      pwm_pulse_width = pwm_pulse_width * 10 + b - '0';
-    }
-    else if (proceso == Proceso::Freq) {
-      if (b < '0' || b > '9') {
-        return false;
-      }
-      microseconds_period = microseconds_period * 10 + b - '0';
-    }
-    else if (proceso == Proceso::Accel) {
-      ;
-    }
-    return true;
-  }
-
-  void ejecutar_mensaje() {
-    if (proceso == Proceso::PWM) {
-      tim2_ptr->set_microseconds_pulse_high(pwm_pulse_width, pwm_canal);
-    }
-    if (proceso == Proceso::Freq) {
-      tim2_ptr->set_microsecond_period(microseconds_period);
-    }
-    if (proceso == Proceso::Accel) {
-      g_acelerometro->imprimir(*g_uart2);
-    }
-  }
-
-  void clear_status() {
-    proceso = Proceso::None;
-    procesando = false;
-    pwm_pulse_width = 0;
-    microseconds_period = 0;
-    pwm_canal = 0;
-  }
-
-  Proceso proceso {Proceso::None};
-  uint16_t pwm_pulse_width{0};
-  uint16_t microseconds_period{0};
-  uint8_t pwm_canal{0};
-};
+// void callback_uart2()
+// {
+//   auto& UART2 = *g_uart2;
+//   if(UART2.available())
+//   {
+//     const uint8_t b = UART2.read_byte();
+//     if(b == '/' or parsing) parse_uart(b);
+//     else {
+//       UART2 << b;
+//       if(nrf_ptr != nullptr) *nrf_ptr << b;
+//     }
+//   }
+// }
 
 
 
 void parse_uart(uint8_t b)
 {
-  static Procesador procesador;
-  if (procesador.procesando) {
-    procesador.procesar_mensaje(b);
-    return;
-  }
+//   static Procesador procesador;
+//   if (procesador.procesando) {
+//     procesador.procesar_mensaje(b);
+//     return;
+//   }
 
   if(b == '/') {
     if(!parsing) {
@@ -168,7 +67,7 @@ void parse_uart(uint8_t b)
 
   else if (b == '{') {
     *g_uart2 << "\n\r" << b;
-    procesador.procesando = true;
+    // procesador.procesando = true;
   }
 
   else if(b == 'r') {

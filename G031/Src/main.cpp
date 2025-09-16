@@ -10,7 +10,7 @@
 #include "app_acelerometro.h"
 #include "app_nrf24.h"
 #include "app_timers.h"
-#include "app_uart.h"
+#include "Procesador.h"
 
 void inicializacion();
 void configurar_relojes();
@@ -20,7 +20,17 @@ GPIO::pin LED(GPIO::PORTA, 12);
 GPIO::pin Boton(GPIO::PORTC,15); // con pull-up interno. Apretamos y se pone a GND.
 GPIO::pin ReleA(GPIO::PORTA,1);
 GPIO::pin ReleB(GPIO::PORTA,0);
+Procesador procesador;
 
+Buffer uart2_buf;
+void callback_uart2()
+{
+  if(g_uart2->available())
+  {
+    const uint8_t b = g_uart2->read_byte();
+    uart2_buf.escribir(b);
+  }
+}
 
 int main(void)
 {
@@ -108,11 +118,14 @@ int main(void)
   GPIO::PORTA.pin_for_timer(1, GPIO::AlternFunct::AF2); // canal 2
 
 
-
-
   while(true)
   {
-
+    if (uart2_buf.available())
+    {
+      uint8_t b = uart2_buf.leer();
+      *g_uart2 << b;
+      procesador.procesar_mensaje(b);
+    }
   }
 
 }

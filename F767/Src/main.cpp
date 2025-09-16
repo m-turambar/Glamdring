@@ -10,6 +10,8 @@
 #include "SPI.h"
 #include "DAC.h"
 
+#include "Procesador.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,9 +23,7 @@ void error(void);
 // GPIO::pin LED_Verd(GPIO::PORTA, 5);
 GPIO::pin LED_Azul(GPIO::PORTB, 7);
 GPIO::pin LED_Rojo(GPIO::PORTB, 14);
-
-uint32_t cnter{0};
-
+Procesador procesador;
 
 void toggle_led()
 {
@@ -40,137 +40,6 @@ void serial_hb()
   else
     *g_uart3 << "Pong";
   b = !b;
-}
-
-/** Estados posibles:
- * 1. procesando = false
- * 2. procesando = true
- * 3. Exito
- * 4. Error
- *
- * Exito y error ejecutan su operación y nos llevan al estado 1.
- * el estado 2 (procesando) nos puede llevar al Exito o al Error. */
-struct Procesador
-{
-  Procesador(UART& uart) : uart(uart) {}
-
-  enum class Proceso {
-    None,
-    Accel,
-    DAC,
-    Freq,
-    PWM,
-  };
-
-  void procesar_mensaje(uint8_t b)
-  {
-    if (b == '}') {
-      procesando = false;
-      ejecutar_mensaje();
-      clear_status();
-      return;
-    }
-
-    if (proceso != Proceso::None) {
-      if(!procesar_interno(b)) {
-        procesando = false;
-        clear_status();
-      }
-      return;
-    }
-
-    if (b == 'p') {
-      proceso = Proceso::PWM;
-    }
-    else if (b == 'f') {
-      proceso = Proceso::Freq;
-    }
-    else if (b == 'd') {
-      proceso = Proceso::DAC;
-    }
-    else if (b == 'a') {
-      proceso = Proceso::Accel;
-    }
-
-  }
-
-  bool procesando{false};
-
-private:
-  bool procesar_interno(const uint8_t b) {
-    if(proceso == Proceso::PWM) {
-      if (pwm_canal == 0) {
-        pwm_canal = b - 'a' + 1; // 'a' para canal 1, 'b' para canal 2, 'c' para 3, 'd' para 4.
-        return (pwm_canal >= 1 && pwm_canal <= 4);
-      }
-      if (b < '0' || b > '9') {
-        return false;
-      }
-      pwm_pulse_width = pwm_pulse_width * 10 + b - '0';
-    }
-    else if (proceso == Proceso::Freq) {
-      if (b < '0' || b > '9') {
-        return false;
-      }
-      microseconds_period = microseconds_period * 10 + b - '0';
-    }
-    else if (proceso == Proceso::DAC) {
-      if (b < '0' || b > '9') {
-        return false;
-      }
-      dac_data = dac_data * 10 + b - '0';
-    }
-    else if (proceso == Proceso::Accel) {
-      ;
-    }
-    return true;
-  }
-
-  // e.g. {pa1000}, {pb1500}, {pc800}
-  void ejecutar_mensaje() {
-    if (proceso == Proceso::PWM) {
-      tim2_ptr->set_microseconds_pulse_high(pwm_pulse_width, pwm_canal);
-    }
-    if (proceso == Proceso::Freq) {
-      // tim2_ptr->set_microsecond_period(microseconds_period);
-      tim6_ptr->configurar_periodo_us(microseconds_period);
-    }
-    if (proceso == Proceso::DAC) {
-      dac_ptr->write_12R(dac_data);
-    }
-    // if (proceso == Proceso::Accel) {
-    //   g_acelerometro->imprimir(*g_uart2);
-    // }
-  }
-
-  void clear_status() {
-    proceso = Proceso::None;
-    procesando = false;
-    pwm_pulse_width = 0;
-    microseconds_period = 0;
-    dac_data = 0;
-    pwm_canal = 0;
-  }
-
-  Proceso proceso {Proceso::None};
-  uint16_t pwm_pulse_width {0};
-  uint16_t microseconds_period {0};
-  uint16_t dac_data {0};
-  uint8_t pwm_canal {0};
-  UART& uart;
-};
-
-void parse_uart(uint8_t b)
-{
-  static Procesador procesador(*g_uart3);
-  if (procesador.procesando) {
-    procesador.procesar_mensaje(b);
-    return;
-  }
-
-  else if (b == '{') {
-    procesador.procesando = true;
-  }
 }
 
 
@@ -192,11 +61,6 @@ void callback_uart3()
     const uint8_t b = g_uart3->read_byte();
     uart3_buf.escribir(b);
   }
-}
-
-void dac_trigger()
-{
-  dac_ptr->trigger();
 }
 
 int main(void)
@@ -227,7 +91,6 @@ int main(void)
   // uart2.enable_fifo().enable();
 
   // general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
-  // tim17_ptr = &t17;
   // t17.configurar_periodo_ms(50);
   // t17.generate_update();
   // t17.clear_update();
@@ -235,11 +98,10 @@ int main(void)
   // t17.start();
 
   basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic);
-  t7.configurar_periodo_ms(500);
+  t7.configurar_periodo_ms(1000);
   t7.generate_update();
   t7.clear_update();
   t7.enable_interrupt(toggle_led);
-  tim7_ptr = &t7;
   t7.start();
 
   general_timer t2(GeneralTimer::TIM2, general_timer::Mode::Periodic);
@@ -255,6 +117,9 @@ int main(void)
   GPIO::PORTA.pin_for_timer(0, GPIO::AlternFunct::AF1); // canal 1
   GPIO::PORTA.pin_for_timer(1, GPIO::AlternFunct::AF1); // canal 2
   GPIO::PORTA.pin_for_timer(2, GPIO::AlternFunct::AF1); // canal 3
+  procesador.pwm_hook = [](uint16_t pwm_pulse_width, uint8_t pwm_canal) { 
+    tim2_ptr->set_microseconds_pulse_high(pwm_pulse_width, pwm_canal);
+  };
 
   DAC::Config dac_config
   {
@@ -269,6 +134,9 @@ int main(void)
   DAC dac(dac_config);
   dac.enable();
   dac_ptr = &dac;
+  procesador.dac_hook = [](uint16_t dac_data) { 
+    dac_ptr->write_12R(dac_data);
+  };
 
   basic_timer t6(BasicTimer::TIM6, basic_timer::Mode::Periodic);
   // t6.configurar_periodo_ms(2);
@@ -278,13 +146,16 @@ int main(void)
   t6.clear_update();
   tim6_ptr = &t6;
   t6.start();
+  procesador.freq_hook = [](uint16_t microseconds_period) {
+    tim6_ptr->configurar_periodo_us(microseconds_period);
+  };
 
   while (1) {
     if (uart3_buf.available())
     {
       uint8_t b = uart3_buf.leer();
       *g_uart3 << b;
-      parse_uart(b);
+      procesador.procesar_mensaje(b);
     }
   }
 }
