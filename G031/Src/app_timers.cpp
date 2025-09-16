@@ -6,9 +6,6 @@
 #include "app_timers.h"
 #include "app_nrf24.h"
 
-general_timer* tim16_ptr{nullptr};
-general_timer* tim17_ptr{nullptr};
-
 extern GPIO::pin LED;
 extern GPIO::pin Boton;
 

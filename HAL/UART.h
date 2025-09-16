@@ -17,6 +17,10 @@ void USART3_IRQHandler(void);
 void USART3_4_IRQHandler(void);
 #endif
 
+class UART;
+extern UART* g_uart3;
+extern UART* g_uart2;
+
 /** UARTs 1 y 2 tienen FIFOs, 3 y 4 no (Para el STM32G070 - el STM32G031 no tiene FIFO en UART2!).
  * Pero todas tienen DMA.
  * Muchas de las configuraciones default de los registros de la UART son las deseables.
@@ -24,15 +28,11 @@ void USART3_4_IRQHandler(void);
  * En este momento no me estoy molestando en modificarlas, pero por limpieza y por si reseteamos de alguna
  * manera en la que el valor de los registros no se borre, lo más saludable sería explícitamente configurar
  * esos valores creo. */
-class UART {
-
+class UART
+{
 public:
-
-  //esto se ve horrible así, Tal vez hay que crear un archivo que se llame mem map o algo así
   enum class Peripheral {
-#ifdef STM32L475xx
-    USART1 = 0x40013800,
-#elif defined(STM32G070xx) || defined(STM32G031xx)
+#if defined(STM32L475xx) || defined(STM32G070xx) || defined(STM32G031xx)
     USART1 = 0x40013800,
 #elif defined(STM32F767xx)
     USART1 = 0x40011000,

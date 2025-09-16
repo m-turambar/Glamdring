@@ -19,13 +19,9 @@ void inicializacion();
 void configurar_relojes();
 void error(void);
 
-extern general_timer* tim16_ptr;
-extern general_timer* tim17_ptr;
-
 basic_timer* basic_tim_ptr{nullptr};
 uint8_t idx=0;
 
-UART* g_uart2{nullptr};
 Powerstep* power_ptr{nullptr};
 
 const char* nombres_registros[] {

@@ -8,6 +8,9 @@
 #include "NVIC.h"
 #include <cstring>
 
+UART* g_uart3 {nullptr};
+UART* g_uart2 {nullptr};
+
 /** Banderas que se usan mucho en las rutinas de comunicacion. Declararlas en el stack una y otra
  * vez no tiene mucho sentido, así que las hacemos globales */
 constexpr static flag RXNE(5);

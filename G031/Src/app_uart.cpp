@@ -12,8 +12,6 @@
 #include "app_rele.h"
 #include "app_acelerometro.h"
 
-UART* g_uart2{nullptr};
-
 bool parsing = true;
 
 void callback_uart2()

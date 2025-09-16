@@ -1,5 +1,4 @@
-#ifndef GLAMDRING_DAC_H
-#define GLAMDRING_DAC_H
+#pragma once
 
 #include "helpers.h"
 #include "RCC.h"
@@ -76,5 +75,4 @@ struct DAC
 // t6.clear_update();
 // t6.start();
 
-
-#endif // GLAMDRING_DAC_H
+extern DAC* dac_ptr;

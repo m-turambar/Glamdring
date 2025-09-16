@@ -6,9 +6,9 @@
 #include "NVIC.h"
 
 general_timer* tim2_ptr = nullptr;
-static general_timer* tim15_ptr = nullptr;
-static general_timer* tim16_ptr = nullptr;
-static general_timer* tim17_ptr = nullptr;
+general_timer* tim15_ptr = nullptr;
+general_timer* tim16_ptr = nullptr;
+general_timer* tim17_ptr = nullptr;
 
 /** Las flags para habilitar cada interrupción en DIER tienen el mismo offset que para leer su estado en SR.
  * Excepto por la OverCapture interrupt (CC1OF), que no he usado aún. */
@@ -69,26 +69,25 @@ void TIM17_IRQHandler(void)
 }
 
 general_timer::general_timer(const GeneralTimer tim, const Mode mode)
-    :
-    peripheral(tim),
-    base(static_cast<size_t>(tim)),
-    CR1(base),
-    CR2(base+4),
-    DIER(base+0xC),
-    SR(base+0x10),
-    EGR(base+0x14),
-    CNT(base+0x24),
-    PSC(base+0x28),
-    ARR(base+0x2C),
-    /*** general timer ***/
-    CCMR1(base+0x18),
-    CCMR2(base+0x1C),
-    CCER(base+0x20),
-    CCR1(base+0x34),
-    CCR2(base+0x38),
-    CCR3(base+0x3C),
-    CCR4(base+0x40),
-    BDTR(base+0x44)
+    : peripheral(tim)
+    , base(static_cast<size_t>(tim))
+    , CR1(base)
+    , CR2(base+4)
+    , DIER(base+0xC)
+    , SR(base+0x10)
+    , EGR(base+0x14)
+    , CNT(base+0x24)
+    , PSC(base+0x28)
+    , ARR(base+0x2C)
+      /*** general timer ***/
+    , CCMR1(base+0x18)
+    , CCMR2(base+0x1C)
+    , CCER(base+0x20)
+    , CCR1(base+0x34)
+    , CCR2(base+0x38)
+    , CCR3(base+0x3C)
+    , CCR4(base+0x40)
+    , BDTR(base+0x44)
 {
   /* Habilitamos los relojes de los periféricos y configuramos los ptrs para las interrupciones */
   /** TODO: move this to RCC */

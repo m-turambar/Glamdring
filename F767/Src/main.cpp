@@ -24,10 +24,6 @@ GPIO::pin LED_Rojo(GPIO::PORTB, 14);
 
 uint32_t cnter{0};
 
-UART* g_uart3{nullptr};
-UART* g_uart2{nullptr};
-
-DAC* dac_ptr;
 
 void toggle_led()
 {

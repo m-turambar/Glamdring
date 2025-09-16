@@ -10,6 +10,9 @@
 class general_timer;
 
 extern general_timer* tim2_ptr;
+extern general_timer* tim15_ptr;
+extern general_timer* tim16_ptr;
+extern general_timer* tim17_ptr;
 
 extern "C"
 {
