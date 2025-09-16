@@ -2,77 +2,82 @@
 // Created by migue on 17/05/2020.
 //
 
-#undef I2C
-
 #include "I2C.h"
 #include "RCC.h"
-#include <GPIO_Port.h>
+#include "GPIO_Port.h"
 
 
-  /* offsets in bits in CR2. Think about a better safer way to put these. */
-  const bitfield SADDR(10, 0);
-  const bitfield RD_WRN(1, 10);
-  const bitfield START(1, 13);
-  const bitfield STOP(1, 14);
-  const bitfield NACK(1, 15);
-  const bitfield NBYTES(8, 16);
-  const bitfield AUTOEND(1, 25);
-  /*        ISR               */
-  const flag TXIS(1);
-  const flag RXNE(2);
-  const flag NACKF(4);
-  const flag TC(6);
-  const flag BUSY(15);
-  /*OAR1*/
-  const flag OA1EN(15);
+/* offsets in bits in CR2. Think about a better safer way to put these. */
+const bitfield SADDR(10, 0);
+const bitfield RD_WRN(1, 10);
+const bitfield START(1, 13);
+const bitfield STOP(1, 14);
+const bitfield NACK(1, 15);
+const bitfield NBYTES(8, 16);
+const bitfield AUTOEND(1, 25);
+/*        ISR               */
+const flag TXIS(1);
+const flag RXNE(2);
+const flag NACKF(4);
+const flag TC(6);
+const flag BUSY(15);
+/*OAR1*/
+const flag OA1EN(15);
 
-  /* Habilita los relojes de los gpios que se usarán para la comunicación. Claramente la
-   * API de C es más concisa, pero la mía es más type safe, y podría extenderse para configurar
-   * más de 1 pin a la vez. */
-  void I2C::init_gpios() const
-  {
+/* Habilita los relojes de los gpios que se usarán para la comunicación. Claramente la
+  * API de C es más concisa, pero la mía es más type safe, y podría extenderse para configurar
+  * más de 1 pin a la vez. */
+void I2C::init_gpios() const
+{
 
 #ifdef STM32G070xx
-    /**
-     * I2C2 GPIO Configuration
-     * PB10     ------> I2C2_SCL
-     * PB11     ------> I2C2_SDA
-     *
-     * I2C1 GPIO Configuration
-     * PA9      ------> I2C1_SCL
-     * PA10     ------> I2C1_SDA
-    */
+  /**
+   * I2C2 GPIO Configuration
+   * PB10     ------> I2C2_SCL
+   * PB11     ------> I2C2_SDA
+   *
+   * I2C1 GPIO Configuration
+   * PA9      ------> I2C1_SCL
+   * PA10     ------> I2C1_SDA
+  */
 
-    if(peripheral==Peripheral::I2C2) {
-      RCC::enable_port_clock(RCC::GPIO_Port::B);
-      GPIO::PORTB.pin_for_I2C(10, GPIO::AlternFunct::AF6);
-      GPIO::PORTB.pin_for_I2C(11, GPIO::AlternFunct::AF6);
-    }
-    else if(peripheral==Peripheral::I2C1) {
-      RCC::enable_port_clock(RCC::GPIO_Port::A);
-      GPIO::PORTA.pin_for_I2C(9, GPIO::AlternFunct::AF6);
-      GPIO::PORTA.pin_for_I2C(10, GPIO::AlternFunct::AF6);
-    }
+  if (peripheral == Peripheral::I2C1) {
+    RCC::enable_port_clock(RCC::GPIO_Port::A);
+    GPIO::PORTA.pin_for_I2C(9, GPIO::AlternFunct::AF6);
+    GPIO::PORTA.pin_for_I2C(10, GPIO::AlternFunct::AF6);
+  }
+  else if (peripheral == Peripheral::I2C2) {
+    RCC::enable_port_clock(RCC::GPIO_Port::B);
+    GPIO::PORTB.pin_for_I2C(10, GPIO::AlternFunct::AF6);
+    GPIO::PORTB.pin_for_I2C(11, GPIO::AlternFunct::AF6);
+  }
 
 #elif defined(STM32G031xx)
+  RCC::enable_port_clock(RCC::GPIO_Port::B);
+  GPIO::PORTB.pin_for_I2C(6, GPIO::AlternFunct::AF6); // CLK
+  GPIO::PORTB.pin_for_I2C(7, GPIO::AlternFunct::AF6); // DA
+
+#elif defined(STM32F767xx)
+  if (peripheral == Peripheral::I2C1) {
     RCC::enable_port_clock(RCC::GPIO_Port::B);
-    GPIO::PORTB.pin_for_I2C(6, GPIO::AlternFunct::AF6); // CLK
-    GPIO::PORTB.pin_for_I2C(7, GPIO::AlternFunct::AF6); // DA
-
+    // GPIO::PORTB.pin_for_I2C(6, GPIO::AlternFunct::AF4); // CLK
+    // GPIO::PORTB.pin_for_I2C(7, GPIO::AlternFunct::AF4); // DA
+    GPIO::PORTB.pin_for_I2C(8, GPIO::AlternFunct::AF4); // CLK
+    GPIO::PORTB.pin_for_I2C(9, GPIO::AlternFunct::AF4); // DA
+  }
 #endif
-  }
+}
 
-  /** Nota
-   * Dejarle esta responsabilidad al RCC es correcto ya que los detalles pueden cambiar de micro a micro. */
-  void I2C::enable_clock() const
-  {
-    if(peripheral==Peripheral::I2C1) {
-      RCC::enable_I2C1_clock();
-    }
-    else if(peripheral==Peripheral::I2C2) {
-      RCC::enable_I2C2_clock();
-    }
+
+void I2C::enable_clock() const
+{
+  if(peripheral==Peripheral::I2C1) {
+    RCC::enable_I2C1_clock();
   }
+  else if(peripheral==Peripheral::I2C2) {
+    RCC::enable_I2C2_clock();
+  }
+}
 
   void I2C::enable(Timing timing) const
   {
@@ -109,7 +114,7 @@
   /* set write to 0 to perform a write */
   I2C::Status I2C::comm_init(const size_t slave_addr, const uint8_t write, uint8_t* buffer, const size_t nbytes, const uint8_t autoend) const
   {
-    while(ISR.is_set(BUSY)); //wait if bus is initially busy
+    while(ISR.is_set(BUSY)); //wait if bus is initially busy // esto puede hangear
     /* CR2 register is 0 by default after reset, meaning some things we need not configure */
     /* 1. Addressing mode ADD10 value 0 means 7-bit addressing. */
     /* 2. Set the slave address to be sent */

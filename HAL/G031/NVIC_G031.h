@@ -1,8 +1,8 @@
 //
 // Created by migue on 06/06/2020.
 //
-#ifndef G031_NVIC_H
-#define G031_NVIC_H
+
+#pragma once
 
 /**
   * @brief Configuration of the Cortex-M0+ Processor and Core Peripherals
@@ -60,5 +60,3 @@ typedef enum
  * el segundo está escrito con las nalgas de un becario. Repitiendo este código que estaba en la HAL de ST,
  * podemos omitir incluir toda su HAL, y hacer uso del código de ARM. */
 #include "core_cm0plus.h"
-
-#endif //G031_NVIC_H

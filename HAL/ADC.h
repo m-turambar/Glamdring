@@ -1,5 +1,4 @@
-#ifndef GLAMDRING_ADC_H
-#define GLAMDRING_ADC_H
+#pragma once
 
 #include "helpers.h"
 #include "RCC.h"
@@ -8,5 +7,3 @@ struct ADC
 {
 
 };
-
-#endif

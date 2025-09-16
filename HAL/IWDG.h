@@ -2,8 +2,7 @@
 // Created by migue on 10/06/2020.
 //
 
-#ifndef GLAMDRING_IWDG_H
-#define GLAMDRING_IWDG_H
+#pragma once
 
 /* Independent watch dog*/
 #include <cstddef>
@@ -33,5 +32,3 @@ namespace mIWDG{
     wait();
   }
 };
-
-#endif //GLAMDRING_IWDG_H

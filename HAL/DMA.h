@@ -2,8 +2,7 @@
 // Created by migue on 12/01/2021.
 //
 
-#ifndef GLAMDRING_DMA_H
-#define GLAMDRING_DMA_H
+#pragma once
 
 #include "helpers.h"
 
@@ -42,7 +41,3 @@
 namespace DMA {
 
 }
-
-
-
-#endif //GLAMDRING_DMA_H

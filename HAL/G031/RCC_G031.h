@@ -2,9 +2,6 @@
 // Created by migue on 06/06/2020.
 //
 
-#ifndef G031_RCC_H
-#define G031_RCC_H
-
 #include "helpers.h"
 
 extern "C" {
@@ -119,5 +116,3 @@ namespace RCC {
 } ;
 
 };
-
-#endif //G031_RCC_H

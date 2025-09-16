@@ -2,8 +2,7 @@
 // Created by migue on 11/08/2021.
 //
 
-#ifndef GLAMDRING_EXTI_H
-#define GLAMDRING_EXTI_H
+#pragma once
 
 #include "helpers.h"
 
@@ -36,5 +35,3 @@ namespace EXTI
   void enable_falling_interrupt(const uint8_t pin);
   void clear_pending_interrupt(const uint8_t pin);
 }
-
-#endif //GLAMDRING_EXTI_H
