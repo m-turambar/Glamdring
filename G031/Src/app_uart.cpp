@@ -7,7 +7,6 @@
 
 #include "general_timer.h"
 
-#include "app_uart.h"
 #include "app_nrf24.h"
 #include "app_rele.h"
 #include "app_acelerometro.h"

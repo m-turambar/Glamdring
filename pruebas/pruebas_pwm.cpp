@@ -46,8 +46,6 @@ void pasar_caracter(uint8_t b)
 
 }
 
-/** Esto también es código de aplicación */
-UART* g_uart2{nullptr};
 
 void callback_uart2()
 {

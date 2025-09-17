@@ -6,6 +6,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 /** No te concentres en hacer las instancias de estas clases const o constexpr.
  * Al parecer no causa ninguna diferencia. Sin embargo, usar flag sobre bitfield sí reduce un poco la flash que usas.
@@ -123,12 +124,12 @@ struct bitfield
 #define BUFSZ 32
 struct Buffer
 {
-    void escribir(uint8_t b) 
+    void escribir(uint8_t b)
     {
         buf[i_w % BUFSZ] = b;
         ++i_w;
     }
-    uint8_t leer() 
+    uint8_t leer()
     {
         uint8_t b = buf[i_r % BUFSZ];
         ++i_r;
@@ -137,6 +138,23 @@ struct Buffer
     bool available()
     {
         return i_w > i_r;
+    }
+    Buffer& operator<<(const uint8_t b)
+    {
+        escribir(b);
+        return *this;
+    }
+    Buffer& operator<<(const char b)
+    {
+        escribir(b);
+        return *this;
+    }
+    Buffer& operator<<(const char* buffer)
+    {
+        const size_t sz = std::strlen(buffer);
+        for(size_t i = 0; i < sz; ++i)
+            escribir(buffer[i]);
+        return *this;
     }
 
 private:

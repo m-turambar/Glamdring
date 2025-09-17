@@ -6,6 +6,7 @@
 #include "UART.h"
 #include "NVIC.h"
 #include "NRF24.h"
+#include "EXTI.h"
 
 #include "app_acelerometro.h"
 #include "app_nrf24.h"
@@ -21,6 +22,22 @@ GPIO::pin Boton(GPIO::PORTC,15); // con pull-up interno. Apretamos y se pone a G
 GPIO::pin ReleA(GPIO::PORTA,1);
 GPIO::pin ReleB(GPIO::PORTA,0);
 Procesador procesador;
+
+/** interrumpir esta funcion con un breakpoint hace que no vuelva a entrar. Por qué?
+ * Osea si el pin se baja y no "atrapamos" ese flanco de bajada, a menos que modifiquemos el diseño
+ * nunca vamos a salir de ese estado. Digo, podrías poner un watchdog o un timer a que resetee las interrupciones del
+ * nrf, pero me sorprende que después de resumir la interrrupción no agarre la onda.*/
+extern "C" {
+void EXTI4_15_IRQHandler(void) {
+  if(nrf_ptr != nullptr)
+    nrf_ptr->irq_handler();
+
+//   EXTI::clear_pending_interrupt(nrf_ptr->irq_pin);
+  EXTI::clear_pending_interrupt(4);
+  NVIC_ClearPendingIRQ(EXTI4_15_IRQn);
+  nrf_ptr->clear_all_interrupts();
+}
+}
 
 Buffer uart2_buf;
 void callback_uart2()
@@ -65,6 +82,7 @@ int main(void)
   SPI spi1(SPI::Peripheral::SPI1_I2S1);
   spi1.inicializar();
 
+  NRF24_uart_buffer = &uart2_buf;
   NRF24 radio(spi1, radio_nss, radio_en);
   nrf_ptr = &radio;
   radio.config_default();

@@ -10,6 +10,7 @@
 #include "SPI.h"
 #include "DAC.h"
 
+#include "app_acelerometro.h"
 #include "Procesador.h"
 
 #ifdef __cplusplus
@@ -83,12 +84,22 @@ int main(void)
   uart3 << "hola";
   uart3.enable_interrupt_rx(callback_uart3);
   uart3.enable_fifo().enable();
+
   
   // UART uart2(UART::Peripheral::USART2, 9600);
   // uart2.enable();
   // g_uart2 = &uart2;
   // uart2.enable_interrupt_rx(callback_uart2);
   // uart2.enable_fifo().enable();
+
+  I2C i2c1(I2C::Peripheral::I2C1);
+  i2c1.enable(I2C::Timing::Standard);
+
+  Acelerometro mpu(i2c1);
+  g_acelerometro = &mpu;
+  procesador.accel_hook = [] (uint16_t _) {
+    g_acelerometro->imprimir(*g_uart3);
+  };
 
   // general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
   // t17.configurar_periodo_ms(50);

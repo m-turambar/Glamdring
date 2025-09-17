@@ -96,6 +96,12 @@ namespace RCC
     APB1ENR.set(I2C2EN);
   }
 
+  void enable_I2C3_clock()
+  {
+    const flag I2C3EN(23);
+    APB1ENR.set(I2C3EN);
+  }
+
   /*******************************************/
 
   void enable_SPI1_I2S1_clock()

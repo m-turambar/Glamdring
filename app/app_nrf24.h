@@ -8,6 +8,7 @@
 #include "NRF24.h"
 
 extern NRF24* nrf_ptr;
+inline Buffer* NRF24_uart_buffer { nullptr };
 
 void callback_nrf24_rx();
 void callback_nrf24_tx_ds();

@@ -6,7 +6,7 @@
 #include <NVIC.h>
 #include <cstring>
 
-NRF24* NRF24_ptr{nullptr};
+NRF24* nrf_ptr{nullptr};
 
 /** Las tres banderas de interrupción que se pueden leer/clearear desde el registro STATUS */
 constexpr uint8_t RX_DR = (1 << 6);
@@ -42,7 +42,7 @@ NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_p
   clear_all_interrupts();
   config_payload_widths(1); //todo dinamico
   escribir_registro(Registro::RF_SETUP, 0x26);
-  NRF24_ptr = this;
+  nrf_ptr = this;
   apagar();
 }
 
