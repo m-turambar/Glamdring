@@ -116,7 +116,8 @@ int main(void)
   t7.enable_interrupt(toggle_led);
   t7.start();
 
-  general_timer t2(GeneralTimer::TIM2, general_timer::Mode::Periodic);
+  general_timer t2(GeneralTimer::TIM2);
+  t2.configure_mode(general_timer::Mode::Periodic);
   t2.set_output_compare_microsecond_resolution(10);
   t2.set_microsecond_period(20000);
   t2.set_microseconds_pulse_high(1000, 1);

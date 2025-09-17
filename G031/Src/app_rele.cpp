@@ -55,14 +55,28 @@ void encender_rele_durante(basic_timer* tim, GPIO::pin& rele, uint16_t milisegun
     tim->start();
 }
 
+void encender_rele_durante(general_timer* tim, GPIO::pin& rele, uint16_t milisegundos)
+{
+    encender_rele(rele);
+    tim->configure_mode(general_timer::Mode::OnePulseMode);
+    tim->configurar_periodo_ms(milisegundos);
+    tim->callback_data = &rele;
+    tim->callback_update = [](void* arg) {
+        auto p = static_cast<GPIO::pin*>(arg);
+        apagar_rele(*p);
+    };
+    tim->enable_interrupt(tim->callback_update, general_timer::InterruptType::UIE);
+    tim->start();
+}
+
 /**************************************************/
 
 void encender_rele(GPIO::pin& rele)
 {
-  rele.set_output();
+    rele.set_output();
 }
 
 void apagar_rele(GPIO::pin& rele)
 {
-  rele.reset_output();
+    rele.reset_output();
 };

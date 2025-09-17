@@ -51,7 +51,7 @@ void callback_uart2()
 void manage_relays(uint8_t b)
 {
     if(b == 't') {
-        encender_rele_durante(tim6_ptr, ReleA, 2000);
+        encender_rele_durante(tim16_ptr, ReleA, 2000);
     }
     else if(b == '0') {
         apagar_rele(ReleA);
@@ -80,9 +80,6 @@ int main(void)
     ReleA.salida();
     ReleB.salida();
     Boton.entrada(); // con pull-up interno. Apretamos y se pone a GND.
-
-    basic_timer t6(BasicTimer::TIM6);
-    tim6_ptr = &t6;
     procesador.relay_hook = manage_relays;
 
     ///////////////
@@ -135,9 +132,11 @@ int main(void)
     // t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
     // t17.start();
 
-    // /**/
+   
+    general_timer t16(GeneralTimer::TIM16);
+    tim16_ptr = &t16;
+
     // general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
-    // tim16_ptr = &t16;
     // t16.configurar_periodo_ms(10000);
     // t16.generate_update();
     // t16.clear_update();

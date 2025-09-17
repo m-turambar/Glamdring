@@ -72,9 +72,6 @@ public:
   const BasicTimer peripheral;
   const size_t base;
   registro CR1, CR2, DIER, SR, EGR, CNT, PSC, ARR;
-
-  void set_cr1_flag(flag f) const;
-  void clear_cr1_flag(flag f) const;
 };
 
 }

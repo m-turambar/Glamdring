@@ -7,6 +7,7 @@
 void toggle_rele(GPIO::pin& rele);
 void encender_rele_en_ms(GPIO::pin& rele, uint16_t milisegundos);
 void encender_rele_durante(basic_timer* tim, GPIO::pin& rele, uint16_t milisegundos);
+void encender_rele_durante(general_timer* tim, GPIO::pin& rele, uint16_t milisegundos);
 
 /*************************************************/
 void encender_rele(GPIO::pin& rele);
