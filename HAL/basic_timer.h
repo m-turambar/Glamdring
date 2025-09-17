@@ -43,7 +43,7 @@ public:
     Update
   };
 
-  basic_timer(const BasicTimer tim, const Mode mode);
+  basic_timer(const BasicTimer tim);
 
 
   //void configure(const Mode mode, const uint8_t auto_reload_preload = 1, const uint8_t update_request_source = 1,
@@ -55,7 +55,7 @@ public:
   void configurar_periodo_ms(uint16_t periodo);
 
   /* maybe i should split this in two functions, and request just isr priority and a fn ptr as callback */
-  void enable_interrupt(void (*callback_fn)(void),const uint8_t isr_priority = 3);
+  void enable_interrupt(void (*callback_fn)(void* data), const uint8_t isr_priority = 3);
 
   void start(void) const;
   void stop(void) const;
@@ -67,7 +67,8 @@ public:
   void generate_update() const;
   void clear_update() const;
 
-  void (*callback)(void) {nullptr};
+  void (*callback)(void*) { nullptr };
+  void* callback_data { nullptr };
   const BasicTimer peripheral;
   const size_t base;
   registro CR1, CR2, DIER, SR, EGR, CNT, PSC, ARR;

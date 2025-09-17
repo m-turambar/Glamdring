@@ -26,7 +26,7 @@ GPIO::pin LED_Azul(GPIO::PORTB, 7);
 GPIO::pin LED_Rojo(GPIO::PORTB, 14);
 Procesador procesador;
 
-void toggle_led()
+void toggle_led(void* unused)
 {
   LED_Azul.toggle();
   LED_Rojo.toggle();
@@ -108,7 +108,8 @@ int main(void)
   // t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
   // t17.start();
 
-  basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic);
+  basic_timer t7(BasicTimer::TIM7);
+  t7.configure_mode(basic_timer::Mode::Periodic);
   t7.configurar_periodo_ms(1000);
   t7.generate_update();
   t7.clear_update();
@@ -149,7 +150,8 @@ int main(void)
     dac_ptr->write_12R(dac_data);
   };
 
-  basic_timer t6(BasicTimer::TIM6, basic_timer::Mode::Periodic);
+  basic_timer t6(BasicTimer::TIM6);
+  t6.configure_mode(basic_timer::Mode::Periodic);
   // t6.configurar_periodo_ms(2);
   t6.configurar_periodo_us(40);
   t6.configure_master_mode(basic_timer::MasterMode::Update); // Para triggerear DAC

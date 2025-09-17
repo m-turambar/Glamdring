@@ -10,16 +10,18 @@ basic_timer* tim7_ptr {};
 
 void TIM6_IRQHandler(void)
 {
-  tim6_ptr->callback();
-  NVIC_ClearPendingIRQ(TIM6_IRQn);
-  memoria(tim6_ptr->SR) &= (~(1u)); // cleareamos el update interrupt flag
+    if (tim6_ptr->callback)
+        tim6_ptr->callback(tim6_ptr->callback_data);
+    NVIC_ClearPendingIRQ(TIM6_IRQn);
+    memoria(tim6_ptr->SR) &= (~(1u)); // cleareamos el update interrupt flag
 }
 
 void TIM7_IRQHandler(void)
 {
-  tim7_ptr->callback();
-  NVIC_ClearPendingIRQ(TIM7_IRQn);
-  memoria(tim7_ptr->SR) &= (~(1u)); // cleareamos el update interrupt flag
+    if (tim7_ptr->callback)
+        tim7_ptr->callback(tim7_ptr->callback_data);
+     NVIC_ClearPendingIRQ(TIM7_IRQn);
+    memoria(tim7_ptr->SR) &= (~(1u)); // cleareamos el update interrupt flag
 }
 
 namespace CR1_Flags {
@@ -31,7 +33,7 @@ namespace CR1_Flags {
     const flag CEN(0);
 };
 
-basic_timer::basic_timer(const BasicTimer tim, const Mode mode)
+basic_timer::basic_timer(const BasicTimer tim)
     : peripheral(tim)
     , base(static_cast<size_t>(tim))
     , CR1(base)
@@ -43,16 +45,14 @@ basic_timer::basic_timer(const BasicTimer tim, const Mode mode)
     , PSC(base+0x28)
     , ARR(base+0x2C)
 {
-  if (peripheral==BasicTimer::TIM6) {
-    tim6_ptr = this;
-    RCC::enable_TIM6_clock();
-  }
-  else if (peripheral==BasicTimer::TIM7) {
-    tim7_ptr = this;
-    RCC::enable_TIM7_clock();
-  }
-
-  configure_mode(mode);
+    if (peripheral==BasicTimer::TIM6) {
+        tim6_ptr = this;
+        RCC::enable_TIM6_clock();
+    }
+    else if (peripheral==BasicTimer::TIM7) {
+        tim7_ptr = this;
+        RCC::enable_TIM7_clock();
+    }
 }
 
 
@@ -82,7 +82,7 @@ void basic_timer::configure_master_mode(const MasterMode& mode)
   CR2.write(MMS);
 }
 
-void basic_timer::enable_interrupt(void (*callback_fn)(void),const uint8_t isr_priority)
+void basic_timer::enable_interrupt(void (*callback_fn)(void* data), const uint8_t isr_priority)
 {
   callback = callback_fn;
 

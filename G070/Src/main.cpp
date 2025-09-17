@@ -72,8 +72,6 @@ void parse_uart(uint8_t b) {
     }
   }
 
-
-
   switch (b) {
     case '1':
       status = power_ptr->GetStatus();
@@ -131,7 +129,7 @@ void callback_uart2()
   }
 }
 
-void toggle_led() {
+void toggle_led(void* unused) {
   GPIO::PORTA.toggle(5);
 };
 
@@ -149,7 +147,8 @@ int main(void)
   // reset_pin_powerstep.set_output();
   GPIO::PORTA.salida(5);
 
-  basic_timer t7(BasicTimer::TIM7, basic_timer::Mode::Periodic);
+  basic_timer t7(BasicTimer::TIM7);
+  t7.configure_mode(basic_timer::Mode::Periodic);
   t7.configurar_periodo_ms(1000);
   t7.generate_update();
   t7.clear_update();

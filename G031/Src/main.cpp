@@ -11,6 +11,7 @@
 #include "app_acelerometro.h"
 #include "app_nrf24.h"
 #include "app_timers.h"
+#include "app_rele.h"
 #include "Procesador.h"
 
 void inicializacion();
@@ -29,123 +30,139 @@ Procesador procesador;
  * nrf, pero me sorprende que después de resumir la interrrupción no agarre la onda.*/
 extern "C" {
 void EXTI4_15_IRQHandler(void) {
-  if(nrf_ptr != nullptr)
-    nrf_ptr->irq_handler();
-
-//   EXTI::clear_pending_interrupt(nrf_ptr->irq_pin);
-  EXTI::clear_pending_interrupt(4);
-  NVIC_ClearPendingIRQ(EXTI4_15_IRQn);
-  nrf_ptr->clear_all_interrupts();
+    if(nrf_ptr != nullptr)
+        nrf_ptr->irq_handler();
+    EXTI::clear_pending_interrupt(4);
+    NVIC_ClearPendingIRQ(EXTI4_15_IRQn);
+    nrf_ptr->clear_all_interrupts();
 }
 }
 
 Buffer uart2_buf;
 void callback_uart2()
 {
-  if(g_uart2->available())
-  {
-    const uint8_t b = g_uart2->read_byte();
-    uart2_buf.escribir(b);
-  }
+    if(g_uart2->available())
+    {
+        const uint8_t b = g_uart2->read_byte();
+        uart2_buf.escribir(b);
+    }
+}
+
+void manage_relays(uint8_t b)
+{
+    if(b == 't') {
+        encender_rele_durante(tim6_ptr, ReleA, 2000);
+    }
+    else if(b == '0') {
+        apagar_rele(ReleA);
+    }
+    else if(b == '1') {
+        encender_rele(ReleA);
+    }
+    else if(b == '2') {
+        apagar_rele(ReleB);
+    }
+    else if(b == '3') {
+        encender_rele(ReleB);
+    }
 }
 
 int main(void)
 {
-  inicializacion();
-  configurar_relojes();
+    inicializacion();
+    configurar_relojes();
 
-  RCC::enable_port_clock(RCC::GPIO_Port::A);
-  RCC::enable_port_clock(RCC::GPIO_Port::B);
-  RCC::enable_port_clock(RCC::GPIO_Port::C);
+    RCC::enable_port_clock(RCC::GPIO_Port::A);
+    RCC::enable_port_clock(RCC::GPIO_Port::B);
+    RCC::enable_port_clock(RCC::GPIO_Port::C);
 
-  LED.salida();
-  ReleA.salida();
-  ReleB.salida();
-  Boton.entrada(); // con pull-up interno. Apretamos y se pone a GND.
+    LED.salida();
+    ReleA.salida();
+    ReleB.salida();
+    Boton.entrada(); // con pull-up interno. Apretamos y se pone a GND.
 
+    basic_timer t6(BasicTimer::TIM6);
+    tim6_ptr = &t6;
+    procesador.relay_hook = manage_relays;
 
+    ///////////////
 
-  ///////////////
+    UART uart2(UART::Peripheral::USART2, 115200);
+    g_uart2 = &uart2;
+    uart2.enable();
+    uart2.enable_interrupt_rx(callback_uart2);
+    uart2 << "Hola\n";
 
-  UART uart2(UART::Peripheral::USART2, 115200);
-  g_uart2 = &uart2;
-  uart2.enable();
-  uart2.enable_interrupt_rx(callback_uart2);
-  uart2 << "Hola\n";
+    //////////////
 
-  //////////////
+    const GPIO::pin radio_en(GPIO::PORTA, 11);
+    const GPIO::pin radio_irq(GPIO::PORTA, 4);
+    const GPIO::pin radio_nss(GPIO::PORTB, 0);
 
-  const GPIO::pin radio_en(GPIO::PORTA, 11);
-  const GPIO::pin radio_irq(GPIO::PORTA, 4);
-  const GPIO::pin radio_nss(GPIO::PORTB, 0);
+    SPI spi1(SPI::Peripheral::SPI1_I2S1);
+    spi1.inicializar();
 
-  SPI spi1(SPI::Peripheral::SPI1_I2S1);
-  spi1.inicializar();
+    NRF24_uart_buffer = &uart2_buf;
+    NRF24 radio(spi1, radio_nss, radio_en);
+    nrf_ptr = &radio;
+    radio.config_default();
+    radio.encender(NRF24::Modo::RX);
+    radio.escribir_registro(NRF24::Registro::RF_CH, 0b100000);
 
-  NRF24_uart_buffer = &uart2_buf;
-  NRF24 radio(spi1, radio_nss, radio_en);
-  nrf_ptr = &radio;
-  radio.config_default();
-  radio.encender(NRF24::Modo::RX);
-  radio.escribir_registro(NRF24::Registro::RF_CH, 0b100000);
+    radio.rx_dr_callback = callback_nrf24_rx;
+    radio.tx_ds_callback = callback_nrf24_tx_ds;
+    radio.max_rt_callback = callback_nrf24_max_rt;
+    radio_irq.pin_for_interrupt(EXTI4_15_IRQn);
 
-  radio.rx_dr_callback = callback_nrf24_rx;
-  radio.tx_ds_callback = callback_nrf24_tx_ds;
-  radio.max_rt_callback = callback_nrf24_max_rt;
-  radio_irq.pin_for_interrupt(EXTI4_15_IRQn);
+    // I2C i2c1(I2C::Peripheral::I2C1);
+    // i2c1.enable(I2C::Timing::Standard);
 
-  I2C i2c1(I2C::Peripheral::I2C1);
-  i2c1.enable(I2C::Timing::Standard);
+    // Acelerometro mpu(i2c1);
+    // g_acelerometro = &mpu;
 
-  Acelerometro mpu(i2c1);
-  g_acelerometro = &mpu;
-
-  ///////////////
-  auto callback_MPU = []() {
-    g_acelerometro->imprimir(*g_uart2);
-  };
-
-
-  general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
-  tim17_ptr = &t17;
-  t17.configurar_periodo_ms(50);
-  t17.generate_update();
-  t17.clear_update();
-  //t17.enable_interrupt(callback_MPU, general_timer::InterruptType::UIE);
-  t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
-  t17.start();
-
-  /**/
-  general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
-  tim16_ptr = &t16;
-  t16.configurar_periodo_ms(10000);
-  t16.generate_update();
-  t16.clear_update();
-  t16.enable_interrupt(callback_tim16, general_timer::InterruptType::UIE);
-  t16.start();
-
-  general_timer t2(GeneralTimer::TIM2, general_timer::Mode::Periodic);
-  t2.set_output_compare_microsecond_resolution(10);
-  t2.set_microsecond_period(20000);
-  t2.set_microseconds_pulse_high(700, 1);
-  t2.set_microseconds_pulse_high(700, 2);
-  t2.enable_output_compare(1);
-  t2.enable_output_compare(2);
-  t2.start();
-  GPIO::PORTA.pin_for_timer(0, GPIO::AlternFunct::AF2); // canal 1
-  GPIO::PORTA.pin_for_timer(1, GPIO::AlternFunct::AF2); // canal 2
+    // ///////////////
+    // auto callback_MPU = []() {
+    //     g_acelerometro->imprimir(*g_uart2);
+    // };
 
 
-  while(true)
-  {
-    if (uart2_buf.available())
+    // general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
+    // tim17_ptr = &t17;
+    // t17.configurar_periodo_ms(50);
+    // t17.generate_update();
+    // t17.clear_update();
+    // //t17.enable_interrupt(callback_MPU, general_timer::InterruptType::UIE);
+    // t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
+    // t17.start();
+
+    // /**/
+    // general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
+    // tim16_ptr = &t16;
+    // t16.configurar_periodo_ms(10000);
+    // t16.generate_update();
+    // t16.clear_update();
+    // t16.enable_interrupt(callback_tim16, general_timer::InterruptType::UIE);
+    // t16.start();
+
+    // general_timer t2(GeneralTimer::TIM2, general_timer::Mode::Periodic);
+    // t2.set_output_compare_microsecond_resolution(10);
+    // t2.set_microsecond_period(20000);
+    // t2.set_microseconds_pulse_high(700, 1);
+    // t2.set_microseconds_pulse_high(700, 2);
+    // t2.enable_output_compare(1);
+    // t2.enable_output_compare(2);
+    // t2.start();
+    // GPIO::PORTA.pin_for_timer(0, GPIO::AlternFunct::AF2); // canal 1
+    // GPIO::PORTA.pin_for_timer(1, GPIO::AlternFunct::AF2); // canal 2
+
+    while(true)
     {
-      uint8_t b = uart2_buf.leer();
-      *g_uart2 << b;
-      procesador.procesar_mensaje(b);
+        if (uart2_buf.available()) {
+            uint8_t b = uart2_buf.leer();
+            *g_uart2 << b;
+            procesador.procesar_mensaje(b);
+        }
     }
-  }
-
 }
 
 void inicializacion()

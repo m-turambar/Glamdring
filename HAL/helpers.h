@@ -139,6 +139,10 @@ struct Buffer
     {
         return i_w > i_r;
     }
+    void clear()
+    {
+        i_r = i_w;
+    }
     Buffer& operator<<(const uint8_t b)
     {
         escribir(b);

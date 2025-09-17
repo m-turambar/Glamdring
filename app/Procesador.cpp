@@ -1,5 +1,9 @@
 #include "Procesador.h"
 
+void null_execution(Buffer& buf)
+{
+    // inconcluso
+}
 void null_execution(uint16_t a, uint8_t b)
 {
     // inconcluso
@@ -7,6 +11,10 @@ void null_execution(uint16_t a, uint8_t b)
 void null_execution(uint16_t a)
 {
     null_execution(a, 42);
+}
+void null_execution(uint8_t b)
+{
+    // inconcluso
 }
 
 Procesador::Proceso seleccionar_proceso(uint8_t b)
@@ -25,6 +33,12 @@ Procesador::Proceso seleccionar_proceso(uint8_t b)
             break;
         case 'a':
             proceso = Proceso::Accel;
+            break;
+        case 'n':
+            proceso = Proceso::NRF;
+            break;
+        case 'r':
+            proceso = Proceso::Relay;
             break;
         default:
             proceso = Proceso::None;
@@ -90,6 +104,12 @@ bool Procesador::procesar_interno(const uint8_t b)
     else if (proceso == Proceso::Accel) {
         ;
     }
+    else if (proceso == Proceso::NRF) {
+        nrf_buf.escribir(b);
+    }
+    else if (proceso == Proceso::Relay) {
+        relay_byte = b;
+    }
     return true;
 }
 
@@ -104,15 +124,24 @@ void Procesador::ejecutar_mensaje()
     }
     if (proceso == Proceso::Freq) {
         freq_hook(microseconds_period);
+        // sample hook:
         // tim6_ptr->configurar_periodo_us(microseconds_period);
     }
     if (proceso == Proceso::DAC) {
         dac_hook(dac_data);
+        // sample hook:
         // dac_ptr->write_12R(dac_data);
     }
     if (proceso == Proceso::Accel) {
         accel_hook(0); 
+        // sample hook:
         // g_acelerometro->imprimir(*g_uart2);
+    }
+    if (proceso == Proceso::NRF) {
+        nrf_hook(nrf_buf);
+    }
+    if (proceso == Proceso::Relay) {
+        relay_hook(relay_byte);
     }
 }
 
@@ -124,4 +153,6 @@ void Procesador::clear_status()
     microseconds_period = 0;
     dac_data = 0;
     pwm_canal = 0;
+    nrf_buf.clear();
+    relay_byte = 0;
 }
