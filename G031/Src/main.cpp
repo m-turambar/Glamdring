@@ -10,8 +10,7 @@
 
 #include "app_acelerometro.h"
 #include "app_nrf24.h"
-#include "app_timers.h"
-#include "app_rele.h"
+#include "app_gpio.h"
 #include "Procesador.h"
 
 void inicializacion();
@@ -51,21 +50,33 @@ void callback_uart2()
 void manage_relays(uint8_t b)
 {
     if(b == 't') {
-        encender_rele_durante(tim16_ptr, ReleA, 2000);
+        encender_pin_durante(tim16_ptr, ReleA, 2000);
     }
     else if(b == '0') {
-        apagar_rele(ReleA);
+        ReleA.reset_output();
     }
     else if(b == '1') {
-        encender_rele(ReleA);
+        ReleA.set_output();
     }
     else if(b == '2') {
-        apagar_rele(ReleB);
+        ReleB.reset_output();
     }
     else if(b == '3') {
-        encender_rele(ReleB);
+        ReleB.set_output();
     }
 }
+
+// void callback_tim17()
+// {
+//   uint8_t voltaje_boton = Boton.read_input();
+//   if(voltaje_boton == 0) {
+//     LED.toggle();
+//     *nrf_ptr << 't';
+//   }
+//   else {
+//     LED.reset_output();
+//   }
+// };
 
 int main(void)
 {

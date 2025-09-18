@@ -18,6 +18,8 @@ include_directories(
 target_sources(${PROJECT_NAME}.elf PUBLIC
     ../app/app_acelerometro.h
     ../app/app_acelerometro.cpp
+    ../app/app_gpio.h
+    ../app/app_gpio.cpp
     ../app/app_nrf24.h
     ../app/app_nrf24.cpp
     ../app/Procesador.h
