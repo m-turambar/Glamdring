@@ -14,4 +14,6 @@ void callback_nrf24_rx();
 void callback_nrf24_tx_ds();
 void callback_nrf24_max_rt();
 
+void process_buffer(Buffer& buf);
+
 #endif //G031_APP_NRF24_H

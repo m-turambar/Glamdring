@@ -41,13 +41,13 @@ void process_buffer(Buffer& buf)
     uint8_t first_char = buf.leer();
     if (first_char == '/') {
         if (nrf_ptr == nullptr || nrf_ptr->modo_cached != NRF24::Modo::TX) {
-            *g_uart2 << "NRF incapaz de transmitir\r\n";
+            *NRF24_uart_buffer << "NRF incapaz de transmitir\r\n";
             buf.clear();
             return;
         }
         while (buf.available()) {
             uint8_t b = buf.leer();
-            *g_uart2 << b;
+            *NRF24_uart_buffer << b;
             *nrf_ptr << b;
         }
     }
@@ -55,9 +55,9 @@ void process_buffer(Buffer& buf)
     {
         NRF24::Modo m = nrf_ptr->obtener_modo();
         if(m == NRF24::Modo::TX)
-            *g_uart2 << "\r\nTransmisor\r\n";
+            *NRF24_uart_buffer << "\r\nTransmisor\r\n";
         else
-            *g_uart2 << "\r\nReceptor\r\n";
+            *NRF24_uart_buffer << "\r\nReceptor\r\n";
         }
     else if (first_char == 'n')
     {
@@ -87,8 +87,8 @@ void process_buffer(Buffer& buf)
         ms_32bits = rx0_addr >> 32;
         sprintf(rx0_addr_buf + 10, "%X", ms_32bits);
 
-        sprintf(freq_buf, "0b%b", freq);
-        sprintf(rf_setup_buf, "0b%b", rf_setup);
+        sprintf(freq_buf, "0x%X", freq);
+        sprintf(rf_setup_buf, "0x%X", rf_setup);
 
         *g_uart2 << "\r\nRF_CH: " << freq_buf;
         *g_uart2 << "\r\nRX_ADDR_P0:" << rx0_addr_buf;
@@ -102,10 +102,10 @@ void process_buffer(Buffer& buf)
         uint8_t inicio = nrf_ptr->idx_enviar;
         uint8_t fin = nrf_ptr->idx_llenar;
         sprintf(n_bytes_buf, "%d", (fin - inicio));
-        *g_uart2 << "\r\nBytes en TX buf: " << n_bytes_buf;
-        *g_uart2 << "\r\nContenido: ";
+        *NRF24_uart_buffer << "\r\nBytes en TX buf: " << n_bytes_buf;
+        *NRF24_uart_buffer << "\r\nContenido: ";
         for (auto i = inicio; i != fin; ++i)
-            *g_uart2 << nrf_ptr->tx_buf[i];
+            *NRF24_uart_buffer << nrf_ptr->tx_buf[i];
     }
 
     else if (first_char == 'u') {

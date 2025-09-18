@@ -91,7 +91,8 @@ int main(void)
     ReleA.salida();
     ReleB.salida();
     Boton.entrada(); // con pull-up interno. Apretamos y se pone a GND.
-    procesador.relay_hook = manage_relays;
+    procesador.gpio_hook = manage_relays;
+    procesador.nrf_hook = process_buffer;
 
     ///////////////
 

@@ -37,8 +37,8 @@ Procesador::Proceso seleccionar_proceso(uint8_t b)
         case 'n':
             proceso = Proceso::NRF;
             break;
-        case 'r':
-            proceso = Proceso::Relay;
+        case 'g':
+            proceso = Proceso::GPIO;
             break;
         default:
             proceso = Proceso::None;
@@ -68,7 +68,7 @@ void Procesador::procesar_mensaje(uint8_t b)
         proceso = seleccionar_proceso(b);
     } else {
         bool result = procesar_interno(b);
-        if(!result) {
+        if (!result) {
             procesando = false;
             clear_status();
         }
@@ -107,8 +107,8 @@ bool Procesador::procesar_interno(const uint8_t b)
     else if (proceso == Proceso::NRF) {
         nrf_buf.escribir(b);
     }
-    else if (proceso == Proceso::Relay) {
-        relay_byte = b;
+    else if (proceso == Proceso::GPIO) {
+        gpio_byte = b;
     }
     return true;
 }
@@ -140,8 +140,8 @@ void Procesador::ejecutar_mensaje()
     if (proceso == Proceso::NRF) {
         nrf_hook(nrf_buf);
     }
-    if (proceso == Proceso::Relay) {
-        relay_hook(relay_byte);
+    if (proceso == Proceso::GPIO) {
+        gpio_hook(gpio_byte);
     }
 }
 
@@ -154,5 +154,5 @@ void Procesador::clear_status()
     dac_data = 0;
     pwm_canal = 0;
     nrf_buf.clear();
-    relay_byte = 0;
+    gpio_byte = 0;
 }
