@@ -1,9 +1,15 @@
 add_library(HAL OBJECT)
 target_include_directories(HAL PRIVATE . CMSIS/Include)
+
+if (NOT TARGET_MCU MATCHES "STM32G031xx")
+    target_sources(HAL PRIVATE
+        basic_timer.h
+        basic_timer.cpp
+    )
+endif()
+
 target_sources(HAL PRIVATE
     # ADC.h
-    basic_timer.h
-    basic_timer.cpp
     DMA.h
     DMA.cpp
     EXTI.h
@@ -46,13 +52,13 @@ if (TARGET_MCU MATCHES "STM32F767xx")
         F767/RCC_F767.cpp
         F767/RCC_F767.h
     )
-elseif(TARGET_MCU MATCHES "STM32G031xx")
+elseif (TARGET_MCU MATCHES "STM32G031xx")
     target_sources(HAL PRIVATE
         G031/NVIC_G031.h
         G031/RCC_G031.cpp
         G031/RCC_G031.h
     )
-elseif(TARGET_MCU MATCHES "STM32G070xx")
+elseif (TARGET_MCU MATCHES "STM32G070xx")
     target_sources(HAL PRIVATE
         G070/NVIC_G070.h
         G070/RCC_G070.cpp

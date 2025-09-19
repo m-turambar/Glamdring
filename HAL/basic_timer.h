@@ -43,7 +43,12 @@ public:
     Update
   };
 
-  basic_timer(const BasicTimer tim);
+#if defined(STM32G031xx)
+    // basic_timer no soportado en STM32G031xx
+    basic_timer(const BasicTimer tim) = delete;
+#else
+    basic_timer(const BasicTimer tim);
+#endif
 
 
   //void configure(const Mode mode, const uint8_t auto_reload_preload = 1, const uint8_t update_request_source = 1,
