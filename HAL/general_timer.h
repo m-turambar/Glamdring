@@ -44,7 +44,6 @@ public:
 
     general_timer(const GeneralTimer tim);
 
-    void configure_mode(const Mode mode);
     void configure(const Mode mode, const uint8_t auto_reload_preload = 1, const uint8_t update_request_source = 1,
         const uint8_t update_disable = 0, const uint8_t status_bit_remap = 0) const;
 

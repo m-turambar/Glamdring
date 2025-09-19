@@ -121,15 +121,6 @@ void general_timer::set_autoreload(const uint16_t autoreload) const
     memoria(ARR) = autoreload;
 }
 
-void general_timer::configure_mode(const Mode mode)
-{
-    const flag OPM(3);
-    if(mode == Mode::OnePulseMode)
-        CR1.set(OPM);
-    else
-        CR1.reset(OPM);
-}
-
 void general_timer::configure(const Mode mode, uint8_t auto_reload_preload, uint8_t update_request_source,
     const uint8_t update_disable, const uint8_t status_bit_remap) const
 {
@@ -146,6 +137,10 @@ void general_timer::configure(const Mode mode, uint8_t auto_reload_preload, uint
 
 void general_timer::enable_interrupt(void (*callback_fn)(void*), InterruptType it, const uint8_t isr_priority)
 {
+    // Estas dos acciones parecen ser necesarias para evitar disparo al inicio de la interrupción
+    generate_update();
+    clear_update();
+    
     switch(it) {
         case InterruptType::UIE:
         callback_update = callback_fn;

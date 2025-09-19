@@ -115,6 +115,6 @@ namespace RCC {
   void seleccionar_reloj_USART2(RelojesUsart reloj);
   void seleccionar_reloj_I2C1(RelojesI2C reloj);
   void seleccionar_reloj_ADC(RelojesADC reloj);
-} ;
+}
 
 };

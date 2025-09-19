@@ -30,7 +30,7 @@ void encender_pin_durante(basic_timer* tim, GPIO::pin& pin, uint16_t milisegundo
 void encender_pin_durante(general_timer* tim, GPIO::pin& pin, uint16_t milisegundos)
 {
     pin.set_output();
-    tim->configure_mode(general_timer::Mode::OnePulseMode);
+    tim->configure(general_timer::Mode::OnePulseMode);
     tim->configurar_periodo_ms(milisegundos);
     tim->callback_data = &pin;
     tim->callback_update = [](void* arg) {
