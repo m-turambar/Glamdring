@@ -127,7 +127,6 @@ class SerialGUI:
             self.serial_conn.write((data + "\n").encode("utf-8"))
             self.show_message(f"Sent: {data}")
 
-
     def update_ports(self):
         """Update the list of available serial ports."""
         ports = serial.tools.list_ports.comports()

@@ -57,7 +57,7 @@ void Procesador::procesar_mensaje(uint8_t b)
         return;
     }
 
-    if (b == '}') {
+    if (b == '}' && (brace_cnt == 0)) {
         procesando = false;
         ejecutar_mensaje();
         clear_status();
@@ -67,6 +67,10 @@ void Procesador::procesar_mensaje(uint8_t b)
     if (proceso == Proceso::None) {
         proceso = seleccionar_proceso(b);
     } else {
+        if (b == '{')
+            ++brace_cnt;
+        if (b == '}')
+            --brace_cnt;
         bool result = procesar_interno(b);
         if (!result) {
             procesando = false;
@@ -79,36 +83,37 @@ void Procesador::procesar_mensaje(uint8_t b)
 
 bool Procesador::procesar_interno(const uint8_t b)
 {
-    if(proceso == Proceso::PWM) {
+    switch (proceso) {
+    case Proceso::PWM:
         if (pwm_canal == 0) {
             pwm_canal = b - 'a' + 1; // 'a' para canal 1, 'b' para canal 2, 'c' para 3, 'd' para 4.
             return (pwm_canal >= 1 && pwm_canal <= 4);
         }
-        if (b < '0' || b > '9') {
+        if (b < '0' || b > '9')
             return false;
-        }
         pwm_pulse_width = pwm_pulse_width * 10 + b - '0';
-    }
-    else if (proceso == Proceso::Freq) {
-        if (b < '0' || b > '9') {
+        break;
+    case Proceso::Freq:
+        if (b < '0' || b > '9')
             return false;
-        }
         microseconds_period = microseconds_period * 10 + b - '0';
-    }
-    else if (proceso == Proceso::DAC) {
-        if (b < '0' || b > '9') {
+        break;
+    case Proceso::DAC:
+        if (b < '0' || b > '9')
             return false;
-        }
         dac_data = dac_data * 10 + b - '0';
-    }
-    else if (proceso == Proceso::Accel) {
+        break;
+    case Proceso::Accel:
         ;
-    }
-    else if (proceso == Proceso::NRF) {
+        break;
+    case Proceso::NRF:
         nrf_buf.escribir(b);
-    }
-    else if (proceso == Proceso::GPIO) {
+        break;
+    case Proceso::GPIO:
         gpio_byte = b;
+        break;
+    default:
+        return false;
     }
     return true;
 }

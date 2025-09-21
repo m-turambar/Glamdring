@@ -4,16 +4,13 @@
 
 extern GPIO::pin LED;
 
-static bool parsing = true; // todo delete
-
 void callback_nrf24_rx() {
   LED.toggle();
 
-  // TODO: lee status para saber de qué canal vino el paquete
-  uint8_t status = nrf_ptr->leer_registro(NRF24::Registro::Status);
-  uint8_t data_pipe_number = (status >> 1) & 0x7;
-
-  *NRF24_uart_buffer << "\r\nchannel: " << static_cast<char>(data_pipe_number + 48) << '\n';
+// TODO: lee status para saber de qué canal vino el paquete
+//   uint8_t status = nrf_ptr->leer_registro(NRF24::Registro::Status);
+//   uint8_t data_pipe_number = (status >> 1) & 0x7;
+//   *NRF24_uart_buffer << "\r\nchannel: " << static_cast<char>(data_pipe_number + 48) << '\n';
 
   uint8_t fifo_status = nrf_ptr->leer_registro(NRF24::Registro::FIFO_STATUS);
   while (fifo_status % 2 == 0) /// el bit menos significativo de FIFO_STATUS es RX_EMPTY
@@ -36,6 +33,7 @@ void callback_nrf24_max_rt() {
   //nrf_ptr->descartar_fifo();
 }
 
+// e.g. encender rele remoto: {n/{gt}}
 void process_buffer(Buffer& buf)
 {
     uint8_t first_char = buf.leer();
@@ -47,7 +45,6 @@ void process_buffer(Buffer& buf)
         }
         while (buf.available()) {
             uint8_t b = buf.leer();
-            *NRF24_uart_buffer << b;
             *nrf_ptr << b;
         }
     }
@@ -67,7 +64,6 @@ void process_buffer(Buffer& buf)
         modo = (modo == NRF24::Modo::TX) ? NRF24::Modo::RX : NRF24::Modo::TX;
         nrf_ptr->encender(modo);
     }
-
     else if (first_char == 'r') {
         char freq_buf[10] = {0};
         char rf_setup_buf[8] = {0};
@@ -96,7 +92,6 @@ void process_buffer(Buffer& buf)
         *g_uart2 << "\r\nRF_SETUP:" << rf_setup_buf << "\r\n";
         return;
     }
-
     else if (first_char == 's') {
         char n_bytes_buf[8] = {0};
         uint8_t inicio = nrf_ptr->idx_enviar;
@@ -107,7 +102,6 @@ void process_buffer(Buffer& buf)
         for (auto i = inicio; i != fin; ++i)
             *NRF24_uart_buffer << nrf_ptr->tx_buf[i];
     }
-
     else if (first_char == 'u') {
         uint64_t tx_addr = nrf_ptr->leer_addr_reg(NRF24::Registro::TX_ADDR);
         if (tx_addr == static_cast<uint64_t>(NRF24::DefaultAddress::P0))
@@ -115,6 +109,5 @@ void process_buffer(Buffer& buf)
         else
             nrf_ptr->config_tx_addr(NRF24::DefaultAddress::P0);
     }
-
 }
 

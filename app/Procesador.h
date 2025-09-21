@@ -37,6 +37,7 @@ private:
 
     bool procesando{false};
     Proceso proceso {Proceso::None};
+    int brace_cnt {0};
     
     uint16_t pwm_pulse_width {0};
     uint16_t microseconds_period {0};
