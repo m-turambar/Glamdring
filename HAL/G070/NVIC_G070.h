@@ -56,7 +56,7 @@ typedef enum
  * definidos estén presentes. El objetivo era usar el código de ARM pero no la HAL de ST, porque
  * el segundo está escrito con las nalgas de un becario. Repitiendo este código que estaba en la HAL de ST,
  * podemos omitir incluir toda su HAL, y hacer uso del código de ARM. */
-#include "core_cm0plus.h"
+#include "CMSIS/Include/core_cm0plus.h"
 
 
 

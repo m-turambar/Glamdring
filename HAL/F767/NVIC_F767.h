@@ -53,4 +53,4 @@ typedef enum
 } IRQn_Type;
 
 // Este header escrito por ARM requiere los macros y enums anteriormente definidos
-#include "core_cm7.h"
+#include "CMSIS/Include/core_cm7.h"

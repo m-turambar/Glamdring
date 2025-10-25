@@ -18,7 +18,6 @@ void configurar_relojes();
 void error(void);
 
 GPIO::pin LED(GPIO::PORTA, 12);
-GPIO::pin Boton(GPIO::PORTC,15); // con pull-up interno. Apretamos y se pone a GND.
 GPIO::pin ReleA(GPIO::PORTA,1);
 GPIO::pin ReleB(GPIO::PORTA,0);
 Procesador procesador;
@@ -50,7 +49,7 @@ void callback_uart2()
 void manage_relays(uint8_t b)
 {
     if(b == 't') {
-        encender_pin_durante(tim16_ptr, ReleA, 2000);
+        encender_pin_durante(tim16_ptr, ReleA, 1000);
     }
     else if(b == '0') {
         ReleA.reset_output();
@@ -66,17 +65,6 @@ void manage_relays(uint8_t b)
     }
 }
 
-// void callback_tim17()
-// {
-//   uint8_t voltaje_boton = Boton.read_input();
-//   if(voltaje_boton == 0) {
-//     LED.toggle();
-//     *nrf_ptr << 't';
-//   }
-//   else {
-//     LED.reset_output();
-//   }
-// };
 
 int main(void)
 {
@@ -90,19 +78,14 @@ int main(void)
     LED.salida();
     ReleA.salida();
     ReleB.salida();
-    Boton.entrada(); // con pull-up interno. Apretamos y se pone a GND.
     procesador.gpio_hook = manage_relays;
     procesador.nrf_hook = process_buffer;
-
-    ///////////////
 
     UART uart2(UART::Peripheral::USART2, 115200);
     g_uart2 = &uart2;
     uart2.enable();
     uart2.enable_interrupt_rx(callback_uart2);
-    uart2 << "Hola\n";
-
-    //////////////
+    uart2 << "Hola tengo Reles\n";
 
     const GPIO::pin radio_en(GPIO::PORTA, 11);
     const GPIO::pin radio_irq(GPIO::PORTA, 4);
@@ -122,38 +105,10 @@ int main(void)
     radio.tx_ds_callback = callback_nrf24_tx_ds;
     radio.max_rt_callback = callback_nrf24_max_rt;
     radio_irq.pin_for_interrupt(EXTI4_15_IRQn);
-
-    // I2C i2c1(I2C::Peripheral::I2C1);
-    // i2c1.enable(I2C::Timing::Standard);
-
-    // Acelerometro mpu(i2c1);
-    // g_acelerometro = &mpu;
-
-    // ///////////////
-    // auto callback_MPU = []() {
-    //     g_acelerometro->imprimir(*g_uart2);
-    // };
-
-
-    // general_timer t17(GeneralTimer::TIM17, general_timer::Mode::Periodic);
-    // tim17_ptr = &t17;
-    // t17.configurar_periodo_ms(50);
-    // t17.generate_update();
-    // t17.clear_update();
-    // //t17.enable_interrupt(callback_MPU, general_timer::InterruptType::UIE);
-    // t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
-    // t17.start();
-
    
     general_timer t16(GeneralTimer::TIM16);
     tim16_ptr = &t16;
 
-    // general_timer t16(GeneralTimer::TIM16, general_timer::Mode::Periodic);
-    // t16.configurar_periodo_ms(10000);
-    // t16.generate_update();
-    // t16.clear_update();
-    // t16.enable_interrupt(callback_tim16, general_timer::InterruptType::UIE);
-    // t16.start();
 
     // general_timer t2(GeneralTimer::TIM2, general_timer::Mode::Periodic);
     // t2.set_output_compare_microsecond_resolution(10);
@@ -186,7 +141,6 @@ void inicializacion()
 
 void configurar_relojes()
 {
-  /** Configurar los relojes del sistema según la aplicación */
   RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P16);
   RCC::configurar_prescaler_AHB(RCC::AHB_Prescaler::P1);
 
@@ -200,8 +154,6 @@ void configurar_relojes()
     error();
 
   RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P1);
-
-  /** Configurar los relojes de los periféricos, sus fuentes. */
   RCC::seleccionar_reloj_USART2(RCC::RelojesUsart::PCLK);
 }
 
