@@ -20,6 +20,7 @@ void USART3_4_IRQHandler(void);
 class UART;
 extern UART* g_uart3;
 extern UART* g_uart2;
+extern UART* g_uart1;
 
 /** UARTs 1 y 2 tienen FIFOs, 3 y 4 no (Para el STM32G070 - el STM32G031 no tiene FIFO en UART2!).
  * Pero todas tienen DMA.

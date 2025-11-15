@@ -1,21 +1,9 @@
 #include "Procesador.h"
 
-void null_execution(Buffer& buf)
-{
-    // inconcluso
-}
-void null_execution(uint16_t a, uint8_t b)
-{
-    // inconcluso
-}
-void null_execution(uint16_t a)
-{
-    null_execution(a, 42);
-}
-void null_execution(uint8_t b)
-{
-    // inconcluso
-}
+void null_execution(Buffer& buf) {}
+void null_execution(uint16_t a, uint8_t b) {}
+void null_execution(uint16_t a) { null_execution(a, 42);}
+void null_execution(uint8_t b) {}
 
 Procesador::Proceso seleccionar_proceso(uint8_t b)
 {

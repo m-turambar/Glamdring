@@ -10,6 +10,7 @@
 
 UART* g_uart3 {nullptr};
 UART* g_uart2 {nullptr};
+UART* g_uart1 {nullptr};
 
 /** Banderas que se usan mucho en las rutinas de comunicacion. Declararlas en el stack una y otra
  * vez no tiene mucho sentido, así que las hacemos globales */
@@ -54,7 +55,13 @@ IRQn_Type get_IRQn(UART::Peripheral peripheral)
 
 void USART1_IRQHandler(void)
 {
-  UART1_ptr->callback();
+    if (UART1_ptr->ISR.is_set(ORE)) {
+        UART1_ptr->ICR.set(ORECF);
+        UART1_ptr->ore_cnt++;
+    }
+    else {
+        UART1_ptr->callback();
+    }
 
   NVIC_ClearPendingIRQ(USART1_IRQn);
 }
@@ -244,6 +251,11 @@ void UART::init_gpios()
   }
 
   #elif defined(STM32G031xx)
+  if(peripheral == Peripheral::USART1) {
+    RCC::enable_port_clock(RCC::GPIO_Port::B);
+    GPIO::PORTB.pin_for_UART(6, GPIO::AlternFunct::AF0); // TX
+    GPIO::PORTB.pin_for_UART(7, GPIO::AlternFunct::AF0); // RX
+  }
   if(peripheral == Peripheral::USART2) {
     RCC::enable_port_clock(RCC::GPIO_Port::A);
     GPIO::PORTA.pin_for_UART(2, GPIO::AlternFunct::AF1);
