@@ -82,26 +82,26 @@ public:
     enable_clock();
   }
 
-  void inicializar() const;
-  void config_baudrate(PCLK_div div) const;
-  void config_role(Role m) const;
-  void escribir(const uint8_t msg) const;
-  uint8_t leer() const;
+  void inicializar();
+  void config_baudrate(PCLK_div div);
+  void config_role(Role m);
+  uint8_t escribir(uint8_t msg);
   void init_gpios() const;
-  void config_LSB_first() const;
-  void config_mode(Mode m) const; //solo necesario si el dispositivo es "raro".
-  void config_software_slave_management() const;
+  void config_LSB_first();
+  void config_mode(Mode m); //solo necesario si el dispositivo es "raro".
+  void config_software_slave_management();
 
   /** usar con números entre 3 y 15.
    * El tamaño a configurar es uno más que el valor en el registro.
    * e.g. config_data_size(8) -> 8-bit transfers -> se escribe 7 al registro en la impl. */
-  void config_data_size(uint8_t size) const;
+  void config_data_size(uint8_t size);
 
-  void habilitar_interrupciones_rx() const;
+  void habilitar_interrupciones_rx();
 
 private:
-  void enable_clock() const;
-  void enable() const;
+  void enable_clock();
+  void enable();
+  void disable();
 
   const reg16 CR1;
   const reg16 CR2;

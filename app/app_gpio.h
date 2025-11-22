@@ -6,7 +6,6 @@
 #include "general_timer.h"
 #include "basic_timer.h"
 
-// void encender_pin_en_ms(GPIO::pin& pin, uint16_t milisegundos);
 void encender_pin_durante(basic_timer* tim, GPIO::pin& pin, uint16_t milisegundos);
 void encender_pin_durante(general_timer* tim, GPIO::pin& pin, uint16_t milisegundos);
 

@@ -17,15 +17,24 @@ public:
     RF_SETUP = 6,
     Status = 7,
     RX_ADDR_P0 = 0x0A,
+    RX_ADDR_P1 = 0x0B,
+    RX_ADDR_P2 = 0x0C,
+    RX_ADDR_P3 = 0x0D,
+    RX_ADDR_P4 = 0x0E,
+    RX_ADDR_P5 = 0x0F,
     TX_ADDR = 0x10,
     RX_PW_P0 = 0x11,
     RX_PW_P1 = 0x12,
     FIFO_STATUS = 0x17
   };
 
-  enum class DefaultAddress :uint64_t {
+  enum class DefaultAddress : uint64_t {
     P0 = 0xE7E7E7E7E7,
     P1 = 0xC2C2C2C2C2,
+    P2 = 0xC2C2C2C2C3,
+    P3 = 0xC2C2C2C2C4,
+    P4 = 0xC2C2C2C2C5,
+    P5 = 0xC2C2C2C2C6,
   };
 
   enum class Modo : uint8_t {
@@ -33,7 +42,7 @@ public:
     RX = 1
   };
 
-  NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin);
+  NRF24(SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin);
 
   void config_default() const;
   void config_payload_widths(uint8_t width) const;
@@ -77,7 +86,7 @@ public:
 
 private:
 
-  const SPI& spi;
+  SPI& spi;
   const GPIO::pin& CEN_pin, SS_pin;
 
   bool transmitiendo{false};

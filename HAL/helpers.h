@@ -121,7 +121,7 @@ struct bitfield
 };
 
 
-#define BUFSZ 64
+#define BUFSZ 256
 struct Buffer
 {
     void escribir(uint8_t b)

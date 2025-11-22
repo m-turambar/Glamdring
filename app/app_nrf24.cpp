@@ -39,7 +39,7 @@ void process_buffer(Buffer& buf)
     uint8_t first_char = buf.leer();
     if (first_char == '/') {
         if (nrf_ptr == nullptr || nrf_ptr->modo_cached != NRF24::Modo::TX) {
-            *NRF24_uart_buffer << "NRF incapaz de transmitir\r\n";
+            *NRF24_uart_buffer << "NRF error\r\n";
             buf.clear();
             return;
         }
@@ -48,21 +48,38 @@ void process_buffer(Buffer& buf)
             *nrf_ptr << b;
         }
     }
+    // Configurar canal
+    else if (first_char == 'c') {
+        if (!buf.available())
+            return;
+        uint8_t canal = buf.leer();
+        switch (canal) {
+            case '0': nrf_ptr->config_tx_addr(NRF24::DefaultAddress::P0); break;
+            case '1': nrf_ptr->config_tx_addr(NRF24::DefaultAddress::P1); break;
+            case '2': nrf_ptr->config_tx_addr(NRF24::DefaultAddress::P2); break;
+            case '3': nrf_ptr->config_tx_addr(NRF24::DefaultAddress::P3); break;
+            case '4': nrf_ptr->config_tx_addr(NRF24::DefaultAddress::P4); break;
+            case '5': nrf_ptr->config_tx_addr(NRF24::DefaultAddress::P5); break;
+            default: return;
+        }
+        *NRF24_uart_buffer << "Canal: " << canal << "\r\n";
+    }
     else if (first_char == 'm')
     {
         NRF24::Modo m = nrf_ptr->obtener_modo();
-        if(m == NRF24::Modo::TX)
-            *NRF24_uart_buffer << "\r\nTransmisor\r\n";
-        else
-            *NRF24_uart_buffer << "\r\nReceptor\r\n";
-        }
+        *NRF24_uart_buffer << (m == NRF24::Modo::RX ? "PRX" : "PTX") << "\r\n";
+    }
     else if (first_char == 'n')
     {
-        NRF24::Modo modo = nrf_ptr->obtener_modo();
+        if (!buf.available())
+            return;
+        uint8_t m = buf.leer();
+        if (m != '0' && m != '1')
+            return;
+        NRF24::Modo modo = (m == '1' ? NRF24::Modo::RX : NRF24::Modo::TX);
         nrf_ptr->apagar();
-
-        modo = (modo == NRF24::Modo::TX) ? NRF24::Modo::RX : NRF24::Modo::TX;
         nrf_ptr->encender(modo);
+        *NRF24_uart_buffer << (m == '1' ? "PRX" : "PTX") << "\r\n";
     }
     else if (first_char == 'r') {
         char freq_buf[10] = {0};
@@ -86,10 +103,10 @@ void process_buffer(Buffer& buf)
         sprintf(freq_buf, "0x%X", freq);
         sprintf(rf_setup_buf, "0x%X", rf_setup);
 
-        *g_uart2 << "\r\nRF_CH: " << freq_buf;
-        *g_uart2 << "\r\nRX_ADDR_P0:" << rx0_addr_buf;
-        *g_uart2 << "\r\nTX_ADDR:" << tx_addr_buf;
-        *g_uart2 << "\r\nRF_SETUP:" << rf_setup_buf << "\r\n";
+        *NRF24_uart_buffer << "\r\nRF_CH: " << freq_buf;
+        *NRF24_uart_buffer << "\r\nRX_ADDR_P0:" << rx0_addr_buf;
+        *NRF24_uart_buffer << "\r\nTX_ADDR:" << tx_addr_buf;
+        *NRF24_uart_buffer << "\r\nRF_SETUP:" << rf_setup_buf << "\r\n";
         return;
     }
     else if (first_char == 's') {

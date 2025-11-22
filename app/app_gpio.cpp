@@ -4,15 +4,6 @@
 
 #include "app_gpio.h"
 
-/*
-void encender_pin_en_ms(GPIO::pin& pin, uint16_t milisegundos)
-{
-  tim16_ptr->configurar_periodo_ms(milisegundos);
-  tim16_ptr->callback_update = encender_pin;
-  tim16_ptr->start();
-}*/
-
-
 void encender_pin_durante(basic_timer* tim, GPIO::pin& pin, uint16_t milisegundos)
 {
     pin.set_output();

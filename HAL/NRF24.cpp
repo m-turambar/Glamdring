@@ -1,6 +1,4 @@
-//
 // Created by migue on 13/12/2020.
-//
 
 #include <NRF24.h>
 #include <NVIC.h>
@@ -14,36 +12,36 @@ constexpr uint8_t TX_DS = (1 << 5);
 constexpr uint8_t MAX_RT = (1 << 4);
 
 enum class Commands : uint8_t {
-  R_REGISTER = 0b00000000, //orear con un registro
-  W_REGISTER = 0b00100000,
-  R_RX_PAYLOAD = 0b01100001,
-  W_TX_PAYLOAD = 0b10100000,
-  FLUSH_TX = 0b11100001,
-  FLUSH_RX = 0b11100010,
-  REUSE_TX_PL = 0b11100011,
-  R_RX_PL_WID = 0b01100000,
-  /**/
-  /**/
-  NOP = 0b11111111,
+    R_REGISTER = 0b00000000, //orear con un registro
+    W_REGISTER = 0b00100000,
+    R_RX_PAYLOAD = 0b01100001,
+    W_TX_PAYLOAD = 0b10100000,
+    FLUSH_TX = 0b11100001,
+    FLUSH_RX = 0b11100010,
+    REUSE_TX_PL = 0b11100011,
+    R_RX_PL_WID = 0b01100000,
+    /**/
+    /**/
+    NOP = 0b11111111,
 };
 
 
 
-NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin)
-  :spi(spi_arg)
-  ,CEN_pin(CEN_pin)
-  ,SS_pin(SS_pin)
+NRF24::NRF24(SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin)
+    : spi(spi_arg)
+    , CEN_pin(CEN_pin)
+    , SS_pin(SS_pin)
 {
-  CEN_pin.salida(); //considerar hacer por hardware
-  SS_pin.salida();
-  SS_pin.set_output(); //disable SS
-  flush_rx_fifo();
-  flush_tx_fifo();
-  clear_all_interrupts();
-  config_payload_widths(1); //todo dinamico
-  escribir_registro(Registro::RF_SETUP, 0x26);
-  nrf_ptr = this;
-  apagar();
+    CEN_pin.salida(); //considerar hacer por hardware
+    SS_pin.salida();
+    SS_pin.set_output(); //disable SS
+    flush_rx_fifo();
+    flush_tx_fifo();
+    clear_all_interrupts();
+    config_payload_widths(1);
+    escribir_registro(Registro::RF_SETUP, 0x26);
+    nrf_ptr = this;
+    apagar();
 }
 
 
@@ -51,20 +49,16 @@ NRF24::NRF24(const SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_p
 void NRF24::transmitir_byte(const uint8_t b) const
 {
     SS_pin.reset_output();
-    spi.escribir(static_cast<uint8_t>(Commands::W_TX_PAYLOAD));
-    spi.leer();
-    spi.escribir(b);
-    spi.leer();
+    (void)spi.escribir(static_cast<uint8_t>(Commands::W_TX_PAYLOAD));
+    (void)spi.escribir(b);
     SS_pin.set_output();
 }
 
 uint8_t NRF24::leer_rx() const
 {
     SS_pin.reset_output();
-    spi.escribir(static_cast<uint8_t>(Commands::R_RX_PAYLOAD));
-    spi.leer();
-    spi.escribir(0u);
-    uint8_t rcvd = spi.leer();
+    (void)spi.escribir(static_cast<uint8_t>(Commands::R_RX_PAYLOAD));
+    uint8_t rcvd = spi.escribir(0u);
     SS_pin.set_output();
     return rcvd;
 }
@@ -93,10 +87,8 @@ NRF24::Modo NRF24::obtener_modo() const {
 void NRF24::escribir_registro(NRF24::Registro reg, uint8_t val) const
 {
     SS_pin.reset_output();
-    spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(reg));
-    spi.leer();
-    spi.escribir(val);
-    spi.leer();
+    (void)spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(reg));
+    (void)spi.escribir(val);
     SS_pin.set_output();
 }
 
@@ -117,13 +109,10 @@ void NRF24::escribir_registro(NRF24::Registro reg, uint8_t val) const
 uint8_t NRF24::leer_registro(NRF24::Registro reg) const
 {
   SS_pin.reset_output();
-  spi.escribir(static_cast<uint8_t>(reg));
   /** Automáticamente se envía el status register del NRF24, por eso vamos a descartar esta lectura */
-  volatile uint8_t valor = spi.leer();
+  (void)spi.escribir(static_cast<uint8_t>(reg));
   /** Escribimos lo que sea. El NRF24 nos mandará el contenido del registro que pedimos anteriormente. */
-  spi.escribir(0u);
-  valor = spi.leer();
-
+  volatile uint8_t valor = spi.escribir(0u);
   SS_pin.set_output();
   return valor;
 }
@@ -147,8 +136,7 @@ void NRF24::descartar_fifo()
 uint8_t NRF24::flush_tx_fifo() const
 {
   SS_pin.reset_output();
-  spi.escribir(static_cast<uint8_t>(Commands::FLUSH_TX));
-  uint8_t status = spi.leer();
+  uint8_t status = spi.escribir(static_cast<uint8_t>(Commands::FLUSH_TX));
   SS_pin.set_output();
   return status;
 }
@@ -156,8 +144,7 @@ uint8_t NRF24::flush_tx_fifo() const
 uint8_t NRF24::flush_rx_fifo() const
 {
   SS_pin.reset_output();
-  spi.escribir(static_cast<uint8_t>(Commands::FLUSH_RX));
-  uint8_t status = spi.leer();
+  uint8_t status = spi.escribir(static_cast<uint8_t>(Commands::FLUSH_RX));
   SS_pin.set_output();
   return status;
 }
@@ -173,20 +160,16 @@ void NRF24::config_payload_widths(uint8_t width) const
 /** La direccion RX_ADDR_P0 debe ser igual a la TX_ADDR para tener ACKs. */
 void NRF24::config_tx_addr(uint64_t addr) const {
   SS_pin.reset_output();
-  spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(Registro::TX_ADDR));
-  spi.leer();
+  (void)spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(Registro::TX_ADDR));
   for (int i = 0; i < 5; ++i) {
-    spi.escribir((addr >> 8*i) & 0xFF);
-    spi.leer();
+    (void)spi.escribir((addr >> 8*i) & 0xFF);
   }
   SS_pin.set_output();
   SS_pin.reset_output();
 
-  spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(Registro::RX_ADDR_P0));
-  spi.leer();
+  (void)spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(Registro::RX_ADDR_P0));
   for (int i = 0; i < 5; ++i) {
-    spi.escribir((addr >> 8*i) & 0xFF);
-    spi.leer();
+    (void)spi.escribir((addr >> 8*i) & 0xFF);
   }
   SS_pin.set_output();
 }
@@ -198,11 +181,9 @@ void NRF24::config_tx_addr(DefaultAddress addr) const {
 uint64_t NRF24::leer_addr_reg(Registro addr_reg) const {
   uint64_t res = 0;
   SS_pin.reset_output();
-  spi.escribir(static_cast<uint8_t>(Commands::R_REGISTER) | static_cast<uint8_t>(addr_reg));
-  spi.leer();
+  (void)spi.escribir(static_cast<uint8_t>(Commands::R_REGISTER) | static_cast<uint8_t>(addr_reg));
   for (int i = 0; i < 5; ++i) {
-    spi.escribir(0);
-    uint8_t byte = spi.leer();
+    uint8_t byte = spi.escribir(0);
     res = res << 8;
     res += byte;
   }
@@ -214,10 +195,9 @@ void NRF24::clear_all_interrupts() const
 {
   SS_pin.reset_output();
   uint8_t status = leer_registro(Registro::Status);
-  /** Clear by writing 1 to MAX_RT, TX_DS and TX_DS */
-  status |= (1 << 4);
-  status |= (1 << 5);
-  status |= (1 << 6);
+  status |= MAX_RT;
+  status |= TX_DS;
+  status |= RX_DR;
   escribir_registro(Registro::Status, status);
   SS_pin.set_output();
 }

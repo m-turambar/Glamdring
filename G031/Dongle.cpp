@@ -63,7 +63,6 @@ int main(void)
     RCC::enable_port_clock(RCC::GPIO_Port::C);
 
     LED.salida();
-    LED.set_output();
     procesador.gpio_hook = manage_gpio;
     procesador.nrf_hook = process_buffer;
 

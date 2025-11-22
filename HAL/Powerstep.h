@@ -43,7 +43,7 @@ struct Powerstep {
     STATUS, //alreves en datasheet -_-
   };
 
-  Powerstep(const SPI& spi_arg, const GPIO::pin& SS_pin_arg);
+  Powerstep(SPI& spi_arg, const GPIO::pin& SS_pin_arg);
   uint32_t GetParam(Registro r);
   void SetParam(Registro r, uint32_t valor);
   void Run(bool DIR, uint32_t speed);
@@ -66,7 +66,7 @@ struct Powerstep {
 private:
   uint8_t recurrent_operation(const uint8_t m);
 
-  const SPI& spi;
+  SPI& spi;
   const GPIO::pin& SS_pin;
 };
 

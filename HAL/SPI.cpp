@@ -9,7 +9,7 @@ const flag TXE(1);
 const flag BSY(7);
 const flag RXNE(0);
 
-void SPI::enable_clock() const
+void SPI::enable_clock()
 {
   if (peripheral == SPI::Peripheral::SPI1_I2S1)
     RCC::enable_SPI1_I2S1_clock();
@@ -18,29 +18,40 @@ void SPI::enable_clock() const
     RCC::enable_SPI2_clock();
 }
 
-void SPI::inicializar() const
+void SPI::inicializar()
 {
   config_baudrate(PCLK_div::d8);
   init_gpios();
+  disable();
   config_role(Role::Master);
   config_software_slave_management();
   config_data_size(8);
   enable();
+
 }
 
-void SPI::enable() const
+void SPI::enable()
 {
   const flag SPE(6);
   CR1.set(SPE);
 }
 
-void SPI::config_baudrate(SPI::PCLK_div div) const
+void SPI::disable()
+{
+  const flag SPE(6);
+  CR1.reset(SPE);
+  while (SR.is_set(RXNE)) {
+    volatile uint8_t rcv = *reinterpret_cast<uint8_t*>(DR.addr);
+  }
+}
+
+void SPI::config_baudrate(SPI::PCLK_div div)
 {
   const bitfield BR(3, 3, static_cast<size_t>(div));
   CR1.write(BR);
 }
 
-void SPI::config_role(SPI::Role role) const
+void SPI::config_role(SPI::Role role)
 {
   const flag MSTR(2);
   if(role == Role::Master)
@@ -50,26 +61,26 @@ void SPI::config_role(SPI::Role role) const
 }
 
 
-void SPI::config_data_size(uint8_t size) const
+void SPI::config_data_size(uint8_t size)
 {
   size = (size-1) & 0xF;
   const bitfield DS(4, 8, size);
   CR2.write(DS);
 }
 
-void SPI::habilitar_interrupciones_rx() const
+void SPI::habilitar_interrupciones_rx()
 {
   const flag RXNEIE(6);
   CR2.set(RXNEIE);
 }
 
-void SPI::config_mode(SPI::Mode m) const
+void SPI::config_mode(SPI::Mode m)
 {
   const bitfield CPHA_y_CPOL(2, 0, static_cast<size_t>(m));
   CR1.write(CPHA_y_CPOL);
 }
 
-void SPI::config_LSB_first() const
+void SPI::config_LSB_first()
 {
   const flag LSBFIRST(7);
   CR1.set(LSBFIRST);
@@ -122,33 +133,19 @@ void SPI::init_gpios() const
 }
 
 
-/** Un acceso de escritura a DR guarda los datos en el TXFIFO al final de una queue a enviar.
- *
- * No mames. Con razon! Cada vez que escribes usando tu API de registros, estás leyendo.
- * Por eso tienes tantos pedos. */
-void SPI::escribir(const uint8_t msg) const
+/** Cuidado con el acceso lectura/escritura a DR */
+uint8_t SPI::escribir(const uint8_t msg)
 {
   while(SR.is_reset(TXE)) {}
-  /** Tu comando de acceso a registros hacía una lectura(!) antes de escribir. Por eso tenías tantas irregularidades. */
-  volatile uint8_t* dr_ptr = reinterpret_cast<uint8_t*>(DR.addr); //Importante que sea un pointer a uint8_t y no a uint16_t, de lo contrario tendrás dos ciclos
-  *dr_ptr = msg;
-}
-
-/** Si tienes problemas de lectura checa el manual. Hay muchas combinaciones para leer.
- * Un acceso de lectura a DR regresa el valor mas viejo guardado en la RXFIFO.
- * Puede ser conveniente hacer algunas lecturas para flushear la queue de recepción.
- * Esta función bloquea*/
-uint8_t SPI::leer() const
-{
-  while(SR.is_reset(RXNE)) {}
-  volatile uint8_t rcv = 0;
   volatile uint8_t* dr_ptr = reinterpret_cast<uint8_t*>(DR.addr); //Importante que sea un pointer a uint8_t y no a uint16_t
-  rcv = *dr_ptr;
-  while(SR.is_set(RXNE)) {}
+  *dr_ptr = msg;
+
+  while(SR.is_reset(RXNE)) {}
+  volatile uint8_t rcv = *dr_ptr;
   return rcv;
 }
 
-void SPI::config_software_slave_management() const
+void SPI::config_software_slave_management()
 {
   const flag SSM(9);
   CR1.set(SSM);
@@ -156,10 +153,10 @@ void SPI::config_software_slave_management() const
   CR1.set(SSI);
   //const flag NSSP(3);
   //CR2.set(NSSP);
-  const flag SSOE(3); //creo que es irrelevante para mi aplicación. Permite multi-masters
-  CR2.set(SSOE);
+  const flag SSOE(3);
+  CR2.set(SSOE); // Deshabilita multi-masters
   //const flag FRF(4);
-  //CR2.set(FRF);
+  //CR2.set(FRF); // Motorola vs TI mode
   const flag FRXTH(12);
   CR2.set(FRXTH);
 }
