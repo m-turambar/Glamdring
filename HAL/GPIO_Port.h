@@ -7,8 +7,9 @@
 #include <gpio_af.h>
 #include <NVIC.h>
 
-namespace GPIO {
-    
+namespace GPIO
+{
+
 class pin;
 class GPIO_Port;
 extern GPIO_Port PORTA, PORTB, PORTC, PORTD, PORTF;
@@ -59,7 +60,7 @@ enum class Mode {
     Input = 0x0,
     Output = 0x1,
     Alternate = 0x2,
-    Analog = 0x3 //reset state
+    Analog = 0x3 // reset state
 };
 
 enum class OutputType {
@@ -80,24 +81,25 @@ enum class PullResistor {
     PullDown = 0x2
 };
 
-
-  /* Vamos a crear solo una instancia por cada puerto de esta clase.
-   * La clase que el usuario utilizará es gpio */
-class GPIO_Port {
+/* Vamos a crear solo una instancia por cada puerto de esta clase.
+ * La clase que el usuario utilizará es gpio */
+class GPIO_Port
+{
 public:
     GPIO_Port(const Port port)
         : base(static_cast<size_t>(port))
         , MODER(base)
-        , OTYPER(base+0x4)
-        , OSPEEDR(base+0x8)
-        , PUPDR(base+0xC)
-        , IDR(base+0x10)
-        , ODR(base+0x14)
-        , BSRR(base+0x18)
-        , LCKR(base+0x1C)
-        , AFRL(base+0x20)
-        , AFRH(base+0x24)
-        , BRR(base+0x28) { }
+        , OTYPER(base + 0x4)
+        , OSPEEDR(base + 0x8)
+        , PUPDR(base + 0xC)
+        , IDR(base + 0x10)
+        , ODR(base + 0x14)
+        , BSRR(base + 0x18)
+        , LCKR(base + 0x1C)
+        , AFRL(base + 0x20)
+        , AFRH(base + 0x24)
+        , BRR(base + 0x28)
+    {}
 
     /* entrada, salida, alternate, analogico */
     const GPIO_Port& cfg_mode(const uint8_t pin, const Mode mode) const;
@@ -114,7 +116,7 @@ public:
     uint8_t read_input(const uint8_t pin) const;
 
     /* El registro ODR se debe modificar indirectamente a través de escrituras al
-    * registro BSRR, para asegurar atomicidad */
+     * registro BSRR, para asegurar atomicidad */
     uint8_t read_output(const uint8_t pin) const;
 
     /* usa el registro BSRR para conseguir escrituras atómicas */
@@ -126,9 +128,9 @@ public:
     void toggle(const uint8_t pin) const;
 
     /* Configura un pin como entrada digital con pull-up = alto (por default)*/
-    GPIO::pin entrada(const uint8_t pin, const PullResistor pupd=PullResistor::PullUp) const;
+    GPIO::pin entrada(const uint8_t pin, const PullResistor pupd = PullResistor::PullUp) const;
     /* Configura un pin como salida digital */
-    GPIO::pin salida(const uint8_t pin, const OutputType out_t=OutputType::PushPull) const;
+    GPIO::pin salida(const uint8_t pin, const OutputType out_t = OutputType::PushPull) const;
 
     /* Configura un pin para usarse con I2C, OpenDrain con PullUp */
     void pin_for_I2C(const uint8_t pin, const AlternFunct af) const;
@@ -141,32 +143,30 @@ public:
     uint8_t lock_bits(const uint16_t bits) const;
 
 private:
-
     const size_t base;
     /* tanto BSRR como BRR modifican ODR atómicamente. La diferencia es que BSRR puede
      * setear y resetear, y BRR solo resetear. ODR es útil tenerlo por si lo queremos leer.
      * Podríamos sólo usar BSRR y omitir BRR por completo */
     const registro MODER, OTYPER, OSPEEDR, PUPDR, IDR, ODR, BSRR, LCKR, AFRL, AFRH, BRR;
-
 };
-  
 
 /* Esta es la clase que el usuario debe usar. Se pasa como referencia uno de los GPIOs que ya existen, declarados en
  * este mismo archivo de encabezado. */
-class pin {
+class pin
+{
 public:
     pin(const GPIO_Port& port_arg, const uint8_t num_arg)
         : port(port_arg)
         , num(num_arg)
-        { }
+    {}
 
     const pin& cfg_mode(const Mode mode) const;
     const pin& cfg_output_type(const OutputType ot) const;
     const pin& cfg_speed(Speed speed) const;
     const pin& cfg_pull(PullResistor pupd) const;
     const pin& cfg_alternate(AlternFunct afsel) const;
-    const pin& entrada(const PullResistor pupd=PullResistor::PullUp) const;
-    const pin& salida(const OutputType out_t=OutputType::PushPull) const;
+    const pin& entrada(const PullResistor pupd = PullResistor::PullUp) const;
+    const pin& salida(const OutputType out_t = OutputType::PushPull) const;
     const pin& pin_for_interrupt(IRQn_Type IRQn) const;
 
     uint8_t read_input() const;
@@ -179,6 +179,5 @@ private:
     const GPIO_Port& port;
     const uint8_t num;
 };
-
 
 } // namespace GPIO

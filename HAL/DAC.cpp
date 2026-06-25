@@ -1,7 +1,7 @@
 #include "DAC.h"
 #include "RCC.h"
 
-DAC* dac_ptr {nullptr};
+DAC* dac_ptr { nullptr };
 
 DAC::DAC(const DAC::Config& config)
     : CR(base)

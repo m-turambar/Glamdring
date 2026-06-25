@@ -18,7 +18,7 @@ void configurar_relojes();
 void error(void);
 
 GPIO::pin LED(GPIO::PORTA, 12);
-GPIO::pin Boton(GPIO::PORTC,15); // con pull-up interno. Apretamos y se pone a GND.
+GPIO::pin Boton(GPIO::PORTC, 15); // con pull-up interno. Apretamos y se pone a GND.
 Procesador procesador;
 
 /** interrumpir esta funcion con un breakpoint hace que no vuelva a entrar. Por qué?
@@ -26,8 +26,9 @@ Procesador procesador;
  * nunca vamos a salir de ese estado. Digo, podrías poner un watchdog o un timer a que resetee las interrupciones del
  * nrf, pero me sorprende que después de resumir la interrrupción no agarre la onda.*/
 extern "C" {
-void EXTI4_15_IRQHandler(void) {
-    if(nrf_ptr != nullptr)
+void EXTI4_15_IRQHandler(void)
+{
+    if (nrf_ptr != nullptr)
         nrf_ptr->irq_handler();
     EXTI::clear_pending_interrupt(4);
     NVIC_ClearPendingIRQ(EXTI4_15_IRQn);
@@ -38,8 +39,7 @@ void EXTI4_15_IRQHandler(void) {
 Buffer uart2_buf;
 void callback_uart2()
 {
-    if(g_uart2->available())
-    {
+    if (g_uart2->available()) {
         const uint8_t b = g_uart2->read_byte();
         uart2_buf.escribir(b);
     }
@@ -47,14 +47,13 @@ void callback_uart2()
 
 void callback_tim17(void* arg)
 {
-  uint8_t voltaje_boton = Boton.read_input();
-  if(voltaje_boton == 0) {
-    LED.toggle();
-    *nrf_ptr << "{gt}";
-  }
-  else {
-    LED.reset_output();
-  }
+    uint8_t voltaje_boton = Boton.read_input();
+    if (voltaje_boton == 0) {
+        LED.toggle();
+        *nrf_ptr << "{gt}";
+    } else {
+        LED.reset_output();
+    }
 };
 
 int main(void)
@@ -109,7 +108,6 @@ int main(void)
     //     g_acelerometro->imprimir(*g_uart2);
     // };
 
-
     general_timer t17(GeneralTimer::TIM17);
     tim17_ptr = &t17;
     t17.configure(general_timer::Mode::Periodic);
@@ -117,8 +115,7 @@ int main(void)
     t17.enable_interrupt(callback_tim17, general_timer::InterruptType::UIE);
     t17.start();
 
-    while(true)
-    {
+    while (true) {
         if (uart2_buf.available()) {
             uint8_t b = uart2_buf.leer();
             *g_uart2 << b;
@@ -129,36 +126,36 @@ int main(void)
 
 void inicializacion()
 {
-  FLASH::prefetch_buffer_enable();
-  RCC::enable_SYSCFG_clock();
-  RCC::enable_power_clock();
-  PWR::configurar_regulador(PWR::Voltaje::Range_1);
+    FLASH::prefetch_buffer_enable();
+    RCC::enable_SYSCFG_clock();
+    RCC::enable_power_clock();
+    PWR::configurar_regulador(PWR::Voltaje::Range_1);
 }
 
 void configurar_relojes()
 {
-  /** Configurar los relojes del sistema según la aplicación */
-  RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P16);
-  RCC::configurar_prescaler_AHB(RCC::AHB_Prescaler::P1);
+    /** Configurar los relojes del sistema según la aplicación */
+    RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P16);
+    RCC::configurar_prescaler_AHB(RCC::AHB_Prescaler::P1);
 
-  if(!RCC::is_HSI_ready())
-    error();
+    if (!RCC::is_HSI_ready())
+        error();
 
-  RCC::seleccionar_SYSCLK(RCC::SystemClockSwitch::HSISYS);
-  RCC::SystemClockSwitch fuente_sysclk = RCC::status_SYSCLK();
+    RCC::seleccionar_SYSCLK(RCC::SystemClockSwitch::HSISYS);
+    RCC::SystemClockSwitch fuente_sysclk = RCC::status_SYSCLK();
 
-  if(fuente_sysclk != RCC::SystemClockSwitch::HSISYS)
-    error();
+    if (fuente_sysclk != RCC::SystemClockSwitch::HSISYS)
+        error();
 
-  RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P1);
+    RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P1);
 
-  /** Configurar los relojes de los periféricos, sus fuentes. */
-  RCC::seleccionar_reloj_USART2(RCC::RelojesUsart::PCLK);
+    /** Configurar los relojes de los periféricos, sus fuentes. */
+    RCC::seleccionar_reloj_USART2(RCC::RelojesUsart::PCLK);
 }
-
 
 void error(void)
 {
-  /* User can add his own implementation to report the HAL error return state */
-  while (1);
+    /* User can add his own implementation to report the HAL error return state */
+    while (1)
+        ;
 }

@@ -9,7 +9,8 @@
 
 extern "C" {
 
-struct I2C {
+struct I2C
+{
 
     enum class Peripheral : std::size_t {
         I2C1 = 0x40005400,
@@ -32,41 +33,41 @@ struct I2C {
     };
 
     I2C(Peripheral peripheral_arg)
-      : peripheral(peripheral_arg)
-      , base(static_cast<size_t>(peripheral))
-      , CR1(base)
-      , CR2(base + 0x4)
-      , OAR1(base + 0x8)
-      , OAR2(base + 0xC)
-      , TIMINGR(base + 0x10)
-      , TIMEOUTR(base + 0x14)
-      , ISR(base + 0x18)
-      , ICR(base + 0x1C)
-      , PECR(base + 0x20)
-      , RXDR(base + 0x24)
-      , TXDR(base + 0x28)
-      {}
+        : peripheral(peripheral_arg)
+        , base(static_cast<size_t>(peripheral))
+        , CR1(base)
+        , CR2(base + 0x4)
+        , OAR1(base + 0x8)
+        , OAR2(base + 0xC)
+        , TIMINGR(base + 0x10)
+        , TIMEOUTR(base + 0x14)
+        , ISR(base + 0x18)
+        , ICR(base + 0x1C)
+        , PECR(base + 0x20)
+        , RXDR(base + 0x24)
+        , TXDR(base + 0x28)
+    {}
 
     void disable() const;
     void enable(Timing timing) const;
 
-    I2C::Status write(const size_t slave_addr, uint8_t *buffer,
-                    const size_t nbytes, const uint8_t autoend = 1) const;
-    I2C::Status read(const size_t slave_addr, uint8_t *buffer,
-                    const size_t nbytes, const uint8_t autoend = 1) const;
+    I2C::Status write(const size_t slave_addr, uint8_t* buffer,
+                      const size_t nbytes, const uint8_t autoend = 1) const;
+    I2C::Status read(const size_t slave_addr, uint8_t* buffer,
+                     const size_t nbytes, const uint8_t autoend = 1) const;
 
 private:
     I2C::Status comm_init(const size_t slave_addr, const uint8_t write,
-                        uint8_t *buffer, const size_t nbytes,
-                        const uint8_t autoend = 1) const;
-    
+                          uint8_t* buffer, const size_t nbytes,
+                          const uint8_t autoend = 1) const;
+
     void init_gpios() const;
     void configure_timings(const Timing timing) const;
     void clear_nackf();
     void enable_clock() const;
 
     /* puede que usemos peripheral para determinar el tipo del I2C después, así
-    * que es conveniente guardarlo */
+     * que es conveniente guardarlo */
     const Peripheral peripheral;
     const size_t base;
     const registro CR1, CR2, OAR1, OAR2, TIMINGR, TIMEOUTR, ISR, ICR, PECR, RXDR,

@@ -6,7 +6,8 @@
 
 #include "helpers.h"
 
-namespace FLASH {
+namespace FLASH
+{
 
-  void prefetch_buffer_enable();
+void prefetch_buffer_enable();
 };

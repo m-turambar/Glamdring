@@ -6,20 +6,20 @@
 
 #include <cstdint>
 
-namespace GPIO {
+namespace GPIO
+{
 
-  /* realmente no me gusta cómo dejé estructurado esto. No se me ocurre una mejor forma. */
-  enum class AlternFunct : uint8_t {
-    AF0     = 0x0,
-    AF1     = 0x1,
-    AF2     = 0x2,
-    AF3     = 0x3,
-    AF4     = 0x4,
-    AF5     = 0x5,
-    AF6     = 0x6,
-    AF7     = 0x7,
-    AF8     = 0x8,
-  };
+/* realmente no me gusta cómo dejé estructurado esto. No se me ocurre una mejor forma. */
+enum class AlternFunct : uint8_t {
+    AF0 = 0x0,
+    AF1 = 0x1,
+    AF2 = 0x2,
+    AF3 = 0x3,
+    AF4 = 0x4,
+    AF5 = 0x5,
+    AF6 = 0x6,
+    AF7 = 0x7,
+    AF8 = 0x8,
+};
 
-
-}
+} // namespace GPIO

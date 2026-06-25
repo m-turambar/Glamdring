@@ -1,0 +1,40 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+AccessModifierOffset: -4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 0
+SortIncludes: Never
+Cpp11BracedListStyle: false
+SpaceBeforeCpp11BracedList: true
+IndentPPDirectives: None
+BreakConstructorInitializers: BeforeComma
+PackConstructorInitializers: Never
+
+# K&R for control flow, Allman for functions
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true
+  AfterClass: true
+  AfterStruct: true
+  AfterEnum: false
+  AfterControlStatement: false
+  AfterNamespace: true
+  AfterUnion: false
+  BeforeElse: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+
+# Space after if/for/while/switch, none before function call parens
+SpaceBeforeParens: ControlStatements
+
+# Match .editorconfig: pointer left (int* p, not int *p)
+PointerAlignment: Left
+
+# Misc spacing to match existing style
+SpaceAfterCStyleCast: false
+SpacesInParentheses: false
+SpaceBeforeAssignmentOperators: true
+SpaceAfterLogicalNot: false

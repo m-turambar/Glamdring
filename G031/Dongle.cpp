@@ -20,8 +20,9 @@ GPIO::pin LED(GPIO::PORTA, 0);
 Procesador procesador;
 
 extern "C" {
-void EXTI4_15_IRQHandler(void) {
-    if(nrf_ptr != nullptr)
+void EXTI4_15_IRQHandler(void)
+{
+    if (nrf_ptr != nullptr)
         nrf_ptr->irq_handler();
     EXTI::clear_pending_interrupt(4);
     NVIC_ClearPendingIRQ(EXTI4_15_IRQn);
@@ -32,8 +33,7 @@ void EXTI4_15_IRQHandler(void) {
 Buffer uart1_buf;
 void callback_uart1()
 {
-    if(g_uart1->available())
-    {
+    if (g_uart1->available()) {
         const uint8_t b = g_uart1->read_byte();
         uart1_buf.escribir(b);
     }
@@ -42,8 +42,7 @@ void callback_uart1()
 Buffer uart2_buf;
 void callback_uart2()
 {
-    if(g_uart2->available())
-    {
+    if (g_uart2->available()) {
         const uint8_t b = g_uart2->read_byte();
         uart2_buf.escribir(b);
     }
@@ -51,17 +50,14 @@ void callback_uart2()
 
 void manage_gpio(uint8_t b)
 {
-    if(b == 't') {
+    if (b == 't') {
         encender_pin_durante(tim16_ptr, LED, 1000);
-    }
-    else if(b == '0') {
+    } else if (b == '0') {
         LED.reset_output();
-    }
-    else if(b == '1') {
+    } else if (b == '1') {
         LED.set_output();
     }
 }
-
 
 int main(void)
 {
@@ -106,12 +102,11 @@ int main(void)
     radio.tx_ds_callback = callback_nrf24_tx_ds;
     radio.max_rt_callback = callback_nrf24_max_rt;
     radio_irq.pin_for_interrupt(EXTI4_15_IRQn);
-   
+
     general_timer t16(GeneralTimer::TIM16);
     tim16_ptr = &t16;
 
-    while(true)
-    {
+    while (true) {
         if (uart1_buf.available()) {
             uint8_t b = uart1_buf.leer();
             *g_uart1 << b;
@@ -129,33 +124,33 @@ int main(void)
 
 void inicializacion()
 {
-  FLASH::prefetch_buffer_enable();
-  RCC::enable_SYSCFG_clock();
-  RCC::enable_power_clock();
-  PWR::configurar_regulador(PWR::Voltaje::Range_1);
+    FLASH::prefetch_buffer_enable();
+    RCC::enable_SYSCFG_clock();
+    RCC::enable_power_clock();
+    PWR::configurar_regulador(PWR::Voltaje::Range_1);
 }
 
 void configurar_relojes()
 {
-  RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P16);
-  RCC::configurar_prescaler_AHB(RCC::AHB_Prescaler::P1);
+    RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P16);
+    RCC::configurar_prescaler_AHB(RCC::AHB_Prescaler::P1);
 
-  if(!RCC::is_HSI_ready())
-    error();
+    if (!RCC::is_HSI_ready())
+        error();
 
-  RCC::seleccionar_SYSCLK(RCC::SystemClockSwitch::HSISYS);
-  RCC::SystemClockSwitch fuente_sysclk = RCC::status_SYSCLK();
+    RCC::seleccionar_SYSCLK(RCC::SystemClockSwitch::HSISYS);
+    RCC::SystemClockSwitch fuente_sysclk = RCC::status_SYSCLK();
 
-  if(fuente_sysclk != RCC::SystemClockSwitch::HSISYS)
-    error();
+    if (fuente_sysclk != RCC::SystemClockSwitch::HSISYS)
+        error();
 
-  RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P1);
-  RCC::seleccionar_reloj_USART2(RCC::RelojesUsart::PCLK);
+    RCC::configurar_prescaler_APB(RCC::APB_Prescaler::P1);
+    RCC::seleccionar_reloj_USART2(RCC::RelojesUsart::PCLK);
 }
-
 
 void error(void)
 {
-  /* User can add his own implementation to report the HAL error return state */
-  while (1);
+    /* User can add his own implementation to report the HAL error return state */
+    while (1)
+        ;
 }

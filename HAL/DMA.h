@@ -38,6 +38,7 @@
  *
  * */
 
-namespace DMA {
+namespace DMA
+{
 
 }

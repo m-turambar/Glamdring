@@ -36,83 +36,82 @@
 class SPI
 {
 public:
-  enum class Peripheral {
-    SPI1_I2S1 = 0x40013000,
-    SPI2 = 0x40003800
-  };
+    enum class Peripheral {
+        SPI1_I2S1 = 0x40013000,
+        SPI2 = 0x40003800
+    };
 
-  /** Entre cuánto se va a dividir PCLK para nuestro reloj */
-  enum class PCLK_div {
-    d2 = 0,
-    d4 = 1,
-    d8 = 2,
-    d16 = 3,
-    d32 = 4,
-    d64 = 5,
-    d128 = 6,
-    d256 = 7,
-  };
+    /** Entre cuánto se va a dividir PCLK para nuestro reloj */
+    enum class PCLK_div {
+        d2 = 0,
+        d4 = 1,
+        d8 = 2,
+        d16 = 3,
+        d32 = 4,
+        d64 = 5,
+        d128 = 6,
+        d256 = 7,
+    };
 
-  enum class Role {
-    Slave = 0,
-    Master = 1
-  };
+    enum class Role {
+        Slave = 0,
+        Master = 1
+    };
 
-  /** CPOL y CPHA. Polaridad y Fase del reloj. Idle low/high, rising/falling edge*/
-  enum class Mode {
-    LowRising = 0,
-    LowFalling = 1,
-    HighRising = 2,
-    HighFalling = 3
-  };
+    /** CPOL y CPHA. Polaridad y Fase del reloj. Idle low/high, rising/falling edge*/
+    enum class Mode {
+        LowRising = 0,
+        LowFalling = 1,
+        HighRising = 2,
+        HighFalling = 3
+    };
 
+    constexpr SPI(SPI::Peripheral p)
+        : CR1(static_cast<size_t>(p))
+        , CR2(static_cast<size_t>(p) + 0x04)
+        , SR(static_cast<size_t>(p) + 0x08)
+        , DR(static_cast<size_t>(p) + 0x0C)
+        , CRCPR(static_cast<size_t>(p) + 0x10)
+        , RXCRCR(static_cast<size_t>(p) + 0x14)
+        , TXCRCR(static_cast<size_t>(p) + 0x18)
+        , I2SCFGR(static_cast<size_t>(p) + 0x1C)
+        , I2SPR(static_cast<size_t>(p) + 0x20)
+        , peripheral(p)
+    {
+        enable_clock();
+    }
 
-  constexpr SPI(SPI::Peripheral p):
-      CR1(static_cast<size_t>(p)),
-      CR2(static_cast<size_t>(p) + 0x04),
-      SR(static_cast<size_t>(p) + 0x08),
-      DR(static_cast<size_t>(p) + 0x0C),
-      CRCPR(static_cast<size_t>(p) + 0x10),
-      RXCRCR(static_cast<size_t>(p) + 0x14),
-      TXCRCR(static_cast<size_t>(p) + 0x18),
-      I2SCFGR(static_cast<size_t>(p) + 0x1C),
-      I2SPR(static_cast<size_t>(p) + 0x20),
-      peripheral(p)
-  {
-    enable_clock();
-  }
+    void inicializar();
+    void config_baudrate(PCLK_div div);
+    void config_role(Role m);
+    uint8_t escribir(uint8_t msg);
+    void init_gpios() const;
+    void config_LSB_first();
+    void config_mode(Mode m); // solo necesario si el dispositivo es "raro".
+    void config_software_slave_management();
 
-  void inicializar();
-  void config_baudrate(PCLK_div div);
-  void config_role(Role m);
-  uint8_t escribir(uint8_t msg);
-  void init_gpios() const;
-  void config_LSB_first();
-  void config_mode(Mode m); //solo necesario si el dispositivo es "raro".
-  void config_software_slave_management();
+    /** usar con números entre 3 y 15.
+     * El tamaño a configurar es uno más que el valor en el registro.
+     * e.g. config_data_size(8) -> 8-bit transfers -> se escribe 7 al registro en la impl. */
+    void config_data_size(uint8_t size);
 
-  /** usar con números entre 3 y 15.
-   * El tamaño a configurar es uno más que el valor en el registro.
-   * e.g. config_data_size(8) -> 8-bit transfers -> se escribe 7 al registro en la impl. */
-  void config_data_size(uint8_t size);
-
-  void habilitar_interrupciones_rx();
+    void habilitar_interrupciones_rx();
 
 private:
-  void enable_clock();
-  void enable();
-  void disable();
+    void enable_clock();
+    void enable();
+    void disable();
 
-  const reg16 CR1;
-  const reg16 CR2;
-  const reg16 SR;
-  const reg16 DR;
-  const reg16 CRCPR;
-  const reg16 RXCRCR;
-  const reg16 TXCRCR;
-  const reg16 I2SCFGR;
-  const reg16 I2SPR;
-  const Peripheral peripheral;
+    const reg16 CR1;
+    const reg16 CR2;
+    const reg16 SR;
+    const reg16 DR;
+    const reg16 CRCPR;
+    const reg16 RXCRCR;
+    const reg16 TXCRCR;
+    const reg16 I2SCFGR;
+    const reg16 I2SPR;
+    const Peripheral peripheral;
 };
 
-#endif //GLAMDRING_SPI_H
+#endif // GLAMDRING_SPI_H

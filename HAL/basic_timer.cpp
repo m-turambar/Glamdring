@@ -20,45 +20,44 @@ void TIM7_IRQHandler(void)
 {
     if (tim7_ptr->callback)
         tim7_ptr->callback(tim7_ptr->callback_data);
-     NVIC_ClearPendingIRQ(TIM7_IRQn);
+    NVIC_ClearPendingIRQ(TIM7_IRQn);
     memoria(tim7_ptr->SR) &= (~(1u)); // cleareamos el update interrupt flag
 }
 
-namespace CR1_Flags {
-    const flag UIFRE_MAP(11);
-    const flag ARPE(7);
-    const flag OPM(3);
-    const flag URS(2);
-    const flag UDIS(1);
-    const flag CEN(0);
-};
+namespace CR1_Flags
+{
+const flag UIFRE_MAP(11);
+const flag ARPE(7);
+const flag OPM(3);
+const flag URS(2);
+const flag UDIS(1);
+const flag CEN(0);
+}; // namespace CR1_Flags
 
 basic_timer::basic_timer(const BasicTimer tim)
     : peripheral(tim)
     , base(static_cast<size_t>(tim))
     , CR1(base)
-    , CR2(base+4)
-    , DIER(base+0xC)
-    , SR(base+0x10)
-    , EGR(base+0x14)
-    , CNT(base+0x24)
-    , PSC(base+0x28)
-    , ARR(base+0x2C)
+    , CR2(base + 4)
+    , DIER(base + 0xC)
+    , SR(base + 0x10)
+    , EGR(base + 0x14)
+    , CNT(base + 0x24)
+    , PSC(base + 0x28)
+    , ARR(base + 0x2C)
 {
-    if (peripheral==BasicTimer::TIM6) {
+    if (peripheral == BasicTimer::TIM6) {
         tim6_ptr = this;
         RCC::enable_TIM6_clock();
-    }
-    else if (peripheral==BasicTimer::TIM7) {
+    } else if (peripheral == BasicTimer::TIM7) {
         tim7_ptr = this;
         RCC::enable_TIM7_clock();
     }
 }
 
-
 void basic_timer::set_prescaler(const uint16_t prescaler) const
 {
-    const bitfield PSC_bf(16,0,prescaler);
+    const bitfield PSC_bf(16, 0, prescaler);
     PSC.write(PSC_bf);
 }
 
@@ -71,7 +70,7 @@ void basic_timer::set_autoreload(const uint16_t autoreload) const
 void basic_timer::configure_mode(const Mode mode)
 {
     const flag OPM(3);
-    if(mode == Mode::OnePulseMode)
+    if (mode == Mode::OnePulseMode)
         CR1.set(OPM);
     else
         CR1.reset(OPM);
@@ -86,8 +85,7 @@ void basic_timer::configure_master_mode(const MasterMode& mode)
 void basic_timer::enable_interrupt(void (*callback_fn)(void* data), const uint8_t isr_priority)
 {
     callback = callback_fn;
-    const IRQn_Type mIRQn = (peripheral==BasicTimer::TIM6 ? TIM6_IRQn :
-                            (peripheral==BasicTimer::TIM7 ? TIM7_IRQn : HardFault_IRQn));
+    const IRQn_Type mIRQn = (peripheral == BasicTimer::TIM6 ? TIM6_IRQn : (peripheral == BasicTimer::TIM7 ? TIM7_IRQn : HardFault_IRQn));
     const flag UIE(0);
     DIER.set(UIE);
     NVIC_SetPriority(mIRQn, isr_priority);
@@ -110,25 +108,26 @@ void basic_timer::stop(void) const
 /** válido de 1us* a 65ms */
 void basic_timer::configurar_periodo_us(uint16_t periodo)
 {
-    set_prescaler(15); //para que cada "tick" sea de 1us
-    set_autoreload(periodo-1);
+    set_prescaler(15); // para que cada "tick" sea de 1us
+    set_autoreload(periodo - 1);
 }
 
 /** válido de 1ms a 65s */
 void basic_timer::configurar_periodo_ms(uint16_t periodo)
 {
-    //memoria(PSC) = 7999; // para que cada "tick" sea de 1ms, divides 8MHz entre 8000
+    // memoria(PSC) = 7999; // para que cada "tick" sea de 1ms, divides 8MHz entre 8000
     set_prescaler(15999); // O tal vez, sí es de 16MHz? divides 16MHz entre 16000. PWM y periodic son diferentes? no.
-    set_autoreload(periodo-1);
+    set_autoreload(periodo - 1);
 }
 
-void basic_timer::generate_update() const {
+void basic_timer::generate_update() const
+{
     const flag UG(0);
     EGR.set(UG);
 }
 
-void basic_timer::clear_update() const {
+void basic_timer::clear_update() const
+{
     const flag UIF(0);
     SR.reset(UIF);
 }
-

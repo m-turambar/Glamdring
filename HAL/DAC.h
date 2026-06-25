@@ -30,7 +30,8 @@ struct DAC
         ExternalLine9,
         Software
     };
-    struct Config {
+    struct Config
+    {
         Canal canal;
         uint8_t amplitud; // Usa solo 4 de los 8 bits, bitfield MAMP
         Wave wave;
@@ -49,7 +50,6 @@ struct DAC
     void trigger();
     void write_12R(uint16_t data);
 };
-
 
 // El DAC funciona particularmente bien con los timers TIM6 y TIM7.
 // Si configuras CR2 en estos timers, puedes triggerear el DAC sin necesidad de interrupciones. :)

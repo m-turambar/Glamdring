@@ -13,30 +13,31 @@ general_timer* tim17_ptr = nullptr;
 /** Las flags para habilitar cada interrupción en DIER tienen el mismo offset que para leer su estado en SR.
  * Excepto por la OverCapture interrupt (CC1OF), que no he usado aún. */
 
-static const flag UIF(0); // Update Interrupt
+static const flag UIF(0);   // Update Interrupt
 static const flag CC1IF(1); // Capture/Compare Interrupt
 static const flag COMIF(5); // COM Interrupt
-static const flag BIF(7); // Break Interrupt
+static const flag BIF(7);   // Break Interrupt
 // static const flag CC1OF(9); // Break Interrupt
 
-void general_timer::callback_selector() {
+void general_timer::callback_selector()
+{
     if (SR.is_set(UIF)) {
-        if(callback_update)
+        if (callback_update)
             callback_update(callback_data);
         SR.reset(UIF);
     }
     if (SR.is_set(CC1IF)) {
-        if(callback_capture_compare)
+        if (callback_capture_compare)
             callback_capture_compare(callback_data);
         SR.reset(CC1IF);
     }
     if (SR.is_set(COMIF)) {
-        if(callback_COM)
+        if (callback_COM)
             callback_COM(callback_data);
         SR.reset(COMIF);
     }
     if (SR.is_set(BIF)) {
-        if(callback_break)
+        if (callback_break)
             callback_break(callback_data);
         SR.reset(BIF);
     }
@@ -45,70 +46,68 @@ void general_timer::callback_selector() {
 #if defined(STM32G031xx) || defined(STM32F767xx)
 void TIM2_IRQHandler(void)
 {
-  tim2_ptr->callback_selector();
-  NVIC_ClearPendingIRQ(TIM2_IRQn);
+    tim2_ptr->callback_selector();
+    NVIC_ClearPendingIRQ(TIM2_IRQn);
 }
 #endif
 
 void TIM15_IRQHandler(void)
 {
-  tim15_ptr->callback_selector();
-  NVIC_ClearPendingIRQ(TIM15_IRQn);
+    tim15_ptr->callback_selector();
+    NVIC_ClearPendingIRQ(TIM15_IRQn);
 }
 
 void TIM16_IRQHandler(void)
 {
-  tim16_ptr->callback_selector();
-  NVIC_ClearPendingIRQ(TIM16_IRQn);
+    tim16_ptr->callback_selector();
+    NVIC_ClearPendingIRQ(TIM16_IRQn);
 }
 
 void TIM17_IRQHandler(void)
 {
-  tim17_ptr->callback_selector();
-  NVIC_ClearPendingIRQ(TIM17_IRQn);
+    tim17_ptr->callback_selector();
+    NVIC_ClearPendingIRQ(TIM17_IRQn);
 }
 
 general_timer::general_timer(const GeneralTimer tim)
     : peripheral(tim)
     , base(static_cast<size_t>(tim))
     , CR1(base)
-    , CR2(base+4)
-    , DIER(base+0xC)
-    , SR(base+0x10)
-    , EGR(base+0x14)
-    , CNT(base+0x24)
-    , PSC(base+0x28)
-    , ARR(base+0x2C)
-      /*** general timer ***/
-    , CCMR1(base+0x18)
-    , CCMR2(base+0x1C)
-    , CCER(base+0x20)
-    , CCR1(base+0x34)
-    , CCR2(base+0x38)
-    , CCR3(base+0x3C)
-    , CCR4(base+0x40)
-    , BDTR(base+0x44)
+    , CR2(base + 4)
+    , DIER(base + 0xC)
+    , SR(base + 0x10)
+    , EGR(base + 0x14)
+    , CNT(base + 0x24)
+    , PSC(base + 0x28)
+    , ARR(base + 0x2C)
+    /*** general timer ***/
+    , CCMR1(base + 0x18)
+    , CCMR2(base + 0x1C)
+    , CCER(base + 0x20)
+    , CCR1(base + 0x34)
+    , CCR2(base + 0x38)
+    , CCR3(base + 0x3C)
+    , CCR4(base + 0x40)
+    , BDTR(base + 0x44)
 {
     /* Habilitamos los relojes de los periféricos y configuramos los ptrs para las interrupciones */
     /** TODO: move this to RCC */
     if (peripheral == GeneralTimer::TIM15) {
         tim15_ptr = this;
         RCC::enable_TIM15_clock();
-    }
-    else if (peripheral == GeneralTimer::TIM16) {
+    } else if (peripheral == GeneralTimer::TIM16) {
         tim16_ptr = this;
         RCC::enable_TIM16_clock();
-    }
-    else if (peripheral == GeneralTimer::TIM17) {
+    } else if (peripheral == GeneralTimer::TIM17) {
         tim17_ptr = this;
         RCC::enable_TIM17_clock();
     }
-    #if defined(STM32G031xx) || defined(STM32F767xx)
-    else if (peripheral==GeneralTimer::TIM2) {
+#if defined(STM32G031xx) || defined(STM32F767xx)
+    else if (peripheral == GeneralTimer::TIM2) {
         tim2_ptr = this;
         RCC::enable_TIM2_clock();
     }
-    #endif
+#endif
 }
 
 void general_timer::set_prescaler(const uint16_t prescaler) const
@@ -122,7 +121,7 @@ void general_timer::set_autoreload(const uint16_t autoreload) const
 }
 
 void general_timer::configure(const Mode mode, uint8_t auto_reload_preload, uint8_t update_request_source,
-    const uint8_t update_disable, const uint8_t status_bit_remap) const
+                              const uint8_t update_disable, const uint8_t status_bit_remap) const
 {
     bitfield UIFRE_MAP(1, 11);
     bitfield ARPE(1, 7);
@@ -131,7 +130,7 @@ void general_timer::configure(const Mode mode, uint8_t auto_reload_preload, uint
     bitfield UDIS(1, 1);
     bitfield CEN(1, 0);
     size_t cr1 = UIFRE_MAP(status_bit_remap) | ARPE(auto_reload_preload) | OPM(static_cast<uint8_t>(mode)) | URS(update_request_source) |
-        UDIS(update_disable) | CEN(0);
+                 UDIS(update_disable) | CEN(0);
     memoria(CR1) |= cr1;
 }
 
@@ -140,35 +139,35 @@ void general_timer::enable_interrupt(void (*callback_fn)(void*), InterruptType i
     // Estas dos acciones parecen ser necesarias para evitar disparo al inicio de la interrupción
     generate_update();
     clear_update();
-    
-    switch(it) {
-        case InterruptType::UIE:
+
+    switch (it) {
+    case InterruptType::UIE:
         callback_update = callback_fn;
         break;
-        case InterruptType::CCIE:
+    case InterruptType::CCIE:
         callback_capture_compare = callback_fn;
         break;
-        case InterruptType::COMIE:
+    case InterruptType::COMIE:
         callback_COM = callback_fn;
         break;
-        case InterruptType::BIE:
+    case InterruptType::BIE:
         callback_break = callback_fn;
     }
 
     IRQn_Type mIRQn = HardFault_IRQn;
     switch (peripheral) {
-    #if defined(STM32G031xx) || defined(STM32F767xx)
-        case GeneralTimer::TIM2:
+#if defined(STM32G031xx) || defined(STM32F767xx)
+    case GeneralTimer::TIM2:
         mIRQn = TIM2_IRQn;
-        break;//TODO hay que arreglar esto
-    #endif
-        case GeneralTimer::TIM15:
+        break; // TODO hay que arreglar esto
+#endif
+    case GeneralTimer::TIM15:
         mIRQn = TIM15_IRQn;
         break;
-        case GeneralTimer::TIM16:
+    case GeneralTimer::TIM16:
         mIRQn = TIM16_IRQn;
         break;
-        case GeneralTimer::TIM17:
+    case GeneralTimer::TIM17:
         mIRQn = TIM17_IRQn;
         break;
     }
@@ -192,8 +191,8 @@ void general_timer::enable_output_compare(const uint8_t canal) const
 
     const uint8_t offset_canal = ((canal % 2) == 0) ? 8 : 0; // los canales nones no llevan offset
     /** Configuramos el registro CCMRx. Vamos a indicar que es una salida, y que es modo PWM. Hay 7 modos. */
-    const bitfield CCxS(2,0 + offset_canal, 0); /** Nos aseguramos de que valga 0, para ser salida */
-    const bitfield OCxM(3,4 + offset_canal, 6); /** Valor 6 para este bitfield es PWM modo 1. */
+    const bitfield CCxS(2, 0 + offset_canal, 0); /** Nos aseguramos de que valga 0, para ser salida */
+    const bitfield OCxM(3, 4 + offset_canal, 6); /** Valor 6 para este bitfield es PWM modo 1. */
     CCMRx.write(CCxS);
     CCMRx.write(OCxM);
 
@@ -217,20 +216,19 @@ void general_timer::enable_output_compare(const uint8_t canal) const
 
     /** Finalmente, encendemos el modo OC. Otras opciones en este registro modifican la polaridad,
      * o nos permiten encender el canal negado. */
-    const flag CCxE((canal - 1)*4); // esa pequeña formula es para generalizar a varios canales
+    const flag CCxE((canal - 1) * 4); // esa pequeña formula es para generalizar a varios canales
     CCER.set(CCxE);
 }
 
-void general_timer::set_output_compare_microsecond_resolution(uint16_t resolution) {
+void general_timer::set_output_compare_microsecond_resolution(uint16_t resolution)
+{
     output_compare_microsecond_resolution = resolution;
 }
 
-void general_timer::set_microseconds_pulse_high(const uint16_t microseconds, const uint8_t canal) {
+void general_timer::set_microseconds_pulse_high(const uint16_t microseconds, const uint8_t canal)
+{
     const registro& CCRx =
-        (canal == 1 ? CCR1 :
-        (canal == 2 ? CCR2 :
-            (canal == 3 ? CCR3 :
-            (canal == 4 ? CCR4 : CCR1))));
+        (canal == 1 ? CCR1 : (canal == 2 ? CCR2 : (canal == 3 ? CCR3 : (canal == 4 ? CCR4 : CCR1))));
     /** Configuramos el umbral de conteo para PWM. Osea a los cuantos ticks el pulso se va a bajar (en modo 1). */
     memoria(CCRx) = (microseconds / output_compare_microsecond_resolution);
 }
@@ -241,24 +239,25 @@ void general_timer::set_microseconds_pulse_high(const uint16_t microseconds, con
  *    CCER->CCxP = 0 o 1    Captura en Rising/Falling edge
  *    Para ver el comportamiento del filtro, consulta el datasheet.
  */
-void general_timer::enable_input_capture(bool rising_edge, uint16_t microsegundos_por_conteo, uint8_t filtro, const uint8_t canal) const {
-  /** Configuramos el registro CCMR1. Vamos a indicar que es una entrada.
-   * Parece que esto debe ocurrir antes de escribir al CCER.
-   * De otro modo, CCMR1 no se estaba actualizando. */
+void general_timer::enable_input_capture(bool rising_edge, uint16_t microsegundos_por_conteo, uint8_t filtro, const uint8_t canal) const
+{
+    /** Configuramos el registro CCMR1. Vamos a indicar que es una entrada.
+     * Parece que esto debe ocurrir antes de escribir al CCER.
+     * De otro modo, CCMR1 no se estaba actualizando. */
     const registro& CCMRx = (canal <= 2 ? CCMR1 : CCMR2);
 
     const uint8_t offset_canal = ((canal % 2) == 0) ? 8 : 0; // los canales nones no llevan offset
-    const bitfield CCxS(2,0 + offset_canal, 1); /** Puede valer 1, 2 o 3. Qué son TI1, TI2 y TRC? */
+    const bitfield CCxS(2, 0 + offset_canal, 1);             /** Puede valer 1, 2 o 3. Qué son TI1, TI2 y TRC? */
     CCMRx.write(CCxS);
 
     const bitfield ICxF(4, 4 + offset_canal, filtro & 0x0F); // el BW AND es para solo tomar los 4 bits menores.
     CCMRx.write(ICxF);
 
-    const flag CCxE((canal - 1)*4);
+    const flag CCxE((canal - 1) * 4);
     CCMRx.set(CCxE);
 
-    const flag CCxP((canal - 1)*4 + 1);
-    if(!rising_edge)
+    const flag CCxP((canal - 1) * 4 + 1);
+    if (!rising_edge)
         CCER.set(CCxP);
     else
         CCER.reset(CCxP);
@@ -274,9 +273,8 @@ void general_timer::enable_input_capture(bool rising_edge, uint16_t microsegundo
     /** Para obtener un conteo de 1us (actualización de CNT), prescaler debe valer 15. (16 MHz entre 16 es 1 MHz).
      * Para que cada conteo valga 1ms, debe valer 15999.
      * Para que cada conteo valga 1 segundo? no alcanza. */
-    set_prescaler(microsegundos_por_conteo*16 - 1);
+    set_prescaler(microsegundos_por_conteo * 16 - 1);
 }
-
 
 /** Notas 06/Jul/2021 - 27/Jul/2022
  * Para configurar una señal PWM, se usan tres registros:
@@ -285,7 +283,6 @@ void general_timer::enable_input_capture(bool rising_edge, uint16_t microsegundo
  * CCRx (comparador)
  * */
 
-
 void general_timer::set_microsecond_period(uint16_t periodo)
 {
     // 16 porque la frecuencia base es 16MHz. Si aumentas la frecuencia de reloj esto tiene que cambiar
@@ -293,27 +290,32 @@ void general_timer::set_microsecond_period(uint16_t periodo)
     set_autoreload((periodo / output_compare_microsecond_resolution) - 1);
 }
 
-void general_timer::generate_update() const {
+void general_timer::generate_update() const
+{
     const flag UG(0);
     EGR.set(UG);
 }
 
-void general_timer::clear_update() const {
+void general_timer::clear_update() const
+{
     const flag UIF(0);
     SR.reset(UIF);
 }
 
-void general_timer::set_capture_compare_polarity_rising() const {
+void general_timer::set_capture_compare_polarity_rising() const
+{
     const flag CC1P(1);
     CCER.reset(CC1P);
 }
 
-void general_timer::set_capture_compare_polarity_falling() const {
+void general_timer::set_capture_compare_polarity_falling() const
+{
     const flag CC1P(1);
     CCER.set(CC1P);
 }
 
-void general_timer::configurar_periodo_ms(uint16_t milisegundos) {
+void general_timer::configurar_periodo_ms(uint16_t milisegundos)
+{
     set_prescaler(15999);
-    set_autoreload(milisegundos-1);
+    set_autoreload(milisegundos - 1);
 }

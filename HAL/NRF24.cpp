@@ -4,7 +4,7 @@
 #include <NVIC.h>
 #include <cstring>
 
-NRF24* nrf_ptr{nullptr};
+NRF24* nrf_ptr { nullptr };
 
 /** Las tres banderas de interrupción que se pueden leer/clearear desde el registro STATUS */
 constexpr uint8_t RX_DR = (1 << 6);
@@ -12,7 +12,7 @@ constexpr uint8_t TX_DS = (1 << 5);
 constexpr uint8_t MAX_RT = (1 << 4);
 
 enum class Commands : uint8_t {
-    R_REGISTER = 0b00000000, //orear con un registro
+    R_REGISTER = 0b00000000, // orear con un registro
     W_REGISTER = 0b00100000,
     R_RX_PAYLOAD = 0b01100001,
     W_TX_PAYLOAD = 0b10100000,
@@ -25,16 +25,14 @@ enum class Commands : uint8_t {
     NOP = 0b11111111,
 };
 
-
-
 NRF24::NRF24(SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin)
     : spi(spi_arg)
     , CEN_pin(CEN_pin)
     , SS_pin(SS_pin)
 {
-    CEN_pin.salida(); //considerar hacer por hardware
+    CEN_pin.salida(); // considerar hacer por hardware
     SS_pin.salida();
-    SS_pin.set_output(); //disable SS
+    SS_pin.set_output(); // disable SS
     apagar();
     flush_rx_fifo();
     flush_tx_fifo();
@@ -44,8 +42,6 @@ NRF24::NRF24(SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin)
     config_default();
     nrf_ptr = this;
 }
-
-
 
 void NRF24::transmitir_byte(const uint8_t b) const
 {
@@ -67,10 +63,10 @@ uint8_t NRF24::leer_rx() const
 void NRF24::encender(NRF24::Modo modo)
 {
     auto config = leer_registro(Registro::Config);
-    config = (config & 0xFE) | 2u | static_cast<uint8_t>(modo); //PWR_UP y modo. El bit menos significativo es el modo.
+    config = (config & 0xFE) | 2u | static_cast<uint8_t>(modo); // PWR_UP y modo. El bit menos significativo es el modo.
     escribir_registro(Registro::Config, config);
     modo_cached = modo;
-    CEN_pin.set_output(); //turn on
+    CEN_pin.set_output(); // turn on
 }
 
 void NRF24::apagar()
@@ -80,7 +76,8 @@ void NRF24::apagar()
     escribir_registro(Registro::Config, config);
 }
 
-NRF24::Modo NRF24::obtener_modo() const {
+NRF24::Modo NRF24::obtener_modo() const
+{
     auto config = leer_registro(Registro::Config);
     return (config % 2 == 0) ? NRF24::Modo::TX : NRF24::Modo::RX;
 }
@@ -109,68 +106,68 @@ void NRF24::escribir_registro(NRF24::Registro reg, uint8_t val) const
  * Si usas uno de 8 bits trabajamos con unidades de 8 pulsos de reloj*/
 uint8_t NRF24::leer_registro(NRF24::Registro reg) const
 {
-  SS_pin.reset_output();
-  /** Automáticamente se envía el status register del NRF24, por eso vamos a descartar esta lectura */
-  (void)spi.escribir(static_cast<uint8_t>(reg));
-  /** Escribimos lo que sea. El NRF24 nos mandará el contenido del registro que pedimos anteriormente. */
-  volatile uint8_t valor = spi.escribir(0u);
-  SS_pin.set_output();
-  return valor;
+    SS_pin.reset_output();
+    /** Automáticamente se envía el status register del NRF24, por eso vamos a descartar esta lectura */
+    (void)spi.escribir(static_cast<uint8_t>(reg));
+    /** Escribimos lo que sea. El NRF24 nos mandará el contenido del registro que pedimos anteriormente. */
+    volatile uint8_t valor = spi.escribir(0u);
+    SS_pin.set_output();
+    return valor;
 }
 
 void NRF24::config_default() const
 {
-  const uint8_t default_cfg = (1 << 3); // EN_CRC
-  escribir_registro(Registro::Config, default_cfg);
+    const uint8_t default_cfg = (1 << 3); // EN_CRC
+    escribir_registro(Registro::Config, default_cfg);
 
-  const uint8_t setup_retr = 8 + (1 << 4); // 8 intentos de transmitir, 500uS entre cada intento
-  escribir_registro(Registro::SETUP_RETR, setup_retr);
+    const uint8_t setup_retr = 8 + (1 << 4); // 8 intentos de transmitir, 500uS entre cada intento
+    escribir_registro(Registro::SETUP_RETR, setup_retr);
 
-  config_tx_addr(static_cast<uint64_t>(NRF24::DefaultAddress::P0));
+    config_tx_addr(static_cast<uint64_t>(NRF24::DefaultAddress::P0));
 }
 
 void NRF24::descartar_fifo()
 {
-  flush_tx_fifo();
-  idx_enviar = idx_llenar;
-  transmitiendo = false;
+    flush_tx_fifo();
+    idx_enviar = idx_llenar;
+    transmitiendo = false;
 }
 
 uint8_t NRF24::flush_tx_fifo() const
 {
-  SS_pin.reset_output();
-  uint8_t status = spi.escribir(static_cast<uint8_t>(Commands::FLUSH_TX));
-  SS_pin.set_output();
-  return status;
+    SS_pin.reset_output();
+    uint8_t status = spi.escribir(static_cast<uint8_t>(Commands::FLUSH_TX));
+    SS_pin.set_output();
+    return status;
 }
 
 uint8_t NRF24::flush_rx_fifo() const
 {
-  SS_pin.reset_output();
-  uint8_t status = spi.escribir(static_cast<uint8_t>(Commands::FLUSH_RX));
-  SS_pin.set_output();
-  return status;
+    SS_pin.reset_output();
+    uint8_t status = spi.escribir(static_cast<uint8_t>(Commands::FLUSH_RX));
+    SS_pin.set_output();
+    return status;
 }
-
 
 void NRF24::config_payload_widths(uint8_t width) const
 {
-  width = width & 0b11111;
-  escribir_registro(Registro::RX_PW_P0, width);
-  escribir_registro(Registro::RX_PW_P1, width);
-  escribir_registro(Registro::RX_PW_P2, width);
-  escribir_registro(Registro::RX_PW_P3, width);
-  escribir_registro(Registro::RX_PW_P4, width);
-  escribir_registro(Registro::RX_PW_P5, width);
+    width = width & 0b11111;
+    escribir_registro(Registro::RX_PW_P0, width);
+    escribir_registro(Registro::RX_PW_P1, width);
+    escribir_registro(Registro::RX_PW_P2, width);
+    escribir_registro(Registro::RX_PW_P3, width);
+    escribir_registro(Registro::RX_PW_P4, width);
+    escribir_registro(Registro::RX_PW_P5, width);
 }
 
 /** La direccion RX_ADDR_P0 debe ser igual a la TX_ADDR para tener ACKs. */
-void NRF24::config_tx_addr(uint64_t addr) const {
+void NRF24::config_tx_addr(uint64_t addr) const
+{
     auto fn = [&](Registro registro) {
         SS_pin.reset_output();
         (void)spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(registro));
         for (int i = 0; i < 5; ++i) {
-            (void)spi.escribir((addr >> 8*i) & 0xFF);
+            (void)spi.escribir((addr >> 8 * i) & 0xFF);
         }
         SS_pin.set_output();
     };
@@ -178,89 +175,92 @@ void NRF24::config_tx_addr(uint64_t addr) const {
     fn(Registro::RX_ADDR_P0);
 }
 
-uint64_t NRF24::leer_addr_reg(Registro addr_reg) const {
-  uint64_t res = 0;
-  SS_pin.reset_output();
-  (void)spi.escribir(static_cast<uint8_t>(Commands::R_REGISTER) | static_cast<uint8_t>(addr_reg));
-  for (int i = 0; i < 5; ++i) {
-    uint8_t byte = spi.escribir(0);
-    res = res << 8;
-    res += byte;
-  }
-  SS_pin.set_output();
-  return res;
+uint64_t NRF24::leer_addr_reg(Registro addr_reg) const
+{
+    uint64_t res = 0;
+    SS_pin.reset_output();
+    (void)spi.escribir(static_cast<uint8_t>(Commands::R_REGISTER) | static_cast<uint8_t>(addr_reg));
+    for (int i = 0; i < 5; ++i) {
+        uint8_t byte = spi.escribir(0);
+        res = res << 8;
+        res += byte;
+    }
+    SS_pin.set_output();
+    return res;
 }
 
 void NRF24::clear_all_interrupts() const
 {
-  SS_pin.reset_output();
-  uint8_t status = leer_registro(Registro::Status);
-  status |= MAX_RT;
-  status |= TX_DS;
-  status |= RX_DR;
-  escribir_registro(Registro::Status, status);
-  SS_pin.set_output();
+    SS_pin.reset_output();
+    uint8_t status = leer_registro(Registro::Status);
+    status |= MAX_RT;
+    status |= TX_DS;
+    status |= RX_DR;
+    escribir_registro(Registro::Status, status);
+    SS_pin.set_output();
 }
 
 /** Este callback lo pondremos dentro de la interrupción del pin.
  * El pin del NRF24 interrumpirá cuando cualquiera de estas condiciones se cumpla,
  * siempre y cuando estén habilitadas en CONFIG.
  * El loop de lectura de la RX_FIFO debe ocurrir en el rx_dr_callback(). */
-void NRF24::irq_handler() {
-  volatile uint8_t status = leer_registro(Registro::Status);
-  if(status & RX_DR) {
-    if(rx_dr_callback != nullptr) {
-      rx_dr_callback();
-    }
-  }
-
-  if(status & TX_DS) {
-    ++idx_enviar;
-    if(idx_enviar == idx_llenar) { /// si ya transmitimos lo que teníamos que transmitir...
-      transmitiendo = false;
-    }
-    else {
-      transmitir_byte(tx_buf[idx_enviar]);
+void NRF24::irq_handler()
+{
+    volatile uint8_t status = leer_registro(Registro::Status);
+    if (status & RX_DR) {
+        if (rx_dr_callback != nullptr) {
+            rx_dr_callback();
+        }
     }
 
-    if(tx_ds_callback != nullptr) {
-      tx_ds_callback();
-    }
-  }
+    if (status & TX_DS) {
+        ++idx_enviar;
+        if (idx_enviar == idx_llenar) { /// si ya transmitimos lo que teníamos que transmitir...
+            transmitiendo = false;
+        } else {
+            transmitir_byte(tx_buf[idx_enviar]);
+        }
 
-  if(status & MAX_RT) {
-    /// No hay necesidad de iniciar una re-transmisión aquí. Lo que podrías hacer es telemetría y medir errores.
-    if(max_rt_callback != nullptr) {
-      max_rt_callback();
+        if (tx_ds_callback != nullptr) {
+            tx_ds_callback();
+        }
     }
-  }
 
+    if (status & MAX_RT) {
+        /// No hay necesidad de iniciar una re-transmisión aquí. Lo que podrías hacer es telemetría y medir errores.
+        if (max_rt_callback != nullptr) {
+            max_rt_callback();
+        }
+    }
 }
 
-NRF24& NRF24::operator<<(uint8_t byte) {
-  tx_buf[idx_llenar] = byte;
-  ++idx_llenar;
-  if(!transmitiendo) {
-    transmitiendo = true;
-    transmitir_byte(tx_buf[idx_enviar]);
-  }
-  return *this;
-}
-
-NRF24& NRF24::operator<<(char c) {
-  return this->operator<<(static_cast<uint8_t>(c));
-}
-
-NRF24& NRF24::operator<<(char *buffer) {
-  const auto sz = std::strlen(buffer);
-  for(int i = 0; i < sz; ++i) {
-    tx_buf[idx_llenar] = buffer[i];
+NRF24& NRF24::operator<<(uint8_t byte)
+{
+    tx_buf[idx_llenar] = byte;
     ++idx_llenar;
-  }
-  if(transmitiendo == false) {
-    transmitiendo = true;
-    transmitir_byte(tx_buf[idx_enviar]);
-  }
+    if (!transmitiendo) {
+        transmitiendo = true;
+        transmitir_byte(tx_buf[idx_enviar]);
+    }
+    return *this;
+}
 
-  return *this;
+NRF24& NRF24::operator<<(char c)
+{
+    return this->operator<<(static_cast<uint8_t>(c));
+}
+
+NRF24& NRF24::operator<<(char* buffer)
+{
+    const auto sz = std::strlen(buffer);
+    for (int i = 0; i < sz; ++i) {
+        tx_buf[idx_llenar] = buffer[i];
+        ++idx_llenar;
+    }
+    if (transmitiendo == false) {
+        transmitiendo = true;
+        transmitir_byte(tx_buf[idx_enviar]);
+    }
+
+    return *this;
 }

@@ -32,78 +32,76 @@ extern UART* g_uart1;
 class UART
 {
 public:
-  enum class Peripheral {
+    enum class Peripheral {
 #if defined(STM32L475xx) || defined(STM32G070xx) || defined(STM32G031xx)
-    USART1 = 0x40013800,
+        USART1 = 0x40013800,
 #elif defined(STM32F767xx)
-    USART1 = 0x40011000,
+        USART1 = 0x40011000,
 #endif
-    USART2 = 0x40004400,
-    USART3 = 0x40004800,
-    USART4 = 0x40004C00,
-  };
+        USART2 = 0x40004400,
+        USART3 = 0x40004800,
+        USART4 = 0x40004C00,
+    };
 
-  enum class WordLength {
-    Eight = 0x0,
-    Nine = 0x1,
-    Seven = 0x2
-  };
+    enum class WordLength {
+        Eight = 0x0,
+        Nine = 0x1,
+        Seven = 0x2
+    };
 
-  enum class StopBits {
-    One,
-    PointFive,
-    Two,
-    OnePointFive
-  };
+    enum class StopBits {
+        One,
+        PointFive,
+        Two,
+        OnePointFive
+    };
 
-  enum class Parity {
-    None,
-    Odd,
-    Even
-  };
+    enum class Parity {
+        None,
+        Odd,
+        Even
+    };
 
-  UART(const Peripheral peripheral, const size_t baud_arg, const WordLength wlen = WordLength::Eight);
+    UART(const Peripheral peripheral, const size_t baud_arg, const WordLength wlen = WordLength::Eight);
 
-  void enable_clock() const;
+    void enable_clock() const;
 
-  void enable() const;
+    void enable() const;
 
-  const UART& enable_interrupt_rx(void (*callback_arg)(), const uint8_t priority=3);
+    const UART& enable_interrupt_rx(void (*callback_arg)(), const uint8_t priority = 3);
 
-  void cfg_word_length(const WordLength len) const;
+    void cfg_word_length(const WordLength len) const;
 
-  void cfg_stop_bits(const StopBits bits) const;
+    void cfg_stop_bits(const StopBits bits) const;
 
-  void cfg_parity(const Parity parity) const;
+    void cfg_parity(const Parity parity) const;
 
-  void cfg_baud(const size_t baud) const;
+    void cfg_baud(const size_t baud) const;
 
-  const UART& enable_fifo();
+    const UART& enable_fifo();
 
-  void init_gpios();
+    void init_gpios();
 
-  void transmitq(const uint8_t* buffer, size_t sz) const;
+    void transmitq(const uint8_t* buffer, size_t sz) const;
 
-  void receiveq(uint8_t* buffer, size_t sz) const;
+    void receiveq(uint8_t* buffer, size_t sz) const;
 
-  bool available() const;
+    bool available() const;
 
-  /** Implementacion ingenua. Deberias usar DMA siempre que puedas. O interrupciones con una queue de sw. */
-  uint8_t read_byte() const;
+    /** Implementacion ingenua. Deberias usar DMA siempre que puedas. O interrupciones con una queue de sw. */
+    uint8_t read_byte() const;
 
-  void write_byte(const uint8_t b) const;
-  const UART& operator<<(const uint8_t b) const;
-  const UART& operator<<(const char b) const;
-  const UART& operator<<(const uint16_t hw) const;
-  const UART& operator<<(const char* buffer) const;
+    void write_byte(const uint8_t b) const;
+    const UART& operator<<(const uint8_t b) const;
+    const UART& operator<<(const char b) const;
+    const UART& operator<<(const uint16_t hw) const;
+    const UART& operator<<(const char* buffer) const;
 
-  const Peripheral peripheral;
-  void (*callback)() {nullptr};
-  const size_t base, baud;
-  const registro CR1, CR2, CR3, BRR, GTPR, RTOT, RQR, ISR, ICR, RDR, TDR, PRESC;
-  bool con_fifo = false;
-  size_t ore_cnt{0};
+    const Peripheral peripheral;
+    void (*callback)() { nullptr };
+    const size_t base, baud;
+    const registro CR1, CR2, CR3, BRR, GTPR, RTOT, RQR, ISR, ICR, RDR, TDR, PRESC;
+    bool con_fifo = false;
+    size_t ore_cnt { 0 };
 };
-
-
 };
