@@ -35,13 +35,14 @@ NRF24::NRF24(SPI& spi_arg, const GPIO::pin& SS_pin, const GPIO::pin& CEN_pin)
     CEN_pin.salida(); //considerar hacer por hardware
     SS_pin.salida();
     SS_pin.set_output(); //disable SS
+    apagar();
     flush_rx_fifo();
     flush_tx_fifo();
     clear_all_interrupts();
     config_payload_widths(1);
     escribir_registro(Registro::RF_SETUP, 0x26);
+    config_default();
     nrf_ptr = this;
-    apagar();
 }
 
 
@@ -119,11 +120,13 @@ uint8_t NRF24::leer_registro(NRF24::Registro reg) const
 
 void NRF24::config_default() const
 {
-  const uint8_t default_cfg = (1 << 3); //EN_CRC
+  const uint8_t default_cfg = (1 << 3); // EN_CRC
   escribir_registro(Registro::Config, default_cfg);
 
-  const uint8_t setup_retr = 8 + (1 << 4); /// 8 intentos de transmitir, 500uS entre cada intento
+  const uint8_t setup_retr = 8 + (1 << 4); // 8 intentos de transmitir, 500uS entre cada intento
   escribir_registro(Registro::SETUP_RETR, setup_retr);
+
+  config_tx_addr(static_cast<uint64_t>(NRF24::DefaultAddress::P0));
 }
 
 void NRF24::descartar_fifo()
@@ -155,27 +158,24 @@ void NRF24::config_payload_widths(uint8_t width) const
   width = width & 0b11111;
   escribir_registro(Registro::RX_PW_P0, width);
   escribir_registro(Registro::RX_PW_P1, width);
+  escribir_registro(Registro::RX_PW_P2, width);
+  escribir_registro(Registro::RX_PW_P3, width);
+  escribir_registro(Registro::RX_PW_P4, width);
+  escribir_registro(Registro::RX_PW_P5, width);
 }
 
 /** La direccion RX_ADDR_P0 debe ser igual a la TX_ADDR para tener ACKs. */
 void NRF24::config_tx_addr(uint64_t addr) const {
-  SS_pin.reset_output();
-  (void)spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(Registro::TX_ADDR));
-  for (int i = 0; i < 5; ++i) {
-    (void)spi.escribir((addr >> 8*i) & 0xFF);
-  }
-  SS_pin.set_output();
-  SS_pin.reset_output();
-
-  (void)spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(Registro::RX_ADDR_P0));
-  for (int i = 0; i < 5; ++i) {
-    (void)spi.escribir((addr >> 8*i) & 0xFF);
-  }
-  SS_pin.set_output();
-}
-
-void NRF24::config_tx_addr(DefaultAddress addr) const {
-  config_tx_addr(static_cast<uint64_t>(addr));
+    auto fn = [&](Registro registro) {
+        SS_pin.reset_output();
+        (void)spi.escribir(static_cast<uint8_t>(Commands::W_REGISTER) | static_cast<uint8_t>(registro));
+        for (int i = 0; i < 5; ++i) {
+            (void)spi.escribir((addr >> 8*i) & 0xFF);
+        }
+        SS_pin.set_output();
+    };
+    fn(Registro::TX_ADDR);
+    fn(Registro::RX_ADDR_P0);
 }
 
 uint64_t NRF24::leer_addr_reg(Registro addr_reg) const {

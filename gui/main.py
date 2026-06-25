@@ -66,6 +66,10 @@ class SerialGUI:
         self.send_button = ttk.Button(self.input_frame, text="Send", state="disabled", command=self.send_text_input_data)
         self.send_button.grid(row=0, column=1, padx=5)
 
+        # Ping Button
+        self.remote_toggle_button = ttk.Button(self.input_frame, text="Toggle remote", state="disabled", command=self.send_remote_toggle)
+        self.remote_toggle_button.grid(row=0, column=2, padx=5)
+
         ###################################################
 
         self.slider1_frame = ttk.Frame(root)
@@ -156,6 +160,7 @@ class SerialGUI:
             self.port_combobox.config(state="disabled")
             self.baud_combobox.config(state="disabled")
             self.send_button.config(state="normal")
+            self.remote_toggle_button.config(state="normal")
             self.show_message(f"Connected to {port} at {baudrate} baud")
             # Start reading data in a separate thread
             self.running = True
@@ -174,6 +179,7 @@ class SerialGUI:
         self.port_combobox.config(state="readonly")
         self.baud_combobox.config(state="readonly")
         self.send_button.config(state="disabled")
+        self.remote_toggle_button.config(state="disabled")
         self.show_message("Disconnected")
 
     def read_serial(self):
@@ -192,6 +198,10 @@ class SerialGUI:
             data = self.input_entry.get()
             if data:
                 self.send_serial_data(data)
+
+    def send_remote_toggle(self):
+            data = "{n/{gt}}"
+            self.send_serial_data(data)
 
     def show_message(self, message):
         self.output_text.config(state="normal")

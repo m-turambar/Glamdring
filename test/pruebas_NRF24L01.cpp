@@ -101,7 +101,6 @@ void demo()
 
   NRF24 radio(spi2, ss_radio, pin_enable_radio);
   nrf_ptr = &radio;
-  radio.config_default();
   auto config = radio.leer_registro(NRF24::Registro::Config);
   radio.encender(NRF24::Modo::TX);
   config = radio.leer_registro(NRF24::Registro::Config);
@@ -118,8 +117,6 @@ spi2.inicializar();
 NRF24 radio1(spi2, ss_radio1, pin_enable_radio1);
 NRF24 radio2(spi2, ss_radio2, pin_enable_radio2);
 
-radio1.config_default();
-radio2.config_default();
 auto config = radio1.leer_registro(NRF24::Registro::Config);
 auto config2 = radio2.leer_registro(NRF24::Registro::Config);
 

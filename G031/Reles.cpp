@@ -97,7 +97,6 @@ int main(void)
     NRF24_uart_buffer = &uart2_buf;
     NRF24 radio(spi1, radio_nss, radio_en);
     nrf_ptr = &radio;
-    radio.config_default();
     radio.encender(NRF24::Modo::RX);
     radio.escribir_registro(NRF24::Registro::RF_CH, 0b100000);
 

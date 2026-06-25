@@ -25,6 +25,10 @@ public:
     TX_ADDR = 0x10,
     RX_PW_P0 = 0x11,
     RX_PW_P1 = 0x12,
+    RX_PW_P2 = 0x13,
+    RX_PW_P3 = 0x14,
+    RX_PW_P4 = 0x15,
+    RX_PW_P5 = 0x16,
     FIFO_STATUS = 0x17
   };
 
@@ -47,7 +51,6 @@ public:
   void config_default() const;
   void config_payload_widths(uint8_t width) const;
   void config_tx_addr(uint64_t addr) const;
-  void config_tx_addr(DefaultAddress addr) const;
   uint64_t leer_addr_reg(Registro addr_reg) const;
   void encender(Modo modo);
   void apagar();
