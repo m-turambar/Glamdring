@@ -10,7 +10,11 @@
 namespace GPIO
 {
 
-  GPIO_Port PORTA(Port::A), PORTB(Port::B), PORTC(Port::C), PORTD(Port::D), PORTF(Port::F);
+  GPIO_Port PORTA(Port::A);
+  GPIO_Port PORTB(Port::B);
+  GPIO_Port PORTC(Port::C);
+  GPIO_Port PORTD(Port::D);
+  GPIO_Port PORTF(Port::F);
 
   /* Varias de estas funciones hacen read-modify-write, y si en ese proceso ocurre una interrupción que haga lo
    * mismo, podemos tener problemas. Por eso es importante usar los registros de bloqueo del gpio, para realizar
@@ -107,7 +111,7 @@ namespace GPIO
   void GPIO_Port::toggle(const uint8_t pin) const
   {
     const uint8_t pin_val = read_output(pin);
-    if(pin_val==0)
+    if (pin_val == 0)
       set_output(pin);
     else
       reset_output(pin);

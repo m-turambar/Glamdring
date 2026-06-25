@@ -1,7 +1,6 @@
 //
 // Created by migue on 13/06/2020.
 //
-
 #pragma once
 
 #include <helpers.h>
@@ -9,32 +8,35 @@
 #include <NVIC.h>
 
 namespace GPIO {
-  class pin;
+    
+class pin;
+class GPIO_Port;
+extern GPIO_Port PORTA, PORTB, PORTC, PORTD, PORTF;
 
 #ifdef STM32L475xx
 
-  enum class Port {
+enum class Port {
     A = 0x48000000,
     B = 0x48000400,
     C = 0x48000800,
     D = 0x48000C00,
     F = 0x48001400
-  };
+};
 
 #elif defined(STM32G070xx) || defined(STM32G031xx)
 
-  /* Deberíamos poner el puerto 'E' para compatibilidad con otros dispositivos? */
-  enum class Port {
+/* Deberíamos poner el puerto 'E' para compatibilidad con otros dispositivos? */
+enum class Port {
     A = 0x50000000,
     B = 0x50000400,
     C = 0x50000800,
     D = 0x50000C00,
     F = 0x50001400
-  };
+};
 
 #elif defined(STM32F767xx)
 
-  enum class Port {
+enum class Port {
     A = 0x40020000,
     B = 0x40020400,
     C = 0x40020800,
@@ -46,57 +48,56 @@ namespace GPIO {
     I = 0x40022000,
     J = 0x40022400,
     K = 0x40022800
-  };
+};
 
 #else
 #error "No MCU declared"
 
 #endif
 
-  enum class Mode {
+enum class Mode {
     Input = 0x0,
     Output = 0x1,
     Alternate = 0x2,
     Analog = 0x3 //reset state
-  };
+};
 
-  enum class OutputType {
+enum class OutputType {
     PushPull = 0x0,
     OpenDrain = 0x1
-  };
+};
 
-  enum class Speed {
+enum class Speed {
     VeryLow = 0x0,
     Low = 0x1,
     High = 0x2,
     VeryHigh = 0x3
-  };
+};
 
-  enum class PullResistor {
+enum class PullResistor {
     NoPull = 0x0,
     PullUp = 0x1,
     PullDown = 0x2
-  };
+};
 
 
   /* Vamos a crear solo una instancia por cada puerto de esta clase.
    * La clase que el usuario utilizará es gpio */
-  class GPIO_Port {
-  public:
+class GPIO_Port {
+public:
     GPIO_Port(const Port port)
-        :
-        base(static_cast<size_t>(port)),
-        MODER(base),
-        OTYPER(base+0x4),
-        OSPEEDR(base+0x8),
-        PUPDR(base+0xC),
-        IDR(base+0x10),
-        ODR(base+0x14),
-        BSRR(base+0x18),
-        LCKR(base+0x1C),
-        AFRL(base+0x20),
-        AFRH(base+0x24),
-        BRR(base+0x28) { }
+        : base(static_cast<size_t>(port))
+        , MODER(base)
+        , OTYPER(base+0x4)
+        , OSPEEDR(base+0x8)
+        , PUPDR(base+0xC)
+        , IDR(base+0x10)
+        , ODR(base+0x14)
+        , BSRR(base+0x18)
+        , LCKR(base+0x1C)
+        , AFRL(base+0x20)
+        , AFRH(base+0x24)
+        , BRR(base+0x28) { }
 
     /* entrada, salida, alternate, analogico */
     const GPIO_Port& cfg_mode(const uint8_t pin, const Mode mode) const;
@@ -139,7 +140,7 @@ namespace GPIO {
     /* can only be written once per MCU reset */
     uint8_t lock_bits(const uint16_t bits) const;
 
-  private:
+private:
 
     const size_t base;
     /* tanto BSRR como BRR modifican ODR atómicamente. La diferencia es que BSRR puede
@@ -147,18 +148,17 @@ namespace GPIO {
      * Podríamos sólo usar BSRR y omitir BRR por completo */
     const registro MODER, OTYPER, OSPEEDR, PUPDR, IDR, ODR, BSRR, LCKR, AFRL, AFRH, BRR;
 
-  };
-
-  /* estas instancias deben pasarse al constructor de gpio*/
-  extern GPIO_Port PORTA, PORTB, PORTC, PORTD, PORTF;
+};
+  
 
 /* Esta es la clase que el usuario debe usar. Se pasa como referencia uno de los GPIOs que ya existen, declarados en
  * este mismo archivo de encabezado. */
-  class pin {
-  public:
-    pin(const GPIO_Port& port_arg, const uint8_t num_arg) :
-        port(port_arg),
-        num(num_arg) { }
+class pin {
+public:
+    pin(const GPIO_Port& port_arg, const uint8_t num_arg)
+        : port(port_arg)
+        , num(num_arg)
+        { }
 
     const pin& cfg_mode(const Mode mode) const;
     const pin& cfg_output_type(const OutputType ot) const;
@@ -175,9 +175,10 @@ namespace GPIO {
     void reset_output() const;
     void toggle() const;
 
-  private:
+private:
     const GPIO_Port& port;
     const uint8_t num;
-  };
+};
 
-}
+
+} // namespace GPIO
