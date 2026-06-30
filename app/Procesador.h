@@ -1,11 +1,12 @@
 #pragma once
 
-#include "UART.h"
+#include "helpers.h"
 
 void null_execution(uint8_t b = 0);
 void null_execution(uint16_t a = 0);
 void null_execution(uint16_t a = 0, uint8_t b = 0);
 void null_execution(Buffer& buf);
+void default_reset_hook(uint8_t b);
 
 struct Procesador
 {
@@ -20,6 +21,7 @@ struct Procesador
         PWM,
         NRF,
         GPIO,
+        Reset
     };
 
     void procesar_mensaje(uint8_t b);
@@ -29,6 +31,7 @@ struct Procesador
     void (*pwm_hook)(uint16_t pwm_pulse_width, uint8_t pwm_canal) { &null_execution };
     void (*nrf_hook)(Buffer& buffer) { &null_execution };
     void (*gpio_hook)(uint8_t b) { &null_execution };
+    void (*reset_hook)(uint8_t b) { &default_reset_hook };
 
 private:
     bool procesar_interno(const uint8_t b) ;
@@ -45,4 +48,5 @@ private:
     uint8_t pwm_canal {0};
     Buffer nrf_buf;
     uint8_t gpio_byte {0};
+    uint8_t reset_byte {0};
 };

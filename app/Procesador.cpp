@@ -1,9 +1,19 @@
+#include "NVIC.h"
 #include "Procesador.h"
+#include "UART.h"
 
 void null_execution(Buffer& buf) {}
 void null_execution(uint16_t a, uint8_t b) {}
 void null_execution(uint16_t a) { null_execution(a, 42);}
 void null_execution(uint8_t b) {}
+void default_reset_hook(uint8_t b) {
+    if (b == 'r') {
+        if (g_uart1) {
+            *g_uart1 << "System reset.\n";
+        }
+        __NVIC_SystemReset();
+    }
+};
 
 Procesador::Proceso seleccionar_proceso(uint8_t b)
 {
@@ -27,6 +37,9 @@ Procesador::Proceso seleccionar_proceso(uint8_t b)
             break;
         case 'g':
             proceso = Proceso::GPIO;
+            break;
+        case 'r':
+            proceso = Proceso::Reset;
             break;
         default:
             proceso = Proceso::None;
@@ -100,6 +113,9 @@ bool Procesador::procesar_interno(const uint8_t b)
     case Proceso::GPIO:
         gpio_byte = b;
         break;
+    case Proceso::Reset:
+        reset_byte = b;
+        break;
     default:
         return false;
     }
@@ -135,6 +151,9 @@ void Procesador::ejecutar_mensaje()
     }
     if (proceso == Proceso::GPIO) {
         gpio_hook(gpio_byte);
+    }
+    if (proceso == Proceso::Reset) {
+        reset_hook(reset_byte);
     }
 }
 
