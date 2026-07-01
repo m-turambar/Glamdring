@@ -70,10 +70,20 @@ class SerialGUI:
         self.remote_toggle_button = ttk.Button(self.input_frame, text="Toggle remote", state="disabled", command=self.send_remote_toggle)
         self.remote_toggle_button.grid(row=0, column=2, padx=5)
 
+        self.nrf_broadcast_var = tk.BooleanVar()
+        self.nrf_broadcast_check = ttk.Checkbutton(self.input_frame, text="NRF broadcast", variable=self.nrf_broadcast_var)
+        self.nrf_broadcast_check.grid(row=1, column=0, padx=5, pady=5, sticky='w')
+
+        self.ptx_button = ttk.Button(self.input_frame, text="PTX", state="disabled", command=self.send_ptx)
+        self.ptx_button.grid(row=1, column=1, padx=5, pady=5)
+
+        self.prx_button = ttk.Button(self.input_frame, text="PRX", state="disabled", command=self.send_prx)
+        self.prx_button.grid(row=1, column=2, padx=5, pady=5)
+
         ###################################################
 
         self.slider1_frame = ttk.Frame(root)
-        self.slider1_frame.pack(pady=10)
+        self.slider1_frame.pack(pady=5, anchor='w', padx=10)
 
         self.channel1_label = ttk.Label(self.slider1_frame, text="Channel 1:")
         self.channel1_label.grid(row=0, column=0, padx=3)
@@ -85,7 +95,7 @@ class SerialGUI:
         self.pw1_label.grid(row=0, column=2, padx=5)
 
         self.slider2_frame = ttk.Frame(root)
-        self.slider2_frame.pack(pady=10)
+        self.slider2_frame.pack(pady=5, anchor='w', padx=10)
 
         self.channel2_label = ttk.Label(self.slider2_frame, text="Channel 2:")
         self.channel2_label.grid(row=0, column=0, padx=3)
@@ -97,7 +107,7 @@ class SerialGUI:
         self.pw2_label.grid(row=0, column=2, padx=5)
 
         self.slider3_frame = ttk.Frame(root)
-        self.slider3_frame.pack(pady=10)
+        self.slider3_frame.pack(pady=5, anchor='w', padx=10)
 
         self.channel3_label = ttk.Label(self.slider3_frame, text="DAC CH1:")
         self.channel3_label.grid(row=0, column=0, padx=3)
@@ -161,6 +171,8 @@ class SerialGUI:
             self.baud_combobox.config(state="disabled")
             self.send_button.config(state="normal")
             self.remote_toggle_button.config(state="normal")
+            self.ptx_button.config(state="normal")
+            self.prx_button.config(state="normal")
             self.show_message(f"Connected to {port} at {baudrate} baud")
             # Start reading data in a separate thread
             self.running = True
@@ -180,6 +192,8 @@ class SerialGUI:
         self.baud_combobox.config(state="readonly")
         self.send_button.config(state="disabled")
         self.remote_toggle_button.config(state="disabled")
+        self.ptx_button.config(state="disabled")
+        self.prx_button.config(state="disabled")
         self.show_message("Disconnected")
 
     def read_serial(self):
@@ -195,13 +209,21 @@ class SerialGUI:
                 break
 
     def send_text_input_data(self):
-            data = self.input_entry.get()
-            if data:
-                self.send_serial_data(data)
+        data = self.input_entry.get()
+        if data:
+            if self.nrf_broadcast_var.get():
+                data = f"{{n/{data}}}"
+            self.send_serial_data(data)
 
     def send_remote_toggle(self):
             data = "{n/{gt}}"
             self.send_serial_data(data)
+
+    def send_ptx(self):
+        self.send_serial_data("{nm0}")
+
+    def send_prx(self):
+        self.send_serial_data("{nm1}")
 
     def show_message(self, message):
         self.output_text.config(state="normal")
