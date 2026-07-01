@@ -79,11 +79,11 @@ int main(void)
     uart1.enable_interrupt_rx(callback_uart1);
     uart1 << "Hola soy un dongle\n";
 
-    UART uart2(UART::Peripheral::USART2, 9600);
-    g_uart2 = &uart2;
-    uart2.enable();
-    uart2.enable_interrupt_rx(callback_uart2);
-    uart2 << "Hola soy el UART2\n";
+    // UART uart2(UART::Peripheral::USART2, 9600);
+    // g_uart2 = &uart2;
+    // uart2.enable();
+    // uart2.enable_interrupt_rx(callback_uart2);
+    // uart2 << "Hola soy el UART2\n";
 
     const GPIO::pin radio_ce(GPIO::PORTB, 1);
     const GPIO::pin radio_irq(GPIO::PORTA, 4);
@@ -110,7 +110,7 @@ int main(void)
         if (uart1_buf.available()) {
             uint8_t b = uart1_buf.leer();
             *g_uart1 << b;
-            *g_uart2 << b;
+            // *g_uart2 << b;
             procesador.procesar_mensaje(b);
         }
         if (uart2_buf.available()) {
