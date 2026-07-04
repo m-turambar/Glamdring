@@ -99,6 +99,8 @@ namespace RCC {
   void enable_TIM7_clock();
 
   /** Funciones para relojes del sistema */
+  void enable_CRC_clock();
+
   void enable_SYSCFG_clock();
   void enable_power_clock();
 

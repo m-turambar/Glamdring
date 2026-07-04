@@ -139,6 +139,12 @@ namespace RCC
   /** Funciones para configurar o leer relojes del sistema */
   /*********************************************************/
 
+  void enable_CRC_clock()
+  {
+    const flag CRCEN(12);
+    AHBENR.set(CRCEN);
+  }
+
   void enable_SYSCFG_clock()
   {
     const flag SYSCFGEN(0);

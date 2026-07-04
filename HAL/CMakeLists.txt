@@ -12,6 +12,8 @@ target_sources(HAL PRIVATE
     # ADC.h
     DMA.h
     DMA.cpp
+    CRC.h
+    CRC.cpp
     EXTI.h
     EXTI.cpp
     FLASH.h
