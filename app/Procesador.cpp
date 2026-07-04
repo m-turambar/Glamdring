@@ -41,6 +41,9 @@ Procesador::Proceso seleccionar_proceso(uint8_t b)
         case 'r':
             proceso = Proceso::Reset;
             break;
+        case '/':
+            proceso = Proceso::Test;
+            break;
         default:
             proceso = Proceso::None;
     }
@@ -116,6 +119,9 @@ bool Procesador::procesar_interno(const uint8_t b)
     case Proceso::Reset:
         reset_byte = b;
         break;
+    case Proceso::Test:
+        test_byte = b;
+        break;
     default:
         return false;
     }
@@ -155,6 +161,9 @@ void Procesador::ejecutar_mensaje()
     if (proceso == Proceso::Reset) {
         reset_hook(reset_byte);
     }
+    if (proceso == Proceso::Test) {
+        test_hook(test_byte);
+    }
 }
 
 void Procesador::clear_status()
@@ -167,4 +176,5 @@ void Procesador::clear_status()
     pwm_canal = 0;
     nrf_buf.clear();
     gpio_byte = 0;
+    test_byte = 0;
 }

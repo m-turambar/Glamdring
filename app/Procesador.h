@@ -21,7 +21,8 @@ struct Procesador
         PWM,
         NRF,
         GPIO,
-        Reset
+        Reset,
+        Test
     };
 
     void procesar_mensaje(uint8_t b);
@@ -32,6 +33,7 @@ struct Procesador
     void (*nrf_hook)(Buffer& buffer) { &null_execution };
     void (*gpio_hook)(uint8_t b) { &null_execution };
     void (*reset_hook)(uint8_t b) { &default_reset_hook };
+    void (*test_hook)(uint8_t b)  { &null_execution };
 
 private:
     bool procesar_interno(const uint8_t b) ;
@@ -49,4 +51,5 @@ private:
     Buffer nrf_buf;
     uint8_t gpio_byte {0};
     uint8_t reset_byte {0};
+    uint8_t test_byte  {0};
 };
