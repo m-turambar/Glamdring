@@ -250,7 +250,7 @@ NRF24& NRF24::operator<<(char c)
     return this->operator<<(static_cast<uint8_t>(c));
 }
 
-NRF24& NRF24::operator<<(char* buffer)
+NRF24& NRF24::operator<<(const char* buffer)
 {
     const auto sz = std::strlen(buffer);
     for (int i = 0; i < sz; ++i) {

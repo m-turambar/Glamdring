@@ -85,7 +85,7 @@ public:
 
     NRF24& operator<<(uint8_t byte);
     NRF24& operator<<(char c);
-    NRF24& operator<<(char* buffer);
+    NRF24& operator<<(const char* buffer);
 
 private:
     SPI& spi;
